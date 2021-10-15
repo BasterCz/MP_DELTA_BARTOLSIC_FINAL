@@ -1,3 +1,6 @@
 {
-  "dependencies": {}
+  "dependencies": {
+    "@types/multer": "^1.4.7",
+    "next-connect": "^0.10.2"
+  }
 }
