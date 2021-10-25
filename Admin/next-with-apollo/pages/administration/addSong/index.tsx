@@ -3,17 +3,21 @@ import { Field, Form, Formik, useFormik } from "formik";
 import { FormikAddSong } from "../../../components/formikAddSong";
 import { UiFileInputButton } from "../../../components/uiFileInputButton";
 import axios from "axios";
-import React from "react";
+import React, { useState } from "react";
 import { Grid } from "@material-ui/core";
+import hlsCreate from "../../../lib/hlsCreate";
 
 interface MyFormValues {
   firstName: string;
 }
 
 const AdminAddSong: NextPage = () => {
-  const onChange = async (formData: FormData) => {
+  const [fileName, setFileName] = useState("")
+  const [imageName, setImageName] = useState("")
+  const onChange = async (formData: FormData, destination: string, type: 'file' | 'image', fileName: string) => {
+  
     const config = {
-      headers: { "content-type": "multipart/form-data" },
+      headers: { "content-type": "multipart/form-data", "destination": destination},
       onUploadProgress: (event: { loaded: number; total: number }) => {
         console.log(
           `Current progress:`,
@@ -23,6 +27,10 @@ const AdminAddSong: NextPage = () => {
     };
 
     const response = await axios.post("/api/upload", formData, config);
+    switch (type) {
+      case 'file': setFileName(fileName); break;
+      case 'image': setImageName(fileName); break;
+    }
 
     console.log("response", response.data);
   };
@@ -31,9 +39,7 @@ const AdminAddSong: NextPage = () => {
     <Formik
       initialValues={initialValues}
       onSubmit={(values, actions) => {
-        console.log({ values, actions });
-        alert(JSON.stringify(values, null, 2));
-        actions.setSubmitting(false);
+        hlsCreate("./public/temp/"+fileName, "./public/audio/"); //!Module not found: Can't resolve './lib-cov/fluent-ffmpeg'
       }}
     >
       <Form>
@@ -42,9 +48,20 @@ const AdminAddSong: NextPage = () => {
         <br />
         <Grid item>
           <UiFileInputButton
-            label="Upload Single File"
+            label="Audio file upload"
             uploadFileName="theFiles"
             onChange={onChange}
+            destination="./public/temp/"
+            type='file'
+          />
+        </Grid>
+        <Grid item>
+          <UiFileInputButton
+            label="Image file upload"
+            uploadFileName="theFiles"
+            onChange={onChange}
+            destination="./public/img/"
+            type='image'
           />
         </Grid>
 

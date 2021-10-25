@@ -1,11 +1,14 @@
-import React from "react";
+import React, { useState } from "react";
+
 
 export interface IProps {
   acceptedFileTypes?: string;
   allowMultipleFiles?: boolean;
   label: string;
-  onChange: (formData: FormData) => void;
+  onChange: (formData: FormData, destination:string, type: 'file'| 'image', fileName:string) => void;
   uploadFileName: string;
+  destination: string;
+  type: 'file'| 'image';
 }
 
 export const UiFileInputButton: React.FC<IProps> = (props) => {
@@ -17,6 +20,8 @@ export const UiFileInputButton: React.FC<IProps> = (props) => {
   };
 
   const onChangeHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const [fileName, setFileName] = useState("");
+
     if (!event.target.files?.length) {
       return;
     }
@@ -25,9 +30,10 @@ export const UiFileInputButton: React.FC<IProps> = (props) => {
 
     Array.from(event.target.files).forEach((file) => {
       formData.append(event.target.name, file);
+      setFileName(event.target.name)
     });
 
-    props.onChange(formData);
+    props.onChange(formData, props.destination, props.type, fileName);
 
     formRef.current?.reset();
   };
