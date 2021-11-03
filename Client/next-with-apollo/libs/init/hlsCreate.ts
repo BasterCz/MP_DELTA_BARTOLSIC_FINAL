@@ -1,13 +1,11 @@
-
-import ffmpeg from "fluent-ffmpeg"
+import ffmpeg from "fluent-ffmpeg";
 
 export default async function hlsCreate(
     sourcePath : string,
     resultPath : string,
     segmentTime = 5
 ) {
-    console.log('done')
-     await ffmpeg()
+    await ffmpeg()
     .input(sourcePath)
     .addOption([
       `-start_number 0`,

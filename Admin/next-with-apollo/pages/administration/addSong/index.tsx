@@ -38,8 +38,11 @@ const AdminAddSong: NextPage = () => {
   return (
     <Formik
       initialValues={initialValues}
-      onSubmit={(values, actions) => {
-        hlsCreate("./public/temp/"+fileName, "./public/audio/"); //!Module not found: Can't resolve './lib-cov/fluent-ffmpeg'
+      onSubmit={async (values, actions) => {
+        const config = {
+          headers: { "source": "./public/temp/"+fileName, "destination": "./public/audio/"},
+        };
+        const response = await axios.post("/api/hlsCreate", config);
       }}
     >
       <Form>

@@ -20,7 +20,7 @@ export const UiFileInputButton: React.FC<IProps> = (props) => {
   };
 
   const onChangeHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const [fileName, setFileName] = useState("");
+    var fileName = "";
 
     if (!event.target.files?.length) {
       return;
@@ -30,7 +30,7 @@ export const UiFileInputButton: React.FC<IProps> = (props) => {
 
     Array.from(event.target.files).forEach((file) => {
       formData.append(event.target.name, file);
-      setFileName(event.target.name)
+      fileName = event.target.name;
     });
 
     props.onChange(formData, props.destination, props.type, fileName);
