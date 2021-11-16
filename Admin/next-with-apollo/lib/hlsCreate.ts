@@ -1,13 +1,21 @@
 
-import ffmpeg from "fluent-ffmpeg"
+const ffmpegPath = require('@ffmpeg-installer/ffmpeg').path;
+const ffmpeg = require('fluent-ffmpeg');
+var fs = require('fs');
 
-export default async function hlsCreate(
+ffmpeg.setFfmpegPath(ffmpegPath);
+
+export default function hlsCreate(
     sourcePath : string,
     resultPath : string,
+    resultFileName : string,
     segmentTime = 5
 ) {
-    console.log('done')
-     await ffmpeg()
+
+if (!fs.existsSync(resultPath)){
+    fs.mkdirSync(resultPath);
+}
+     ffmpeg()
     .input(sourcePath)
     .addOption([
       `-start_number 0`,
@@ -16,7 +24,14 @@ export default async function hlsCreate(
       `-f hls`,
     ])
     .noVideo()
-    .output(resultPath)
+    .output(resultFileName)
+    .on('error', function(err: { message: any; }, stdout: string, stderr: string) {
+      if (err) {
+          console.log(err.message);
+          console.log("stdout:\n" + stdout);
+          console.log("stderr:\n" + stderr);
+      }
+  })
     .run();
     return true;
   }

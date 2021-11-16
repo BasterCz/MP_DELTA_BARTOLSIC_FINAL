@@ -24,7 +24,6 @@ apiRoute.use(uploadMiddleware);
 
 // Process a POST request
 apiRoute.post((req, res) => {
-  
   res.status(200).json({ data: "success" });
 });
 

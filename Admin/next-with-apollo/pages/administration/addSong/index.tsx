@@ -39,10 +39,13 @@ const AdminAddSong: NextPage = () => {
     <Formik
       initialValues={initialValues}
       onSubmit={async (values, actions) => {
+        let input = fileName
+        let output = input.replaceAll(' ', '_').substr(0, input.lastIndexOf('.')) || input.replaceAll(' ', '_');
+        let outputExt = output + ".m3u8" 
         const config = {
-          headers: { "source": "./public/temp/"+fileName, "destination": "./public/audio/"},
+          headers: { "source": "./public/temp/"+fileName,  "destinationFolder": "./public/audio/"+ output  , "destination": "./public/audio/"+ output + "/" + outputExt },
         };
-        const response = await axios.post("/api/hlsCreate", config);
+        const response = await axios.post("/api/hlsCreate", {}, config);
       }}
     >
       <Form>
