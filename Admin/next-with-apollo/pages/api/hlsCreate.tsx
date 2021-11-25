@@ -10,6 +10,7 @@ const upload = (req : NextApiRequest)=> {
     req.headers['destinationfolder'] as string,
     req.headers['destination'] as string
      );
+     
 
 }
 
