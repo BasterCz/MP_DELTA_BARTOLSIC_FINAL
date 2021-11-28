@@ -215,6 +215,10 @@ const Root = styled.div`
   grid-column-end: 5;
   grid-row-start: 8;
   grid-row-end: 9;
+  @media only screen and (min-width: 376px) {
+    grid-column-start: 3;
+    grid-column-end: 7;
+  };
 `;
 const Input = styled.input``;
 

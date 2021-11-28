@@ -82,4 +82,8 @@ const StyledForm = styled.form`
   grid-row-start: 4;
   grid-row-end: 5;
   place-self: center;
+  @media only screen and (min-width: 376px) {
+    grid-column-start: 3;
+    grid-column-end: 7;
+  }
 `;
