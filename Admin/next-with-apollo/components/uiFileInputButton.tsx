@@ -1,14 +1,21 @@
+import { ThemeProvider, Button } from "@mui/material";
 import React, { useState } from "react";
-
+import styled from "styled-components";
+import { palette } from "../styles/palette";
 
 export interface IProps {
   acceptedFileTypes?: string;
   allowMultipleFiles?: boolean;
   label: string;
-  onChange: (formData: FormData, destination:string, type: 'file'| 'image', fileName:string) => void;
+  onChange: (
+    formData: FormData,
+    destination: string,
+    type: "file" | "image",
+    fileName: string
+  ) => void;
   uploadFileName: string;
   destination: string;
-  type: 'file'| 'image';
+  type: "file" | "image";
 }
 
 export const UiFileInputButton: React.FC<IProps> = (props) => {
@@ -40,24 +47,39 @@ export const UiFileInputButton: React.FC<IProps> = (props) => {
   };
 
   return (
-    <form ref={formRef}>
-      <button type="button" onClick={onClickHandler}>
-        {props.label}
-      </button>
-      <input
-        accept={props.acceptedFileTypes}
-        multiple={props.allowMultipleFiles}
-        name={props.uploadFileName}
-        onChange={onChangeHandler}
-        ref={fileInputRef}
-        style={{ display: 'none' }}
-        type="file"
-      />
-    </form>
+    <ThemeProvider theme={palette}>
+      <StyledForm ref={formRef}>
+        <Button
+          variant="contained"
+          color="primary"
+          type="button"
+          onClick={onClickHandler}
+        >
+          {props.label}
+        </Button>
+        <input
+          accept={props.acceptedFileTypes}
+          multiple={props.allowMultipleFiles}
+          name={props.uploadFileName}
+          onChange={onChangeHandler}
+          ref={fileInputRef}
+          style={{ display: "none" }}
+          type="file"
+        />
+      </StyledForm>
+    </ThemeProvider>
   );
 };
 
 UiFileInputButton.defaultProps = {
-  acceptedFileTypes: '',
+  acceptedFileTypes: "",
   allowMultipleFiles: false,
 };
+
+const StyledForm = styled.form`
+  grid-column-start: 3;
+  grid-column-end: 5;
+  grid-row-start: 4;
+  grid-row-end: 5;
+  place-self: center;
+`;
