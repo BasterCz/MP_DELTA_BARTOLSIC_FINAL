@@ -108,5 +108,9 @@ const SCard = styled(Card)`
   @media only screen and (min-width: 376px) {
     min-height: 60vw;
     min-width: 60vw;
-  }
+  };
+  @media only screen and (min-width: 425px) {
+    min-height: 56vw;
+    min-width: 56vw;
+  };
 `;

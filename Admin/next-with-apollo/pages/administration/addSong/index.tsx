@@ -171,6 +171,23 @@ const FormGrid = styled.form`
       60px
       90px;
   };
+  @media only screen and (min-width: 425px) {
+    grid-template-columns:
+      calc((100% - 70vw) / 4) calc((100% - 70vw) / 4) 7vw 13vw 43vw 7vw calc(
+        (100% - 70vw) / 4
+      )
+      calc((100% - 70vw) / 4);
+    grid-template-rows:
+      10px
+      56vw
+      30px
+      60px
+      30px
+      60px
+      60px
+      60px
+      90px;
+  };
 `;
 
 const Placeholder = styled.div`
@@ -182,6 +199,7 @@ const Placeholder = styled.div`
     grid-column-start: 1;
     grid-column-end: 9;
   };
+  
 `;
 
 const STextField = styled(TextField)`
