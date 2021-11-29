@@ -85,5 +85,11 @@ const StyledForm = styled.form`
   @media only screen and (min-width: 376px) {
     grid-column-start: 3;
     grid-column-end: 7;
-  }
+  };
+  @media only screen and (min-width: 481px) {
+    grid-column-start: 2;
+    grid-column-end: 5;
+    grid-row-start: 8;
+  grid-row-end: 9;
+  };
 `;

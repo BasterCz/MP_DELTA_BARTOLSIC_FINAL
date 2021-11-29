@@ -56,14 +56,7 @@ export const ImageInputBox: React.FC<IProps> = (props) => {
             bgcolor: "background.default",
           }}
         >
-          <AddPhotoAlternateOutlinedIcon
-            sx={{
-              fontSize: "12vw",
-              display: "block",
-              margin: "auto",
-              opacity: 0.3,
-            }}
-          />
+          <SAddPhotoAlternateOutlinedIcon />
         </SCard>
         <input
           accept={props.acceptedFileTypes}
@@ -89,15 +82,32 @@ const StyledForm = styled.form`
   grid-column-end: 5;
   grid-row-start: 2;
   grid-row-end: 3;
+
   @media only screen and (min-width: 376px) {
     grid-column-start: 4;
     grid-column-end: 6;
   }
+  @media only screen and (min-width: 481px) {
+    grid-column-start: 2;
+    grid-column-end: 3;
+    grid-row-start: 2;
+    grid-row-end: 7;
+  } ;
+`;
+
+const SAddPhotoAlternateOutlinedIcon = styled(AddPhotoAlternateOutlinedIcon)`
+  font-size: 12vw;
+  display: block;
+  margin: auto;
+  opacity: 0.3;
+  @media only screen and (min-width: 751px) {
+    font-size: 90px;
+  } ;
 `;
 
 const SCard = styled(Card)`
-  width: 100%;
-  height: 100%;
+  width: 40vw;
+  height: 40vw;
   min-height: 70vw;
   min-width: 70vw;
   text-align: center;
@@ -108,9 +118,17 @@ const SCard = styled(Card)`
   @media only screen and (min-width: 376px) {
     min-height: 60vw;
     min-width: 60vw;
-  };
+  }
   @media only screen and (min-width: 425px) {
     min-height: 56vw;
     min-width: 56vw;
-  };
+  }
+  @media only screen and (min-width: 481px) {
+    min-height: 192px;
+    min-width: 192px;
+    height: 40vw;
+    width: 40vw;
+    max-height: 300px;
+    max-width: 300px;
+  } ;
 `;

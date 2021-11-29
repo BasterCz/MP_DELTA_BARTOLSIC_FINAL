@@ -71,15 +71,11 @@ const AdminAddSong: NextPage = () => {
 
   return (
     <ThemeProvider theme={palette}>
-      <Card
+      <Wrap>
+      <SCard
         sx={{
           bgcolor: "background.paper",
-          height: "95vh",
-          padding: 3,
-          width: 9 / 10,
           color: "text.primary",
-          margin: "2.5vh auto auto auto",
-          overflow: "auto",
         }}
       >
         <FormikProvider value={formikUI}>
@@ -116,7 +112,7 @@ const AdminAddSong: NextPage = () => {
             <br />
           </FormGrid>
         </FormikProvider>
-      </Card>
+      </SCard>
       <Fab
         form="addForm"
         color="inherit"
@@ -130,11 +126,34 @@ const AdminAddSong: NextPage = () => {
       >
         <FileUploadOutlinedIcon />
       </Fab>
+      </Wrap>
     </ThemeProvider>
   );
 };
 
 export default AdminAddSong;
+
+const SCard = styled(Card)`
+  height: 95vh;
+  width: 90%;
+  max-width: 810px;
+  padding: 3;
+  margin: 2.5vh auto auto auto;
+  overflow: auto;
+  @media only screen and (min-width: 481px) {
+    height: auto;
+  };
+  
+`;
+
+const Wrap = styled.div`
+  background-color: rgba(0,0,0, 0.5);
+  backdrop-filter: blur(10px);
+  display: grid;
+  align-content: center;
+  height: 100vh;
+  margin:0;
+`
 
 const FormGrid = styled.form`
   height: 100%;
@@ -161,7 +180,7 @@ const FormGrid = styled.form`
       )
       calc((100% - 70vw) / 4);
     grid-template-rows:
-      10px
+      20px
       60vw
       30px
       60px
@@ -170,7 +189,7 @@ const FormGrid = styled.form`
       60px
       60px
       90px;
-  };
+  }
   @media only screen and (min-width: 425px) {
     grid-template-columns:
       calc((100% - 70vw) / 4) calc((100% - 70vw) / 4) 7vw 13vw 43vw 7vw calc(
@@ -178,7 +197,7 @@ const FormGrid = styled.form`
       )
       calc((100% - 70vw) / 4);
     grid-template-rows:
-      10px
+      20px
       56vw
       30px
       60px
@@ -187,6 +206,51 @@ const FormGrid = styled.form`
       60px
       60px
       90px;
+  }
+  @media only screen and (min-width: 481px) {
+    margin: auto;
+    grid-template-columns:
+      calc((100% - 80vw) / 2)
+      40vw
+      15px
+      calc(40vw - 15px)
+      calc((100% - 80vw) / 2);
+    grid-template-rows:
+      5vw
+      60px
+      60px
+      60px
+      60px
+      60px
+      30px
+      60px
+      37px;
+  }
+  @media only screen and (min-width: 751px) {
+    grid-template-columns:
+      calc((100% - 80vw) / 2)
+      300px
+      15px
+      calc(80vw - 315px)
+      calc((100% - 80vw) / 2);
+    grid-template-rows:
+      37px
+      60px
+      60px
+      60px
+      60px
+      60px
+      30px
+      60px
+      37px;
+  } ;
+  @media only screen and (min-width: 900px) {
+    grid-template-columns:
+      calc((100% - 720px) / 2)
+      300px
+      15px
+      calc(720px - 315px)
+      calc((100% - 720px) / 2);
   };
 `;
 
@@ -198,8 +262,11 @@ const Placeholder = styled.div`
   @media only screen and (min-width: 376px) {
     grid-column-start: 1;
     grid-column-end: 9;
-  };
-  
+  }
+  @media only screen and (min-width: 481px) {
+    grid-column-start: 1;
+    grid-column-end: 6;
+  } ;
 `;
 
 const STextField = styled(TextField)`
@@ -210,16 +277,27 @@ const STextField = styled(TextField)`
   @media only screen and (min-width: 376px) {
     grid-column-start: 3;
     grid-column-end: 7;
-  };
-
-`
+  }
+  @media only screen and (min-width: 481px) {
+    grid-column-start: 4;
+    grid-column-end: 5;
+    grid-row-start: 2;
+    grid-row-end: 3;
+  } ;
+`;
 const SFormControlLabel = styled(FormControlLabel)`
-    grid-column-start: 3;
+  grid-column-start: 3;
   grid-column-end: 5;
   grid-row-start: 7;
   grid-row-end: 8;
   @media only screen and (min-width: 376px) {
     grid-column-start: 3;
     grid-column-end: 7;
-  };
-`
+  }
+  @media only screen and (min-width: 481px) {
+    grid-column-start: 4;
+    grid-column-end: 5;
+    grid-row-start: 3;
+    grid-row-end: 4;
+  } ;
+`;

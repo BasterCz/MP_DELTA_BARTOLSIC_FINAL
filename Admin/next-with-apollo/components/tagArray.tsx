@@ -201,10 +201,22 @@ const StyledFieldSet = styled.fieldset`
 const Insider = styled.div`
   overflow-x: auto;
   display: inherit;
+  @media only screen and (min-width: 481px) {
+    width: calc(100% - 28px);
+    display: block;
+    margin: 14px;
+    padding: 14px 0 14px 0;
+    width: 100%;
+    height: 180px;
+  } ;
 `;
 
 const InsiderOutside = styled.div`
   width: 100%;
+
+  @media only screen and (min-width: 481px) {
+    height: 180px;
+  } ;
 `;
 
 const Root = styled.div`
@@ -218,9 +230,23 @@ const Root = styled.div`
   @media only screen and (min-width: 376px) {
     grid-column-start: 3;
     grid-column-end: 7;
-  };
+  }
+  @media only screen and (min-width: 481px) {
+    min-width: calc(40vw - 15px);
+    grid-column-start: 4;
+    grid-column-end: 5;
+    grid-row-start: 4;
+    grid-row-end: 7;
+  } ;
+  @media only screen and (min-width: 900px) {
+    min-width: 345px;
+  }
 `;
-const Input = styled.input``;
+const Input = styled.input`
+  @media only screen and (min-width: 481px) {
+    width: calc(100% - 28px);
+  } ;
+`;
 
 interface TagProps extends ReturnType<AutocompleteGetTagProps> {
   label: string;
@@ -245,6 +271,13 @@ const StyledTag = styled(Tag)<TagProps>`
   }
   margin: auto;
   margin-right: 5px !important;
+  @media only screen and (min-width: 481px) {
+    :first-of-type {
+      margin-left: 0px !important;
+    }
+    margin-top: 5px;
+    
+  } ;
 `;
 
 const Listbox = styled.ul`
