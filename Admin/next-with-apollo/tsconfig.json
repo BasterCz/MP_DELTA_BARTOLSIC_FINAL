@@ -5,7 +5,7 @@
       "dom",
       "dom.iterable",
       "esnext"
-    ],
+    ],  
     "allowJs": true,
     "skipLibCheck": true,
     "strict": true,
@@ -24,7 +24,8 @@
     "next-env.d.ts",
     "**/*.ts",
     "**/*.tsx", 
-    "pages/_document.tsx"  
+    "pages/_document.tsx",  
+    "additional.d.ts"
   ],
   "exclude": [
     "node_modules"

@@ -1,0 +1,74 @@
+type Query {
+  playlists: [Playlist]
+  playlist(_id: ID!): Playlist
+  songs: [Song]
+  song(_id: ID!): Song
+  playlistSongs(_id: ID!): [Song]
+}
+
+type Mutation {
+  songsUpdate(
+    _id: ID!
+    name: String!
+    file_path: String!
+    image_path: String!
+    isPublic: Boolean!
+  ): Boolean!
+
+  playlistUpdate(
+    _id: ID!
+    name: String!
+    description: String!
+    songs: [ID!]!
+    image_path: String!
+    isPublic: Boolean!
+  ): Boolean!
+
+  songsDelete(_id: ID!): MyID
+
+  playlistDelete(_id: ID!): MyID
+
+  songsAdd(
+    name: String!
+    file_path: String!
+    image_path: String!
+    isPublic: Boolean!
+  ): Boolean!
+
+  playlistAdd(
+    name: String!
+    description: String!
+    songs: [ID!]!
+    image_path: String!
+    isPublic: Boolean!
+  ): Boolean!
+
+  playlistAddSong(_id: ID!, song: ID!): Boolean!
+  playlistRemoveSong(_id: ID!, song: ID!): Boolean!
+}
+
+type Song {
+  _id: ID!
+  name: String!
+  file_path: String!
+  image_path: String!
+  createdDate: String
+  modifiedDate: String
+  isPublic: Boolean!
+}
+
+type MyID {
+  _id: ID!
+}
+
+type Playlist {
+  _id: ID!
+  name: String!
+  description: String!
+  songs: [ID]
+  image_path: String!
+  createdDate: String
+  modifiedDate: String
+  isPublic: Boolean!
+  _deleted: Boolean
+}
