@@ -59,7 +59,7 @@ export const CardAddSong: React.FC = () => {
     console.log("response", response.data);
   };
 
-  const formikUI = useFormikUIHLS(fileName, axios);
+  const formikUI = useFormikUIHLS(fileName, imageName, axios);
 
   return (
     <ThemeProvider theme={palette}>
@@ -85,13 +85,13 @@ export const CardAddSong: React.FC = () => {
               <UiFileInputButton
                 label="Audio file upload"
                 uploadFileName="theFiles"
-                onChange={onChange}
+                onChange={()=>{onChange; formikUI.handleChange}}
                 destination="./public/temp/"
                 type="file"
               />
               <ImageInputBox
                 uploadFileName="theFiles"
-                onChange={onChange}
+                onChange={()=>{onChange; formikUI.handleChange}}
                 destination="./public/img/"
                 type="image"
               />
