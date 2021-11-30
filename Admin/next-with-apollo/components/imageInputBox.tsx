@@ -4,6 +4,7 @@ import { palette } from "../styles/palette";
 import AddPhotoAlternateOutlinedIcon from "@mui/icons-material/AddPhotoAlternateOutlined";
 import { FormatAlignCenter } from "@mui/icons-material";
 import styled, { CSSProperties } from "styled-components";
+import Image from 'next/image'
 
 export interface IProps {
   acceptedFileTypes?: string;
@@ -22,13 +23,13 @@ export interface IProps {
 export const ImageInputBox: React.FC<IProps> = (props) => {
   const fileInputRef = React.useRef<HTMLInputElement | null>(null);
   const formRef = React.useRef<HTMLFormElement | null>(null);
+  const [imageName, setImageName] = useState("");
 
   const onClickHandler = () => {
     fileInputRef.current?.click();
   };
 
   const onChangeHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
-    var fileName = "";
 
     if (!event.target.files?.length) {
       return;
@@ -39,10 +40,10 @@ export const ImageInputBox: React.FC<IProps> = (props) => {
     Array.from(event.target.files).forEach((file) => {
       console.log(file.name);
       formData.append(event.target.name, file);
-      fileName = file.name;
+      setImageName(file.name);
     });
 
-    props.onChange(formData, props.destination, props.type, fileName);
+    props.onChange(formData, props.destination, props.type, imageName);
 
     formRef.current?.reset();
   };
@@ -56,7 +57,15 @@ export const ImageInputBox: React.FC<IProps> = (props) => {
             bgcolor: "background.default",
           }}
         >
-          <SAddPhotoAlternateOutlinedIcon />
+          {imageName.length===0 ?
+          (<SAddPhotoAlternateOutlinedIcon />)
+          :
+          (<Image 
+            src={"/img/"+imageName}
+            width="300px"
+            height="300px"
+          />)
+          }
         </SCard>
         <input
           accept={props.acceptedFileTypes}
