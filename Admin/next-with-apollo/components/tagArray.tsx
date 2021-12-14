@@ -4,39 +4,48 @@ import {
   AutocompleteGetTagProps,
 } from "@mui/base/AutocompleteUnstyled";
 import CheckIcon from "@mui/icons-material/Check";
-import CloseIcon from "@mui/icons-material/Close";
 import styled from "styled-components";
-import { Chip, InputLabel } from "@mui/material";
+import { Chip } from "@mui/material";
+import { PlaylistsQuery } from "../__generated__/lib/viewer.graphql";
+import { useState, useEffect } from "react";
+import { FormikProps } from "formik";
+import { MyFormValues } from "./hooks/useFormikUI";
 
-interface PlaylisType {
-  name: string;
+
+
+interface InputProps {
+  playlists?: PlaylistsQuery["playlists"];
+  formikInstance : FormikProps<MyFormValues>;
 }
 
-const fakeData = [
-  {
-    name: "test",
-  },
-  {
-    name: "test2",
-  },
-  {
-    name: "test3",
-  },
-  {
-    name: "test4",
-  },
-  {
-    name: "test5",
-  },
-  {
-    name: "test6",
-  },
-  {
-    name: "test7",
-  },
-];
-
-export const TagArray: React.FC = () => {
+export const TagArray: React.FC<InputProps> = ({ playlists, formikInstance }) => {
+  const [noOfVal, setNoOfVal] = useState(0)
+  var arrayer = playlists?.map((a) => {
+    let toarray = a;
+    return toarray;
+  });
+  if (!arrayer) {
+    arrayer = [
+      {
+        createdDate: "1",
+        description: "No data found.",
+        image_path: "-",
+        isPublic: true,
+        modifiedDate: "1",
+        name: "No data found.",
+        songs: [],
+        __typename: "Playlist",
+        _deleted: false,
+        _id: "-1",
+      },
+    ];
+  }
+  useEffect(()=>{
+    if(noOfVal !== value.length) {
+      setNoOfVal(value.length)
+      formikInstance.setFieldValue("playlists", value);
+    }
+  })
   const {
     getRootProps,
     getInputLabelProps,
@@ -53,8 +62,14 @@ export const TagArray: React.FC = () => {
     id: "customized-hook-demo",
     defaultValue: [],
     multiple: true,
-    options: fakeData,
-    getOptionLabel: (option) => option.name,
+    options: arrayer,
+    getOptionLabel: (option) => {
+      if (option) {
+        return option._id;
+      } else {
+        return "-1";
+      }
+    },
   });
   return (
     <Root>
@@ -85,12 +100,27 @@ export const TagArray: React.FC = () => {
           }
         >
           <Insider>
-            {value.map((option: PlaylisType, index: number) => (
-              <StyledTag label={option.name} {...getTagProps({ index })} />
-            ))}
+            {value?.map((option, index: number) => {
+              var row = option
+                ? option
+                : {
+                    createdDate: "1",
+                    description: "No data found.",
+                    image_path: "-",
+                    isPublic: true,
+                    modifiedDate: "1",
+                    name: "No data found.",
+                    songs: [],
+                    __typename: "Playlist",
+                    _deleted: false,
+                    _id: "-1",
+                  };
+              return <StyledTag label={row.name} {...getTagProps({ index })} />;
+            })}
             <Input
               {...getInputProps()}
               className="MuiOutlinedInput-input MuiInputBase-input css-p51h6s-MuiInputBase-input-MuiOutlinedInput-input"
+              
             />
           </Insider>
           <StyledFieldSet
@@ -110,13 +140,32 @@ export const TagArray: React.FC = () => {
         </InsiderOutside>
       </RelativeDiv>
       {groupedOptions.length > 0 ? (
-        <Listbox {...getListboxProps()}>
-          {(groupedOptions as typeof fakeData).map((option, index) => (
-            <li {...getOptionProps({ option, index })}>
-              <span>{option.name}</span>
-              <CheckIcon fontSize="small" />
-            </li>
-          ))}
+        <Listbox {...getListboxProps()} >
+          {
+            (groupedOptions as PlaylistsQuery["playlists"])?.map(
+            (option, index) => {
+              var row = option
+                ? option
+                : {
+                    createdDate: "1",
+                    description: "No data found.",
+                    image_path: "-",
+                    isPublic: true,
+                    modifiedDate: "1",
+                    name: "No data found.",
+                    songs: [],
+                    __typename: "Playlist",
+                    _deleted: false,
+                    _id: "-1",
+                  };
+              return (
+                <li {...getOptionProps({ option, index })}>
+                  <span>{row.name}</span>
+                  <CheckIcon fontSize="small" />
+                </li>
+              );
+            }
+          )}
         </Listbox>
       ) : null}
     </Root>
@@ -125,8 +174,7 @@ export const TagArray: React.FC = () => {
 
 const Label = styled.label`
   position: absolute;
-  :first-of-type.maxed-label //!may cause problem in fututre
-  {
+  :first-of-type.maxed-label {
     color: rgba(255, 255, 255, 0.7);
     font-family: "Roboto", "Helvetica", "Arial", sans-serif;
     font-weight: 400;
@@ -237,7 +285,7 @@ const Root = styled.div`
     grid-column-end: 5;
     grid-row-start: 4;
     grid-row-end: 7;
-  } ;
+  }
   @media only screen and (min-width: 900px) {
     min-width: 345px;
   }
@@ -276,7 +324,6 @@ const StyledTag = styled(Tag)<TagProps>`
       margin-left: 0px !important;
     }
     margin-top: 5px;
-    
   } ;
 `;
 

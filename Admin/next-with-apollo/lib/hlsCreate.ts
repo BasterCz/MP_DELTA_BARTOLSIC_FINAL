@@ -15,7 +15,7 @@ export default function hlsCreate(
 if (!fs.existsSync(resultPath)){
     fs.mkdirSync(resultPath);
 }
-     ffmpeg()
+    console.log( ffmpeg()
     .input(sourcePath)
     .addOption([
       `-start_number 0`,
@@ -32,7 +32,7 @@ if (!fs.existsSync(resultPath)){
           console.log("stderr:\n" + stderr);
       }
   })
-    .run();
+    .run())
     return true;
   }
   

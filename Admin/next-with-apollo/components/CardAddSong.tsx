@@ -14,18 +14,20 @@ import {
   FormControlLabel,
   TextField,
   ThemeProvider,
+  Button,
 } from "@mui/material";
 import { useFormikUIHLS } from "./hooks/useFormikUI";
 import styled from "styled-components";
 import { palette } from "../styles/palette";
 import FileUploadOutlinedIcon from "@mui/icons-material/FileUploadOutlined";
 import { ImageInputBox } from "./imageInputBox";
+import { usePlaylistMultiple } from "./hooks/usePlaylist";
 
 export const CardAddSong: React.FC = () => {
-  const [songTitle, setSongTitle] = useState("");
-  const [fileName, setFileName] = useState("");
-  const [imageName, setImageName] = useState("");
-  const [publicBool, setPublicBool] = useState("");
+
+  const { playlists } = usePlaylistMultiple();
+  console.log(playlists)
+  const formikUI = useFormikUIHLS(axios);
 
   const onChange = async (
     formData: FormData,
@@ -33,6 +35,7 @@ export const CardAddSong: React.FC = () => {
     type: "file" | "image",
     fileName: string
   ) => {
+
     const config = {
       headers: {
         "content-type": "multipart/form-data",
@@ -45,21 +48,23 @@ export const CardAddSong: React.FC = () => {
         );
       },
     };
-
+    
     const response = await axios.post("/api/upload", formData, config);
+    
     switch (type) {
       case "file":
-        setFileName(fileName);
+        formikUI.setFieldValue("fileName", fileName);
+        console.log(fileName)
         break;
       case "image":
-        setImageName(fileName);
+        formikUI.setFieldValue("imageName", fileName);
+        console.log(fileName)
         break;
     }
-
     console.log("response", response.data);
   };
 
-  const formikUI = useFormikUIHLS(fileName, imageName, axios);
+  
 
   return (
     <ThemeProvider theme={palette}>
@@ -85,13 +90,13 @@ export const CardAddSong: React.FC = () => {
               <UiFileInputButton
                 label="Audio file upload"
                 uploadFileName="theFiles"
-                onChange={()=>{onChange; formikUI.handleChange}}
+                onChange={onChange}
                 destination="./public/temp/"
                 type="file"
               />
               <ImageInputBox
                 uploadFileName="theFiles"
-                onChange={()=>{onChange; formikUI.handleChange}}
+                onChange={onChange}
                 destination="./public/img/"
                 type="image"
               />
@@ -99,7 +104,10 @@ export const CardAddSong: React.FC = () => {
                 control={<Checkbox defaultChecked />}
                 label="Public"
               />
-              <TagArray />
+              <TagArray 
+                playlists={playlists}
+                formikInstance={formikUI}
+              />
               <Placeholder />
               <br />
             </FormGrid>

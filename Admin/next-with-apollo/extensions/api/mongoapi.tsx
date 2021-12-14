@@ -142,7 +142,7 @@ export const songsAdd = async (
                 modifiedDate: new Date(Date.now())
             }
         );
-    return res.insertedId !== 'undefined' ? true : false;
+    return res.insertedId;
 }
 
 export const playlistAdd = async (
@@ -166,7 +166,7 @@ export const playlistAdd = async (
                 modifiedDate: new Date(Date.now())
             }
         );
-    return res.insertedId !== 'undefined' ? true : false;
+    return res.insertedId;
 }
 
 export const playlistAddSong = async (

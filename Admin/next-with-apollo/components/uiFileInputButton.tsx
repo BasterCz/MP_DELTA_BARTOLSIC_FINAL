@@ -39,9 +39,10 @@ export const UiFileInputButton: React.FC<IProps> = (props) => {
       console.log(file.name);
       formData.append(event.target.name, file);
       setFileName(file.name);
+      props.onChange(formData, props.destination, props.type, file.name);
     });
 
-    props.onChange(formData, props.destination, props.type, fileName);
+   
 
     formRef.current?.reset();
   };

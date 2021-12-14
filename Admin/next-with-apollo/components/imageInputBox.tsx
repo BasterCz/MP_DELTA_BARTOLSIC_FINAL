@@ -1,9 +1,8 @@
-import { ThemeProvider, Button, Card } from "@mui/material";
+import { ThemeProvider, Card } from "@mui/material";
 import React, { useState } from "react";
 import { palette } from "../styles/palette";
 import AddPhotoAlternateOutlinedIcon from "@mui/icons-material/AddPhotoAlternateOutlined";
-import { FormatAlignCenter } from "@mui/icons-material";
-import styled, { CSSProperties } from "styled-components";
+import styled from "styled-components";
 import Image from 'next/image'
 
 export interface IProps {
@@ -30,21 +29,19 @@ export const ImageInputBox: React.FC<IProps> = (props) => {
   };
 
   const onChangeHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
-
     if (!event.target.files?.length) {
       return;
     }
 
     const formData = new FormData();
-
+    console.log(Array.from(event.target.files))
     Array.from(event.target.files).forEach((file) => {
-      console.log(file.name);
       formData.append(event.target.name, file);
       setImageName(file.name);
+      props.onChange(formData, props.destination, props.type, file.name);
     });
-
-    props.onChange(formData, props.destination, props.type, imageName);
-
+    
+    
     formRef.current?.reset();
   };
 

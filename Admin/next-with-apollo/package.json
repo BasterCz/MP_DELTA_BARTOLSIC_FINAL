@@ -10,10 +10,9 @@
     "lint": "yarn codegen && next lint"
   },
   "dependencies": {
-
+    "@apollo/client": "3.3.8",
     "@emotion/react": "^11.6.0",
     "@emotion/styled": "^11.6.0",
-    "@apollo/client": "3.3.8",
     "@ffmpeg-installer/ffmpeg": "^1.1.0",
     "@graphql-tools/load-files": "6.2.5",
     "@graphql-tools/merge": "6.2.7",
@@ -33,6 +32,7 @@
     "@zeit/next-css": "^1.0.1",
     "apollo-server-micro": "^2.19.2",
     "axios": "^0.23.0",
+    "axios-debug-log": "^0.8.4",
     "cookies": "^0.8.0",
     "fluent-ffmpeg": "^2.1.2",
     "formik": "^2.2.9",
