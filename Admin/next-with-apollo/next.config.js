@@ -34,4 +34,7 @@ module.exports = {
     return config
   },
   circularDep,
+  images: {
+    domains: ['cloud-object-storage-s5-cos-standard-4m2.s3.eu-de.cloud-object-storage.appdomain.cloud']
+  }
 };

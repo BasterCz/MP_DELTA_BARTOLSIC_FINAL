@@ -1,5 +1,5 @@
 import * as React from "react";
-import { alpha } from "@mui/material/styles";
+import { alpha, ThemeProvider } from "@mui/material/styles";
 import Box from "@mui/material/Box";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
@@ -22,8 +22,11 @@ import FilterListIcon from "@mui/icons-material/FilterList";
 import { visuallyHidden } from "@mui/utils";
 import Image from "next/image";
 import { useSongMultiple } from "./hooks/useSongs";
-
-interface Data {
+import { palette } from "../styles/palette";
+import styled from "styled-components";
+import VisibilityIcon from '@mui/icons-material/Visibility';
+import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
+type Data = {
   _id: string;
   image_path: string;
   name: string;
@@ -31,9 +34,11 @@ interface Data {
   isPublic: boolean;
   modifiedDate: string;
   createdDate: string;
-}
+};
 
-function createData(
+type Order = "asc" | "desc";
+
+const createData = (
   _id: string,
   image_path: string,
   name: string,
@@ -41,7 +46,7 @@ function createData(
   isPublic: boolean,
   modifiedDate: string,
   createdDate: string
-): Data {
+): Data => {
   return {
     _id,
     image_path,
@@ -51,104 +56,66 @@ function createData(
     modifiedDate,
     createdDate,
   };
-}
+};
 
+// * Head of table
 
-
-function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
-  if (b[orderBy] < a[orderBy]) {
-    return -1;
-  }
-  if (b[orderBy] > a[orderBy]) {
-    return 1;
-  }
-  return 0;
-}
-
-type Order = "asc" | "desc";
-
-function getComparator<Key extends keyof any>(
-  order: Order,
-  orderBy: Key
-): (
-  a: { [key in Key]: number | string },
-  b: { [key in Key]: number | string }
-) => number {
-  return order === "desc"
-    ? (a, b) => descendingComparator(a, b, orderBy)
-    : (a, b) => -descendingComparator(a, b, orderBy);
-}
-
-// This method is created for cross-browser compatibility, if you don't
-// need to support IE11, you can use Array.prototype.sort() directly
-function stableSort<T>(
-  array: readonly T[],
-  comparator: (a: T, b: T) => number
-) {
-  const stabilizedThis = array.map((el, index) => [el, index] as [T, number]);
-  stabilizedThis.sort((a, b) => {
-    const order = comparator(a[0], b[0]);
-    if (order !== 0) {
-      return order;
-    }
-    return a[1] - b[1];
-  });
-  return stabilizedThis.map((el) => el[0]);
-}
-
-interface HeadCell {
+type HeadCell = {
   disablePadding: boolean;
   id: keyof Data;
   label: string;
   numeric: boolean;
-}
+  width: number;
+};
 
 const headCells: readonly HeadCell[] = [
-  {
-    id: "_id",
-    numeric: false,
-    disablePadding: true,
-    label: "ID",
-  },
-  {
-    id: "image_path",
-    numeric: true,
-    disablePadding: false,
-    label: "Image",
-  },
+  // {
+  //   id: "_id",
+  //   numeric: false,
+  //   disablePadding: true,
+  //   label: "ID",
+  // },
+  // {
+  //   id: "image_path",
+  //   numeric: false,
+  //   disablePadding: false,
+  //   label: "Image",
+  // },
   {
     id: "name",
-    numeric: true,
+    numeric: false,
     disablePadding: false,
     label: "Name",
+    width: 9/10
   },
-  {
-    id: "file_path",
-    numeric: true,
-    disablePadding: false,
-    label: "File",
-  },
+  // {
+  //   id: "file_path",
+  //   numeric: true,
+  //   disablePadding: false,
+  //   label: "File",
+  // },
   {
     id: "isPublic",
-    numeric: true,
+    numeric: false,
     disablePadding: false,
     label: "Is Public",
+    width: 1/10
   },
-  {
-    id: "modifiedDate",
-    numeric: true,
-    disablePadding: false,
-    label: "Modified Date",
-  },
-  {
-    id: "createdDate",
-    numeric: true,
-    disablePadding: false,
-    label: "Created Date",
-  },
+  // {
+  //   id: "modifiedDate",
+  //   numeric: true,
+  //   disablePadding: false,
+  //   label: "Modified Date",
+  // },
+  // {
+  //   id: "createdDate",
+  //   numeric: true,
+  //   disablePadding: false,
+  //   label: "Created Date",
+  // },
 ];
 
-interface EnhancedTableProps {
+type EnhancedTableProps = {
   numSelected: number;
   onRequestSort: (
     event: React.MouseEvent<unknown>,
@@ -158,9 +125,9 @@ interface EnhancedTableProps {
   order: Order;
   orderBy: string;
   rowCount: number;
-}
+};
 
-function EnhancedTableHead(props: EnhancedTableProps) {
+const EnhancedTableHead = (props: EnhancedTableProps) => {
   const {
     onSelectAllClick,
     order,
@@ -177,7 +144,7 @@ function EnhancedTableHead(props: EnhancedTableProps) {
   return (
     <TableHead>
       <TableRow>
-        <TableCell padding="checkbox">
+        <TableCell align="center" sx={{width:"60px"}}>
           <Checkbox
             color="primary"
             indeterminate={numSelected > 0 && numSelected < rowCount}
@@ -194,6 +161,7 @@ function EnhancedTableHead(props: EnhancedTableProps) {
             align={headCell.numeric ? "right" : "left"}
             padding={headCell.disablePadding ? "none" : "normal"}
             sortDirection={orderBy === headCell.id ? order : false}
+            sx={{width: headCell.width}}
           >
             <TableSortLabel
               active={orderBy === headCell.id}
@@ -212,11 +180,11 @@ function EnhancedTableHead(props: EnhancedTableProps) {
       </TableRow>
     </TableHead>
   );
-}
+};
 
-interface EnhancedTableToolbarProps {
+type EnhancedTableToolbarProps = {
   numSelected: number;
-}
+};
 
 const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
   const { numSelected } = props;
@@ -275,8 +243,8 @@ export const EnhancedTable: React.FC = () => {
   const [order, setOrder] = React.useState<Order>("asc");
   const [orderBy, setOrderBy] = React.useState<keyof Data>("_id");
   const [selected, setSelected] = React.useState<readonly string[]>([]);
+  const [selectedPanel, setSelectedPanel] = React.useState("");
   const [page, setPage] = React.useState(0);
-  const [dense, setDense] = React.useState(false);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const { songs } = useSongMultiple();
   const rows = songs?.map((song) => {
@@ -301,7 +269,7 @@ export const EnhancedTable: React.FC = () => {
 
   const handleSelectAllClick = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.checked) {
-      const newSelecteds = rows?.map((n) => n?.name);
+      const newSelecteds = rows?.map((n) => n?._id);
       setSelected(newSelecteds as string[]);
       return;
     }
@@ -328,6 +296,18 @@ export const EnhancedTable: React.FC = () => {
     setSelected(newSelected);
   };
 
+  const handlePanelClick = (event: React.MouseEvent<unknown>, name: string) => {
+    const selectedIndex = selectedPanel === name;
+    let newSelected = "";
+
+    if (!selectedIndex) {
+      newSelected = name;
+    } else {
+      newSelected = "";
+    }
+    setSelectedPanel(newSelected);
+  };
+
   const handleChangePage = (event: unknown, newPage: number) => {
     setPage(newPage);
   };
@@ -339,107 +319,134 @@ export const EnhancedTable: React.FC = () => {
     setPage(0);
   };
 
-  const handleChangeDense = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setDense(event.target.checked);
-  };
-
   const isSelected = (name: string) => selected.indexOf(name) !== -1;
+  const isSelectedPanel = (name: string) => selectedPanel === name;
+
 
   // Avoid a layout jump when reaching the last page with empty rows.
   const emptyRows =
-    page > 0 ? Math.max(0, (1 + page) * rowsPerPage - (rows? rows.length : 0)) : 0;
+    page > 0
+      ? Math.max(0, (1 + page) * rowsPerPage - (rows ? rows.length : 0))
+      : 0;
 
   return (
-    <Box sx={{ width: "100%" }}>
-      <Paper sx={{ width: "100%", mb: 2 }}>
-        <EnhancedTableToolbar numSelected={selected.length} />
-        <TableContainer>
-          <Table
-            sx={{ minWidth: 750 }}
-            aria-labelledby="tableTitle"
-            size={dense ? "small" : "medium"}
-          >
-            <EnhancedTableHead
-              numSelected={selected.length}
-              order={order}
-              orderBy={orderBy}
-              onSelectAllClick={handleSelectAllClick}
-              onRequestSort={handleRequestSort}
-              rowCount={rows?.length ?? 0}
-            />
-            <TableBody>
-              {/* if you don't need to support IE11, you can replace the `stableSort` call with:
-              rows.slice().sort(getComparator(order, orderBy)) */}
-              {rows?.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                .map((row, index) => {
-                  const isItemSelected = isSelected(row?.name ?? "");
-                  const labelId = `enhanced-table-checkbox-${index}`;
+    <ThemeProvider theme={palette}>
+      <SBox sx={{ width: "100%" }}>
+        <Paper sx={{ width: "100%", mb: 2 }}>
+          <EnhancedTableToolbar numSelected={selected.length} />
+          <TableContainer>
+            <Table
+              
+              aria-labelledby="tableTitle"
+              size={"small"}
+            >
+              <EnhancedTableHead
+                numSelected={selected.length}
+                order={order}
+                orderBy={orderBy}
+                onSelectAllClick={handleSelectAllClick}
+                onRequestSort={handleRequestSort}
+                rowCount={rows?.length ?? 0}
+              />
+              <TableBody>
+                {rows
+                  ?.sort((a, b) =>
+                    order === "asc"
+                      ? typeof a[orderBy] === "boolean"
+                        ? +a[orderBy] - +b[orderBy]
+                        : (a[orderBy] as string).localeCompare(
+                            b[orderBy] as string,
+                            undefined,
+                            { numeric: true, sensitivity: "base" }
+                          )
+                      : typeof a[orderBy] === "boolean"
+                      ? +b[orderBy] - +a[orderBy]
+                      : (b[orderBy] as string).localeCompare(
+                          a[orderBy] as string,
+                          undefined,
+                          { numeric: true, sensitivity: "base" }
+                        )
+                  )
+                  .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                  .map((row, index) => {
+                    const isItemSelected = isSelected(row._id);
+                    const isPanelSelected = isSelectedPanel(row._id);
+                    const labelId = `enhanced-table-checkbox-${index}`;
 
-                  return (
-                    <TableRow
-                      hover
-                      onClick={(event) => handleClick(event, row?.name ?? "")}
-                      role="checkbox"
-                      aria-checked={isItemSelected}
-                      tabIndex={-1}
-                      key={row.name}
-                      selected={isItemSelected}
-                    >
-                      <TableCell padding="checkbox">
-                        <Checkbox
-                          color="primary"
-                          checked={isItemSelected}
-                          inputProps={{
-                            "aria-labelledby": labelId,
-                          }}
-                        />
-                      </TableCell>
-                      <TableCell
-                        component="th"
-                        id={labelId}
-                        scope="row"
-                        padding="none"
+                    return (
+                      <TableRow
+                        hover
+                        onClick={(event) => handlePanelClick(event, row._id)}
+                        role="checkbox"
+                        aria-checked={isItemSelected}
+                        tabIndex={-1}
+                        key={row._id}
+                        selected={isItemSelected}
                       >
-                        {row.name}
-                      </TableCell>
-                      <TableCell align="right">{row._id}</TableCell>
-                      <TableCell align="right">{row.image_path}</TableCell>
-                      <TableCell align="right">{row.name}</TableCell>
-                      <TableCell align="right">{row.file_path}</TableCell>
-                      <TableCell align="right">{row.isPublic}</TableCell>
-                      <TableCell align="right">{row.modifiedDate}</TableCell>
-                      <TableCell align="right">{row.createdDate}</TableCell>
-                    </TableRow>
-                  );
-                })}
-              {emptyRows > 0 && (
-                <TableRow
-                  style={{
-                    height: (dense ? 33 : 53) * emptyRows,
-                  }}
-                >
-                  <TableCell colSpan={6} />
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
-        </TableContainer>
-        <TablePagination
-          rowsPerPageOptions={[5, 10, 25]}
-          component="div"
-          count={rows?.length ?? 0}
-          rowsPerPage={rowsPerPage}
-          page={page}
-          onPageChange={handleChangePage}
-          onRowsPerPageChange={handleChangeRowsPerPage}
-        />
-      </Paper>
-      <FormControlLabel
-        control={<Switch checked={dense} onChange={handleChangeDense} />}
-        label="Dense padding"
-      />
-    </Box>
+                        <TableCell align="left">
+                          <Image
+                            onClick={(event) => handleClick(event, row._id)}
+                            src={row.image_path}
+                            height={"60px"}
+                            width={"60px"}
+                          />
+                        </TableCell>
+                        
+                        <TableCell align="left">{row.name}</TableCell>
+                        <TableCell align="right">{row.isPublic? (<VisibilityIcon/>) : (<VisibilityOffIcon/>)}</TableCell>
+                        {isPanelSelected?
+                        (<div>
+                          {/* <TableCell align="right">{row.file_path}</TableCell> */}
+                        <TableCell align="right">
+                          {new Date(
+                            Number(row.modifiedDate)
+                          ).toLocaleDateString("cs-CZ")}{" "}
+                          {new Date(
+                            Number(row.modifiedDate)
+                          ).toLocaleTimeString("cs-CZ")}
+                        </TableCell>
+                        <TableCell align="right">
+                          {new Date(Number(row.createdDate)).toLocaleDateString(
+                            "cs-CZ"
+                          )}{" "}
+                          {new Date(Number(row.createdDate)).toLocaleTimeString(
+                            "cs-CZ"
+                          )}
+                        </TableCell>
+                        </div>) :
+                        (<div></div>)
+                      }
+                      </TableRow>
+                      
+                    );
+                  })}
+                {emptyRows > 0 && (
+                  <TableRow
+                    style={{
+                      height: 33  * emptyRows,
+                    }}
+                  >
+                    <TableCell colSpan={6} />
+                  </TableRow>
+                )}
+              </TableBody>
+            </Table>
+          </TableContainer>
+          <TablePagination
+            rowsPerPageOptions={[5, 10, 25]}
+            component="div"
+            count={rows?.length ?? 0}
+            rowsPerPage={rowsPerPage}
+            page={page}
+            onPageChange={handleChangePage}
+            onRowsPerPageChange={handleChangeRowsPerPage}
+          />
+        </Paper>
+      </SBox>
+    </ThemeProvider>
   );
 };
 
 export default EnhancedTable;
+
+const SBox = styled(Box)``;
