@@ -24,8 +24,26 @@ import Image from "next/image";
 import { useSongMultiple } from "./hooks/useSongs";
 import { palette } from "../styles/palette";
 import styled from "styled-components";
-import VisibilityIcon from '@mui/icons-material/Visibility';
-import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
+import VisibilityIcon from "@mui/icons-material/Visibility";
+import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
+import ReactPlayer from "react-player";
+import {
+  Button,
+  FormControl,
+  InputLabel,
+  MenuItem,
+  Select,
+  SelectChangeEvent,
+  ToggleButton,
+  ToggleButtonGroup,
+} from "@mui/material";
+import AssessmentOutlinedIcon from "@mui/icons-material/AssessmentOutlined";
+import ModeEditOutlineOutlinedIcon from "@mui/icons-material/ModeEditOutlineOutlined";
+import DeleteOutlinedIcon from "@mui/icons-material/DeleteOutlined";
+import ListItemCustom from "./ListItem";
+import { useState } from "react";
+import FilterOptions from "./FilterOptions";
+
 type Data = {
   _id: string;
   image_path: string;
@@ -66,6 +84,7 @@ type HeadCell = {
   label: string;
   numeric: boolean;
   width: number;
+  isJsx: boolean;
 };
 
 const headCells: readonly HeadCell[] = [
@@ -81,26 +100,29 @@ const headCells: readonly HeadCell[] = [
   //   disablePadding: false,
   //   label: "Image",
   // },
-  {
-    id: "name",
-    numeric: false,
-    disablePadding: false,
-    label: "Name",
-    width: 9/10
-  },
   // {
-  //   id: "file_path",
-  //   numeric: true,
+  //   id: "name",
+  //   numeric: false,
   //   disablePadding: false,
-  //   label: "File",
+  //   label: "Name",
+  //   width: 9 / 10,
+  //   isJsx: false,
   // },
   {
-    id: "isPublic",
+    id: "file_path",
     numeric: false,
     disablePadding: false,
-    label: "Is Public",
-    width: 1/10
+    label: "File",
+    width: 8 / 10,
+    isJsx: true,
   },
+  // {
+  //   id: "isPublic",
+  //   numeric: false,
+  //   disablePadding: false,
+  //   label: "Is Public",
+  //   width: 1 / 10,
+  // },
   // {
   //   id: "modifiedDate",
   //   numeric: true,
@@ -118,8 +140,8 @@ const headCells: readonly HeadCell[] = [
 type EnhancedTableProps = {
   numSelected: number;
   onRequestSort: (
-    event: React.MouseEvent<unknown>,
-    property: keyof Data
+    orderBy: keyof Data,
+    order: Order
   ) => void;
   onSelectAllClick: (event: React.ChangeEvent<HTMLInputElement>) => void;
   order: Order;
@@ -137,14 +159,14 @@ const EnhancedTableHead = (props: EnhancedTableProps) => {
     onRequestSort,
   } = props;
   const createSortHandler =
-    (property: keyof Data) => (event: React.MouseEvent<unknown>) => {
-      onRequestSort(event, property);
+(orderBy: keyof Data, order: Order) => {
+      onRequestSort(orderBy, order);
     };
 
   return (
     <TableHead>
       <TableRow>
-        <TableCell align="center" sx={{width:"60px"}}>
+        <STableCell align="center" sx={{ width: "30px" }}>
           <Checkbox
             color="primary"
             indeterminate={numSelected > 0 && numSelected < rowCount}
@@ -154,29 +176,52 @@ const EnhancedTableHead = (props: EnhancedTableProps) => {
               "aria-label": "select all desserts",
             }}
           />
-        </TableCell>
-        {headCells.map((headCell) => (
-          <TableCell
-            key={headCell.id}
-            align={headCell.numeric ? "right" : "left"}
-            padding={headCell.disablePadding ? "none" : "normal"}
-            sortDirection={orderBy === headCell.id ? order : false}
-            sx={{width: headCell.width}}
-          >
-            <TableSortLabel
-              active={orderBy === headCell.id}
-              direction={orderBy === headCell.id ? order : "asc"}
-              onClick={createSortHandler(headCell.id)}
+        </STableCell>
+        {headCells.map((headCell) =>
+          headCell.isJsx ? (
+            <STableCell
+              key={headCell.id}
+              align={headCell.numeric ? "right" : "left"}
+              padding={headCell.disablePadding ? "none" : "normal"}
+              sortDirection={orderBy === headCell.id ? order : false}
+              sx={{ width: headCell.width }}
             >
-              {headCell.label}
+              <FilterOptions 
+                refOrderBy={createSortHandler} 
+                _orderBy={orderBy as keyof Data} 
+                _order={order} 
+              />
               {orderBy === headCell.id ? (
                 <Box component="span" sx={visuallyHidden}>
                   {order === "desc" ? "sorted descending" : "sorted ascending"}
                 </Box>
               ) : null}
-            </TableSortLabel>
-          </TableCell>
-        ))}
+            </STableCell>
+          ) : (
+            <STableCell
+              key={headCell.id}
+              align={headCell.numeric ? "right" : "left"}
+              padding={headCell.disablePadding ? "none" : "normal"}
+              sortDirection={orderBy === headCell.id ? order : false}
+              sx={{ width: headCell.width }}
+            >
+              <TableSortLabel
+                active={orderBy === headCell.id}
+                direction={orderBy === headCell.id ? order : "asc"}
+                onClick={() => createSortHandler(headCell.id, order)}
+              >
+                {headCell.label}
+                {orderBy === headCell.id ? (
+                  <Box component="span" sx={visuallyHidden}>
+                    {order === "desc"
+                      ? "sorted descending"
+                      : "sorted ascending"}
+                  </Box>
+                ) : null}
+              </TableSortLabel>
+            </STableCell>
+          )
+        )}
       </TableRow>
     </TableHead>
   );
@@ -185,6 +230,8 @@ const EnhancedTableHead = (props: EnhancedTableProps) => {
 type EnhancedTableToolbarProps = {
   numSelected: number;
 };
+
+const handleSortBy = () => {};
 
 const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
   const { numSelected } = props;
@@ -230,7 +277,7 @@ const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
         </Tooltip>
       ) : (
         <Tooltip title="Filter list">
-          <IconButton>
+          <IconButton onClick={handleSortBy}>
             <FilterListIcon />
           </IconButton>
         </Tooltip>
@@ -241,7 +288,7 @@ const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
 
 export const EnhancedTable: React.FC = () => {
   const [order, setOrder] = React.useState<Order>("asc");
-  const [orderBy, setOrderBy] = React.useState<keyof Data>("_id");
+  const [orderBy, setOrderBy] = React.useState<keyof Data>("name");
   const [selected, setSelected] = React.useState<readonly string[]>([]);
   const [selectedPanel, setSelectedPanel] = React.useState("");
   const [page, setPage] = React.useState(0);
@@ -258,13 +305,14 @@ export const EnhancedTable: React.FC = () => {
       song?.createdDate as string
     );
   });
+
   const handleRequestSort = (
-    event: React.MouseEvent<unknown>,
-    property: keyof Data
+    _orderBy: keyof Data,
+    _order: Order = order
   ) => {
-    const isAsc = orderBy === property && order === "asc";
-    setOrder(isAsc ? "desc" : "asc");
-    setOrderBy(property);
+    console.log(_orderBy+ " "+ _order);
+    setOrder(_order);
+    setOrderBy(_orderBy);
   };
 
   const handleSelectAllClick = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -276,7 +324,7 @@ export const EnhancedTable: React.FC = () => {
     setSelected([]);
   };
 
-  const handleClick = (event: React.MouseEvent<unknown>, name: string) => {
+  const handleClick = (name: string) => {
     const selectedIndex = selected.indexOf(name);
     let newSelected: readonly string[] = [];
 
@@ -296,7 +344,7 @@ export const EnhancedTable: React.FC = () => {
     setSelected(newSelected);
   };
 
-  const handlePanelClick = (event: React.MouseEvent<unknown>, name: string) => {
+  const handlePanelClick = (name: string) => {
     const selectedIndex = selectedPanel === name;
     let newSelected = "";
 
@@ -322,8 +370,6 @@ export const EnhancedTable: React.FC = () => {
   const isSelected = (name: string) => selected.indexOf(name) !== -1;
   const isSelectedPanel = (name: string) => selectedPanel === name;
 
-
-  // Avoid a layout jump when reaching the last page with empty rows.
   const emptyRows =
     page > 0
       ? Math.max(0, (1 + page) * rowsPerPage - (rows ? rows.length : 0))
@@ -331,117 +377,160 @@ export const EnhancedTable: React.FC = () => {
 
   return (
     <ThemeProvider theme={palette}>
-      <SBox sx={{ width: "100%" }}>
-        <Paper sx={{ width: "100%", mb: 2 }}>
-          <EnhancedTableToolbar numSelected={selected.length} />
-          <TableContainer>
-            <Table
-              
-              aria-labelledby="tableTitle"
-              size={"small"}
-            >
-              <EnhancedTableHead
-                numSelected={selected.length}
-                order={order}
-                orderBy={orderBy}
-                onSelectAllClick={handleSelectAllClick}
-                onRequestSort={handleRequestSort}
-                rowCount={rows?.length ?? 0}
-              />
-              <TableBody>
-                {rows
-                  ?.sort((a, b) =>
-                    order === "asc"
-                      ? typeof a[orderBy] === "boolean"
-                        ? +a[orderBy] - +b[orderBy]
-                        : (a[orderBy] as string).localeCompare(
-                            b[orderBy] as string,
-                            undefined,
-                            { numeric: true, sensitivity: "base" }
-                          )
-                      : typeof a[orderBy] === "boolean"
-                      ? +b[orderBy] - +a[orderBy]
-                      : (b[orderBy] as string).localeCompare(
-                          a[orderBy] as string,
+      <SBox sx={{ width: "100%", backgroundColor: "background.paper" }}>
+        <EnhancedTableToolbar numSelected={selected.length} />
+        <TableContainer>
+          <Table aria-labelledby="tableTitle" size={"small"}>
+            <EnhancedTableHead
+              numSelected={selected.length}
+              order={order}
+              orderBy={orderBy}
+              onSelectAllClick={handleSelectAllClick}
+              onRequestSort={handleRequestSort}
+              rowCount={rows?.length ?? 0}
+            />
+            <TableBody>
+              {rows
+                ?.sort((a, b) =>
+                  order === "asc"
+                    ? typeof a[orderBy] === "boolean"
+                      ? +a[orderBy] - +b[orderBy]
+                      : (a[orderBy] as string).localeCompare(
+                          b[orderBy] as string,
                           undefined,
                           { numeric: true, sensitivity: "base" }
                         )
-                  )
-                  .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                  .map((row, index) => {
-                    const isItemSelected = isSelected(row._id);
-                    const isPanelSelected = isSelectedPanel(row._id);
-                    const labelId = `enhanced-table-checkbox-${index}`;
+                    : typeof a[orderBy] === "boolean"
+                    ? +b[orderBy] - +a[orderBy]
+                    : (b[orderBy] as string).localeCompare(
+                        a[orderBy] as string,
+                        undefined,
+                        { numeric: true, sensitivity: "base" }
+                      )
+                )
+                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                .map((row, index) => {
+                  const isItemSelected = isSelected(row._id);
+                  const isPanelSelected = isSelectedPanel(row._id);
+                  const labelId = `enhanced-table-checkbox-${index}`;
 
-                    return (
-                      <TableRow
-                        hover
-                        onClick={(event) => handlePanelClick(event, row._id)}
-                        role="checkbox"
-                        aria-checked={isItemSelected}
-                        tabIndex={-1}
-                        key={row._id}
-                        selected={isItemSelected}
-                      >
-                        <TableCell align="left">
-                          <Image
-                            onClick={(event) => handleClick(event, row._id)}
-                            src={row.image_path}
-                            height={"60px"}
-                            width={"60px"}
-                          />
-                        </TableCell>
-                        
-                        <TableCell align="left">{row.name}</TableCell>
-                        <TableCell align="right">{row.isPublic? (<VisibilityIcon/>) : (<VisibilityOffIcon/>)}</TableCell>
-                        {isPanelSelected?
-                        (<div>
-                          {/* <TableCell align="right">{row.file_path}</TableCell> */}
-                        <TableCell align="right">
-                          {new Date(
-                            Number(row.modifiedDate)
-                          ).toLocaleDateString("cs-CZ")}{" "}
-                          {new Date(
-                            Number(row.modifiedDate)
-                          ).toLocaleTimeString("cs-CZ")}
-                        </TableCell>
-                        <TableCell align="right">
-                          {new Date(Number(row.createdDate)).toLocaleDateString(
-                            "cs-CZ"
-                          )}{" "}
-                          {new Date(Number(row.createdDate)).toLocaleTimeString(
-                            "cs-CZ"
-                          )}
-                        </TableCell>
-                        </div>) :
-                        (<div></div>)
-                      }
-                      </TableRow>
-                      
-                    );
-                  })}
-                {emptyRows > 0 && (
-                  <TableRow
-                    style={{
-                      height: 33  * emptyRows,
-                    }}
-                  >
-                    <TableCell colSpan={6} />
-                  </TableRow>
-                )}
-              </TableBody>
-            </Table>
-          </TableContainer>
-          <TablePagination
-            rowsPerPageOptions={[5, 10, 25]}
-            component="div"
-            count={rows?.length ?? 0}
-            rowsPerPage={rowsPerPage}
-            page={page}
-            onPageChange={handleChangePage}
-            onRowsPerPageChange={handleChangeRowsPerPage}
-          />
-        </Paper>
+                  return [
+                    <TableRow
+                      hover
+                      role="checkbox"
+                      tabIndex={-1}
+                      key={row._id}
+                      sx={{
+                        backgroundColor: "initial !important",
+                      }}
+                    >
+                      <STableCell colSpan={3}>
+                        <ListItemCustom
+                          selected={isPanelSelected}
+                          selectedToArray={isItemSelected}
+                          id={row._id}
+                          image_path={row.image_path}
+                          name={row.name}
+                          onClickDropDown={() => handlePanelClick(row._id)}
+                          onClickMark={() => handleClick(row._id)}
+                        />
+                      </STableCell>
+                    </TableRow>,
+                    // <TableRow
+                    //   hover
+                    //   onClick={(event) => handlePanelClick(event, row._id)}
+                    //   role="checkbox"
+                    //   aria-checked={isItemSelected}
+                    //   tabIndex={-1}
+                    //   key={row._id}
+                    //   selected={isItemSelected}
+                    // >
+                    //   <TableCell align="left">
+                    //     <Image
+                    //       onClick={(event) => handleClick(event, row._id)}
+                    //       src={row.image_path}
+                    //       height={"60px"}
+                    //       width={"60px"}
+                    //     />
+                    //   </TableCell>
+
+                    //   <TableCell align="left">{row.name}</TableCell>
+                    //   <TableCell align="right">
+                    //     {row.isPublic ? (
+                    //       <VisibilityIcon />
+                    //     ) : (
+                    //       <VisibilityOffIcon />
+                    //     )}
+                    //   </TableCell>
+                    // </TableRow>,
+                    // //player
+                    // <TableRow>
+                    //   {isPanelSelected ? (
+                    //     [
+                    //       // <div />,
+                    //       // <TableCell align="right">
+                    //       //   {new Date(
+                    //       //     Number(row.modifiedDate)
+                    //       //   ).toLocaleDateString("cs-CZ")}{" "}
+                    //       //   {new Date(
+                    //       //     Number(row.modifiedDate)
+                    //       //   ).toLocaleTimeString("cs-CZ")}
+                    //       // </TableCell>,
+                    //       // <TableCell align="right">
+                    //       //   {new Date(
+                    //       //     Number(row.createdDate)
+                    //       //   ).toLocaleDateString("cs-CZ")}{" "}
+                    //       //   {new Date(
+                    //       //     Number(row.createdDate)
+                    //       //   ).toLocaleTimeString("cs-CZ")}
+                    //       // </TableCell>,
+                    //       <PlayerTableCell colSpan={3}>
+                    //         <ReactPlayer
+                    //           forceAudio
+                    //           controls
+                    //           url={row.file_path}
+                    //           height="55px"
+                    //           width="90vw"
+                    //         />
+                    //       </PlayerTableCell>,
+
+                    //     ]
+                    //   ) : (
+                    //     <div></div>
+                    //   )}
+                    // </TableRow>,
+                    // <TableRow>
+                    //   {isPanelSelected ? (
+                    //   <ButtonsTableCell colSpan={3}>
+                    //         <Button variant="contained" color="success"><AssessmentOutlinedIcon/></Button>
+                    //         <Button variant="contained" color="primary"><ModeEditOutlineOutlinedIcon/></Button>
+                    //         <Button variant="contained" color="error"><DeleteOutlinedIcon/></Button>
+                    //       </ButtonsTableCell>)
+                    //       : (<div/>)}
+                    // </TableRow>,
+                  ];
+                })}
+              {emptyRows > 0 && (
+                <TableRow
+                  style={{
+                    height: 33 * emptyRows,
+                  }}
+                >
+                  <STableCell colSpan={6} />
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
+        </TableContainer>
+        <TablePagination
+          rowsPerPageOptions={[5, 10, 25]}
+          component="div"
+          count={rows?.length ?? 0}
+          rowsPerPage={rowsPerPage}
+          page={page}
+          onPageChange={handleChangePage}
+          onRowsPerPageChange={handleChangeRowsPerPage}
+        />
       </SBox>
     </ThemeProvider>
   );
@@ -450,3 +539,13 @@ export const EnhancedTable: React.FC = () => {
 export default EnhancedTable;
 
 const SBox = styled(Box)``;
+const PlayerTableCell = styled(TableCell)`
+  text-align: -webkit-center;
+`;
+const ButtonsTableCell = styled(TableCell)`
+  text-align: -webkit-center;
+`;
+const STableCell = styled(TableCell)`
+  border: 0px;
+  padding: 5px 10px 5px 10px;
+`;
