@@ -46,7 +46,7 @@ export const FilterOptions: React.FC<FilterOprionsProps> = ({
   const handleSetOrder = (event: React.MouseEvent<HTMLElement, MouseEvent>, value: Order) => {if(value !== null) setOrder(value)};
   return (
     <FormControl fullWidth sx={{display: 'inline-flex', flexDirection: 'row', alignItems: "center"}}>
-      <Box sx={{width:'10%'}} onClick={()=>{setOrder(order === 'asc'? order : 'desc');refOrderBy(orderBy, order === 'asc'? order : 'desc')}}>{order === "desc"? (<ArrowDownwardRoundedIcon/>) : (<ArrowUpwardRoundedIcon/>)}</Box>
+      <Box sx={{width:'10%', margin: '10px'}} onClick={()=>{setOrder(order === 'asc'? order : 'desc');refOrderBy(orderBy, order === 'asc'? order : 'desc')}}>{order === "desc"? (<ArrowDownwardRoundedIcon sx={{display: 'block', margin: 'auto'}}/>) : (<ArrowUpwardRoundedIcon sx={{display: 'block', margin: 'auto'}}/>)}</Box>
       <Select
         labelId="demo-simple-select-label"
         id="demo-simple-select"

@@ -27,6 +27,8 @@ import styled from "styled-components";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import ReactPlayer from "react-player";
+import ArrowCircleDownRoundedIcon from "@mui/icons-material/ArrowCircleDownRounded";
+import ArrowCircleUpRoundedIcon from "@mui/icons-material/ArrowCircleUpRounded";
 import {
   Button,
   FormControl,
@@ -44,6 +46,7 @@ import ListItemCustom from "./ListItem";
 import { useEffect, useState } from "react";
 import FilterOptions from "./FilterOptions";
 import PlayerStickyDown from "./PlayerStickyDown";
+import { useRef } from "react";
 
 type Data = {
   _id: string;
@@ -114,7 +117,7 @@ const headCells: readonly HeadCell[] = [
     numeric: false,
     disablePadding: false,
     label: "File",
-    width: 8 / 10,
+    width: 1,
     isJsx: true,
   },
   // {
@@ -140,14 +143,12 @@ const headCells: readonly HeadCell[] = [
 
 type EnhancedTableProps = {
   numSelected: number;
-  onRequestSort: (
-    orderBy: keyof Data,
-    order: Order
-  ) => void;
+  onRequestSort: (orderBy: keyof Data, order: Order) => void;
   onSelectAllClick: (event: React.ChangeEvent<HTMLInputElement>) => void;
   order: Order;
   orderBy: string;
   rowCount: number;
+  isVisible: boolean;
 };
 
 const EnhancedTableHead = (props: EnhancedTableProps) => {
@@ -158,26 +159,15 @@ const EnhancedTableHead = (props: EnhancedTableProps) => {
     numSelected,
     rowCount,
     onRequestSort,
+    isVisible = true,
   } = props;
-  const createSortHandler =
-(orderBy: keyof Data, order: Order) => {
-      onRequestSort(orderBy, order);
-    };
+  const createSortHandler = (orderBy: keyof Data, order: Order) => {
+    onRequestSort(orderBy, order);
+  };
 
   return (
-    <TableHead>
-      <TableRow>
-        <STableCell align="center" sx={{ width: "30px" }}>
-          <Checkbox
-            color="primary"
-            indeterminate={numSelected > 0 && numSelected < rowCount}
-            checked={rowCount > 0 && numSelected === rowCount}
-            onChange={onSelectAllClick}
-            inputProps={{
-              "aria-label": "select all desserts",
-            }}
-          />
-        </STableCell>
+    <TableHead sx={{ display: isVisible ? "table-caption" : "none" }}>
+      <TableRow sx={{width: '100%', display: 'flex', justifyContent: 'center'}}>
         {headCells.map((headCell) =>
           headCell.isJsx ? (
             <STableCell
@@ -187,10 +177,10 @@ const EnhancedTableHead = (props: EnhancedTableProps) => {
               sortDirection={orderBy === headCell.id ? order : false}
               sx={{ width: headCell.width }}
             >
-              <FilterOptions 
-                refOrderBy={createSortHandler} 
-                _orderBy={orderBy as keyof Data} 
-                _order={order} 
+              <FilterOptions
+                refOrderBy={createSortHandler}
+                _orderBy={orderBy as keyof Data}
+                _order={order}
               />
               {orderBy === headCell.id ? (
                 <Box component="span" sx={visuallyHidden}>
@@ -225,18 +215,21 @@ const EnhancedTableHead = (props: EnhancedTableProps) => {
         )}
       </TableRow>
     </TableHead>
-
   );
 };
 
 type EnhancedTableToolbarProps = {
   numSelected: number;
+  isVisible: boolean;
+  setIsVisible: React.Dispatch<React.SetStateAction<boolean>>;
+  rowCount: number;
+  onSelectAllClick: (event: React.ChangeEvent<HTMLInputElement>) => void;
 };
 
 const handleSortBy = () => {};
 
 const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
-  const { numSelected } = props;
+  const { numSelected, rowCount, onSelectAllClick } = props;
 
   return (
     <Toolbar
@@ -259,12 +252,22 @@ const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
           variant="subtitle1"
           component="div"
         >
+          <Checkbox
+            color="primary"
+            indeterminate={numSelected > 0 && numSelected < rowCount}
+            checked={rowCount > 0 && numSelected === rowCount}
+            onChange={onSelectAllClick}
+            inputProps={{
+              "aria-label": "select all desserts",
+            }}
+          />
           {numSelected} selected
         </Typography>
       ) : (
         <Typography
           sx={{ flex: "1 1 100%" }}
           variant="h6"
+          color="white"
           id="tableTitle"
           component="div"
         >
@@ -274,15 +277,21 @@ const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
       {numSelected > 0 ? (
         <Tooltip title="Delete">
           <IconButton>
-            <DeleteIcon />const [showChild, setShowChild] = useState(false);
+            <DeleteIcon />
           </IconButton>
         </Tooltip>
       ) : (
-        <Tooltip title="Filter list">
-          <IconButton onClick={handleSortBy}>
-            <FilterListIcon />
-          </IconButton>
-        </Tooltip>
+        <div>
+          <Tooltip title="Filter list">
+            <IconButton onClick={() => props.setIsVisible(!props.isVisible)}>
+              {props.isVisible ? (
+                <ArrowCircleUpRoundedIcon />
+              ) : (
+                <ArrowCircleDownRoundedIcon />
+              )}
+            </IconButton>
+          </Tooltip>
+        </div>
       )}
     </Toolbar>
   );
@@ -294,14 +303,41 @@ export const EnhancedTable: React.FC = () => {
   const [selected, setSelected] = React.useState<readonly string[]>([]);
   const [selectedPanel, setSelectedPanel] = React.useState("");
   const [page, setPage] = React.useState(0);
-  const [rowsPerPage, setRowsPerPage] = React.useState(5);
+  const [rowsPerPage, setRowsPerPage] = React.useState(10);
   const [showChild, setShowChild] = useState(false);
+  const [playingName, setPlayingName] = useState("");
+  const [sorterVisible, setSorterVisible] = useState(false);
   const { songs } = useSongMultiple();
+  const audioRef = useRef<HTMLAudioElement>(null);
+  const sendPlayBtnRef = useRef<HTMLButtonElement>(null);
+  const nameRef = useRef<HTMLSpanElement>(null);
 
-    useEffect(() => {
-      if(!showChild)
-      setShowChild(true);
-    }, []);
+  useEffect(() => {
+    if (!showChild) setShowChild(true);
+  }, []);
+
+  useEffect(() => {
+    const handleChangeSrc = (_src: string) => {
+      if (audioRef.current !== null) {
+        audioRef.current.src = _src;
+        audioRef.current.play();
+      }
+    };
+    if (sendPlayBtnRef.current !== null) {
+      console.log(sendPlayBtnRef.current.value);
+      sendPlayBtnRef.current.addEventListener("click", () => {
+        handleChangeSrc(sendPlayBtnRef.current!.value);
+        setPlayingName(sendPlayBtnRef.current!.name ?? "");
+      });
+    }
+    return () => {
+      if (sendPlayBtnRef.current !== null) {
+        sendPlayBtnRef.current.removeEventListener("click", () =>
+          handleChangeSrc(sendPlayBtnRef.current!.value)
+        );
+      }
+    };
+  });
 
   const rows = songs?.map((song) => {
     return createData(
@@ -315,11 +351,8 @@ export const EnhancedTable: React.FC = () => {
     );
   });
 
-  const handleRequestSort = (
-    _orderBy: keyof Data,
-    _order: Order = order
-  ) => {
-    console.log(_orderBy+ " "+ _order);
+  const handleRequestSort = (_orderBy: keyof Data, _order: Order = order) => {
+    console.log(_orderBy + " " + _order);
     setOrder(_order);
     setOrderBy(_orderBy);
   };
@@ -387,8 +420,14 @@ export const EnhancedTable: React.FC = () => {
   return (
     <ThemeProvider theme={palette}>
       <SBox sx={{ width: "100%", backgroundColor: "background.paper" }}>
-        <EnhancedTableToolbar numSelected={selected.length} />
-        <TableContainer>
+        <EnhancedTableToolbar
+          onSelectAllClick={handleSelectAllClick}
+          rowCount={rows?.length ?? 0}
+          isVisible={sorterVisible}
+          setIsVisible={setSorterVisible}
+          numSelected={selected.length}
+        />
+        <TableContainer sx={{width: '100vw', display: 'contents'}}>
           <Table aria-labelledby="tableTitle" size={"small"}>
             <EnhancedTableHead
               numSelected={selected.length}
@@ -397,6 +436,17 @@ export const EnhancedTable: React.FC = () => {
               onSelectAllClick={handleSelectAllClick}
               onRequestSort={handleRequestSort}
               rowCount={rows?.length ?? 0}
+              isVisible={sorterVisible}
+            />
+            <TablePagination
+              rowsPerPageOptions={[5, 10, 25]}
+              component="div"
+              sx={{ display: sorterVisible ? "table-header-group" : "none" }}
+              count={rows?.length ?? 0}
+              rowsPerPage={rowsPerPage}
+              page={page}
+              onPageChange={handleChangePage}
+              onRowsPerPageChange={handleChangeRowsPerPage}
             />
             <TableBody>
               {rows
@@ -439,7 +489,9 @@ export const EnhancedTable: React.FC = () => {
                           selectedToArray={isItemSelected}
                           id={row._id}
                           image_path={row.image_path}
+                          file_path={row.file_path}
                           name={row.name}
+                          btnRef={sendPlayBtnRef}
                           onClickDropDown={() => handlePanelClick(row._id)}
                           onClickMark={() => handleClick(row._id)}
                         />
@@ -531,21 +583,12 @@ export const EnhancedTable: React.FC = () => {
             </TableBody>
           </Table>
         </TableContainer>
-        <TablePagination
-          rowsPerPageOptions={[5, 10, 25]}
-          component="div"
-          count={rows?.length ?? 0}
-          rowsPerPage={rowsPerPage}
-          page={page}
-          onPageChange={handleChangePage}
-          onRowsPerPageChange={handleChangeRowsPerPage}
-        />
+        <Placeholder/>
       </SBox>
-      {showChild?
-      <PlayerStickyDown/>:
-      (null)}
+      {showChild ? (
+        <PlayerStickyDown name={playingName} audioRef={audioRef} />
+      ) : null}
     </ThemeProvider>
-    
   );
 };
 
@@ -562,3 +605,7 @@ const STableCell = styled(TableCell)`
   border: 0px;
   padding: 5px 10px 5px 10px;
 `;
+const Placeholder = styled.div`
+  height: 150px;
+  width: 100%;
+`

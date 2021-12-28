@@ -13,7 +13,12 @@ import PauseRoundedIcon from "@mui/icons-material/PauseRounded";
 import FastRewindRoundedIcon from "@mui/icons-material/FastRewindRounded";
 import FastForwardRoundedIcon from "@mui/icons-material/FastForwardRounded";
 
-export const PlayerStickyDown: React.FC = () => {
+type PlayerStickyDownProps = {
+  audioRef : React.RefObject<HTMLAudioElement>;
+  name: string;
+}
+
+export const PlayerStickyDown: React.FC<PlayerStickyDownProps> = ({audioRef, name = ""}) => {
   const [sliderValue, setSliderValue] = useState(0);
   const [commited, setCommited] = useState(-1);
   const [isSliderMoving, setIsSliderMoving] = useState(false);
@@ -21,7 +26,6 @@ export const PlayerStickyDown: React.FC = () => {
   const [audioTime, setAudioTime] = useState(1);
   const [audioBufferTime, setAudioBufferTime] = useState(1);
   const [audioCurrentTime, setAudioCurrentTime] = useState(0);
-  const audioRef = useRef<HTMLAudioElement>(null);
   const playBtnRef = useRef<HTMLButtonElement>(null);
   const sliderRef = useRef<HTMLInputElement>(null);
   const fwdBtnRef = useRef<HTMLButtonElement>(null);
@@ -103,11 +107,16 @@ export const PlayerStickyDown: React.FC = () => {
       return () => clearInterval(currentTimeH)
   }, [isSliderMoving, commited])
 
+  useLayoutEffect(()=>{
+    if (audioRef.current !== null )
+    if(audioRef.current.error === null) setIsPlaying(!audioRef.current.paused);
+    else setIsPlaying(false);
+  }, [audioRef.current?.src])
+
   return (
     <Wrapper>
       <audio
         ref={audioRef}
-        src="https://cloud-object-storage-s5-cos-standard-4m2.s3.eu-de.cloud-object-storage.appdomain.cloud/Titanium.mp3"
       />
       <PlayerWrapper>
         <TopDiv>
@@ -125,7 +134,7 @@ export const PlayerStickyDown: React.FC = () => {
         </TopDiv>
         <SCard>
           <MidDiv>
-            <Title>Lorem ipsum dolor sit amet</Title>
+            <Title>{name}</Title>
           </MidDiv>
           <BottomDiv>
             <CustomSliderDiv>
@@ -161,7 +170,7 @@ const SCard = styled(Card)`
   bottom: 0px;
   width: 100vw;
   height: 106px;
-  background-color: rgb(41, 46, 57);
+  background-color: #2E3440;
   border-radius: 30px 30px 0px 0px;
 `;
 const TopDiv = styled.div`
