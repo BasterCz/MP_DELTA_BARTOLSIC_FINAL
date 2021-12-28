@@ -41,8 +41,9 @@ import AssessmentOutlinedIcon from "@mui/icons-material/AssessmentOutlined";
 import ModeEditOutlineOutlinedIcon from "@mui/icons-material/ModeEditOutlineOutlined";
 import DeleteOutlinedIcon from "@mui/icons-material/DeleteOutlined";
 import ListItemCustom from "./ListItem";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import FilterOptions from "./FilterOptions";
+import PlayerStickyDown from "./PlayerStickyDown";
 
 type Data = {
   _id: string;
@@ -224,6 +225,7 @@ const EnhancedTableHead = (props: EnhancedTableProps) => {
         )}
       </TableRow>
     </TableHead>
+
   );
 };
 
@@ -272,7 +274,7 @@ const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
       {numSelected > 0 ? (
         <Tooltip title="Delete">
           <IconButton>
-            <DeleteIcon />
+            <DeleteIcon />const [showChild, setShowChild] = useState(false);
           </IconButton>
         </Tooltip>
       ) : (
@@ -293,7 +295,14 @@ export const EnhancedTable: React.FC = () => {
   const [selectedPanel, setSelectedPanel] = React.useState("");
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
+  const [showChild, setShowChild] = useState(false);
   const { songs } = useSongMultiple();
+
+    useEffect(() => {
+      if(!showChild)
+      setShowChild(true);
+    }, []);
+
   const rows = songs?.map((song) => {
     return createData(
       song?._id as string,
@@ -532,7 +541,11 @@ export const EnhancedTable: React.FC = () => {
           onRowsPerPageChange={handleChangeRowsPerPage}
         />
       </SBox>
+      {showChild?
+      <PlayerStickyDown/>:
+      (null)}
     </ThemeProvider>
+    
   );
 };
 

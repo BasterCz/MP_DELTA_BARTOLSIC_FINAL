@@ -1,4 +1,5 @@
 import {
+  Box,
   FormControl,
   InputLabel,
   ListSubheader,
@@ -44,17 +45,16 @@ export const FilterOptions: React.FC<FilterOprionsProps> = ({
   const handleSetOrderBy = (event: SelectChangeEvent<keyof Data> ) => setOrderBy((event as SelectChangeEvent<keyof Data>).target.value as keyof Data);
   const handleSetOrder = (event: React.MouseEvent<HTMLElement, MouseEvent>, value: Order) => {if(value !== null) setOrder(value)};
   return (
-    <FormControl fullWidth>
+    <FormControl fullWidth sx={{display: 'inline-flex', flexDirection: 'row', alignItems: "center"}}>
+      <Box sx={{width:'10%'}} onClick={()=>{setOrder(order === 'asc'? order : 'desc');refOrderBy(orderBy, order === 'asc'? order : 'desc')}}>{order === "desc"? (<ArrowDownwardRoundedIcon/>) : (<ArrowUpwardRoundedIcon/>)}</Box>
       <Select
         labelId="demo-simple-select-label"
         id="demo-simple-select"
         value={_orderBy}
-        IconComponent={order === "desc"? ArrowDownwardRoundedIcon : ArrowUpwardRoundedIcon}
-        
-        inputProps={{ 'aria-label': 'Without label' }}
+        inputProps={{ 'aria-label': 'Without label'}}
         onChange={(event) => {handleSetOrderBy(event); refOrderBy(event.target.value as keyof Data, order)}}
+        sx={{width: '90%'}}
       >
-          
         <SListSubheader>
           <ToggleButtonGroup
             color="primary"
