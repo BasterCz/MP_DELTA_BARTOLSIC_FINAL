@@ -90,7 +90,7 @@ export const TagArray: React.FC<InputProps> = ({ playlists, formikInstance }) =>
             "MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-outlined MuiFormLabel-root MuiFormLabel-colorPrimary"
           }
         >
-          Playlists {console.log(inputValue)}
+          Playlists
         </Label>
         <InsiderOutside
           ref={setAnchorEl}
@@ -180,7 +180,7 @@ const Label = styled.label`
     font-weight: 400;
     font-size: 1rem;
     line-height: 1.4375em;
-    letter-spacing: 0.00938em;
+    letter-spacing: 0.00938em;  
     padding: 0;
     position: relative;
     display: block;
@@ -232,7 +232,7 @@ const StyledFieldSet = styled.fieldset`
     width: auto;
     padding: 0;
     height: 11px;
-    font-size: 0.75em;
+    font-size: 14px;
     visibility: hidden;
     max-width: 100%;
     -webkit-transition: max-width 100ms cubic-bezier(0, 0, 0.2, 1) 50ms;
