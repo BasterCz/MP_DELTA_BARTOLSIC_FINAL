@@ -4,6 +4,7 @@ type Query {
   songs: [Song]
   song(_id: ID!): Song
   playlistSongs(_id: ID!): [Song]
+  songPlaylists(_id: ID!): [Playlist]
 }
 
 type Mutation {

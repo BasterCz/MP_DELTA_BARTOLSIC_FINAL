@@ -2,9 +2,9 @@ import { ThemeProvider, Button } from "@mui/material";
 import React, { useState } from "react";
 import ReactPlayer from "react-player";
 import styled from "styled-components";
-import { palette } from "../styles/palette";
+import { palette } from "../../../../styles/palette";
 
-export interface IProps {
+type FileUploadProps = {
   acceptedFileTypes?: string;
   allowMultipleFiles?: boolean;
   label: string;
@@ -17,12 +17,22 @@ export interface IProps {
   uploadFileName: string;
   destination: string;
   type: "file" | "image";
-}
+};
 
-export const UiFileInputButton: React.FC<IProps> = (props) => {
+export const FileUpload: React.FC<FileUploadProps> = ({
+  acceptedFileTypes,
+  allowMultipleFiles,
+  label,
+  onChange,
+  uploadFileName,
+  destination,
+  type,
+}) => {
+  
+  const [fileName, setFileName] = useState("");
+
   const fileInputRef = React.useRef<HTMLInputElement | null>(null);
   const formRef = React.useRef<HTMLFormElement | null>(null);
-  const [fileName, setFileName] = useState("");
 
   const onClickHandler = () => {
     fileInputRef.current?.click();
@@ -36,13 +46,10 @@ export const UiFileInputButton: React.FC<IProps> = (props) => {
     const formData = new FormData();
 
     Array.from(event.target.files).forEach((file) => {
-      console.log(file.name);
       formData.append(event.target.name, file);
       setFileName(file.name);
-      props.onChange(formData, props.destination, props.type, file.name);
+      onChange(formData, destination, type, file.name);
     });
-
-   
 
     formRef.current?.reset();
   };
@@ -57,12 +64,12 @@ export const UiFileInputButton: React.FC<IProps> = (props) => {
             type="button"
             onClick={onClickHandler}
           >
-            {props.label}
+            {label}
           </Button>
           <input
-            accept={props.acceptedFileTypes}
-            multiple={props.allowMultipleFiles}
-            name={props.uploadFileName}
+            accept={acceptedFileTypes}
+            multiple={allowMultipleFiles}
+            name={uploadFileName}
             onChange={onChangeHandler}
             ref={fileInputRef}
             style={{ display: "none" }}
@@ -76,7 +83,6 @@ export const UiFileInputButton: React.FC<IProps> = (props) => {
             controls
             url={"/temp/" + fileName.replaceAll(" ", "_")}
             height="55px"
-            
           />
         </StyledContainer>
       )}
@@ -84,10 +90,12 @@ export const UiFileInputButton: React.FC<IProps> = (props) => {
   );
 };
 
-UiFileInputButton.defaultProps = {
+FileUpload.defaultProps = {
   acceptedFileTypes: "",
   allowMultipleFiles: false,
 };
+
+export default FileUpload;
 
 const StyledContainer = styled.div`
   grid-column-start: 3;

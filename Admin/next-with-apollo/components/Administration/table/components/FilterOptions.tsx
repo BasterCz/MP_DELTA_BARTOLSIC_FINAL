@@ -1,7 +1,6 @@
 import {
   Box,
   FormControl,
-  InputLabel,
   ListSubheader,
   MenuItem,
   Select,
@@ -42,8 +41,10 @@ export const FilterOptions: React.FC<FilterOprionsProps> = ({
 }) => {
   const [order, setOrder] = React.useState(_order);
   const [orderBy, setOrderBy] = React.useState(_orderBy);
+  
   const handleSetOrderBy = (event: SelectChangeEvent<keyof Data> ) => setOrderBy((event as SelectChangeEvent<keyof Data>).target.value as keyof Data);
   const handleSetOrder = (event: React.MouseEvent<HTMLElement, MouseEvent>, value: Order) => {if(value !== null) setOrder(value)};
+  
   return (
     <FormControl fullWidth sx={{display: 'inline-flex', flexDirection: 'row', alignItems: "center"}}>
       <Box sx={{width:'10%', margin: '10px'}} onClick={()=>{setOrder(order === 'asc'? order : 'desc');refOrderBy(orderBy, order === 'asc'? order : 'desc')}}>{order === "desc"? (<ArrowDownwardRoundedIcon sx={{display: 'block', margin: 'auto'}}/>) : (<ArrowUpwardRoundedIcon sx={{display: 'block', margin: 'auto'}}/>)}</Box>

@@ -1,6 +1,6 @@
 import type { NextPage } from "next";
 import * as React from "react";
-import EnhancedTable from "../../components/SongsTable";
+import EnhancedTable from "../../components/Administration/table/SongsTable";
 
 
 

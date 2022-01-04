@@ -21,7 +21,6 @@ export const toggleClassName = (e: React.MouseEvent<HTMLElement, MouseEvent> | R
 export const categoryOnLoad = (e: React.SyntheticEvent<HTMLElement, Event>, pageName: string) => {
 
     if (e.currentTarget.classList.contains(pageName)) addClassName(e, "selected");
-    console.log("češť");
 
 }
 export const addClassNameElement = (byName: string, className: string) => {
@@ -55,7 +54,6 @@ export const navMenuActivation = (className: string, menuClassName: string, full
         else {
             e.classList.add(fullClassName)
         }
-        console.log("Ahoj");
     }
 
 }

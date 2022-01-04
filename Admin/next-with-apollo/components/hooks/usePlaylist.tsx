@@ -19,9 +19,7 @@ export const usePlaylistMultiple = () => {
                         id: "Playlist:"+id, 
                         fragment: ClientPlaylistFragmentDoc
                     });
-                    console.log(client.cache);
                     if ( playlistToDelte ) {
-                        console.log("here");
                         client.writeFragment({
                             id: "Playlist:"+id,
                             fragment: ClientPlaylistFragmentDoc,

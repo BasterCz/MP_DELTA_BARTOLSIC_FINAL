@@ -1,5 +1,5 @@
 import * as React from "react";
-import { SingleFileUploadWithProgress } from "../lib/fileUpload";
+import { SingleFileUploadWithProgress } from "../../../../lib/fileUpload";
 import {
   Formik,
   FormikHelpers,
@@ -53,7 +53,6 @@ export const FormikAddSong: React.FC = () => {
     validationSchema: validationSchema,
     initialValues: initialValues,
     onSubmit: (values, actions) => {
-      console.log({ values, actions });
       alert(JSON.stringify(values, null, 2));
       actions.setSubmitting(false);
     },
@@ -98,9 +97,6 @@ export const FormikAddSong: React.FC = () => {
 };
 
 export interface UploadableFile {
-  // id was added after the video being released to fix a bug
-  // Video with the bug -> https://youtube-2021-feb-multiple-file-upload-formik-bmvantunes.vercel.app/bug-report-SMC-Alpha-thank-you.mov
-  // Thank you for the bug report SMC Alpha - https://www.youtube.com/channel/UC9C4AlREWdLoKbiLNiZ7XEA
   id: number;
   file: File;
   errors: FileError[];

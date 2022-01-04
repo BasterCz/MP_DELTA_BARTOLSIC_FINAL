@@ -8,6 +8,7 @@ import DeleteRoundedIcon from "@mui/icons-material/DeleteRounded";
 import Image from "next/image";
 import React from "react";
 import styled from "styled-components";
+import { Box } from "@mui/system";
 
 type InputProps = {
   selected: boolean;
@@ -19,9 +20,10 @@ type InputProps = {
   onClickDropDown: () => void;
   onClickMark: () => void;
   btnRef: React.RefObject<HTMLButtonElement>;
+  editBtnRef: React.RefObject<HTMLButtonElement>;
 };
 
-const ListItemCustom: React.FC<InputProps> = (props: InputProps) => {
+const SongItem: React.FC<InputProps> = (props: InputProps) => {
   return (
     <Wrapper>
       {props.selected ? (
@@ -30,7 +32,7 @@ const ListItemCustom: React.FC<InputProps> = (props: InputProps) => {
             <ImagePlace onClick={props.onClickMark}>
               <SImage src={props.image_path} height={"61px"} width={"61px"} />
             </ImagePlace>
-            <TextP variant="body1">{props.name}</TextP>
+            <TextP>{props.name}<div> </div></TextP>
             <ButtonDivDropdown>
               <StyledRoundButton
                 className="cstmbtn-invis"
@@ -47,13 +49,13 @@ const ListItemCustom: React.FC<InputProps> = (props: InputProps) => {
               value={props.file_path}
               className="cstmbtn-white cstmbtn-play"
             >
-              <PlayArrowRoundedIcon className="iconDark" />
+              <PlayArrowRoundedIcon className="play" />
             </StyledRoundButton>
             <ButtonGroup>
               <StyledRoundButton className="cstmbtn-green cstmbtn-stats">
                 <AssessmentRoundedIcon className="iconDark" />
               </StyledRoundButton>
-              <StyledRoundButton className="cstmbtn-blue cstmbtn-edit">
+              <StyledRoundButton ref={props.editBtnRef} value={props.id} className="cstmbtn-blue cstmbtn-edit">
                 <EditRoundedIcon className="iconDark" />
               </StyledRoundButton>
               <StyledRoundButton className="cstmbtn-red cstmbtn-delete">
@@ -68,7 +70,7 @@ const ListItemCustom: React.FC<InputProps> = (props: InputProps) => {
             <ImagePlace onClick={props.onClickMark}>
               <SImage src={props.image_path} height={"61px"} width={"61px"} />
             </ImagePlace>
-            <TextP variant="body1">{props.name}</TextP>
+            <TextP>{props.name}<div> </div></TextP>
             <ButtonDivDropdown>
               <StyledRoundButton
                 className="cstmbtn-invis "
@@ -84,7 +86,7 @@ const ListItemCustom: React.FC<InputProps> = (props: InputProps) => {
   );
 };
 
-export default ListItemCustom;
+export default SongItem;
 
 const Wrapper = styled.div`
   .selected {
@@ -94,18 +96,16 @@ const Wrapper = styled.div`
 
 const Card = styled.div`
   background-color: #3b4252;
-  width: 100%;
-  height: 158px;
-  margin-top: 3px;
+  width: calc(100vw - 20px);
+  height: 126px;
   border-radius: 15px;
   display: block;
   filter: drop-shadow(1px 3px 4px rgba(0, 0, 0, 0.2));
 `;
 const CardUnselected = styled.div`
   background-color: #3b4252;
-  width: 100%;
-  height: 77px;
-  margin-top: 3px;
+  width: calc(100vw - 20px);
+  height: 61px;
   border-radius: 15px;
   display: block;
   filter: drop-shadow(1px 3px 4px rgba(0, 0, 0, 0.2));
@@ -115,6 +115,7 @@ const TopDiv = styled.div`
   height: 50%;
   .cstmbtn-invis {
     background-color: initial;
+    transform: translate(0px, 6px);
   }
 `;
 const BottomDiv = styled.div`
@@ -133,37 +134,37 @@ const BottomDiv = styled.div`
     background-color: #bf616a;
   }
   .cstmbtn-play {
-    transform: translate(8px, 10px);
+    transform: translate(6px, 4px);
   }
 `;
 const ImagePlace = styled.div`
   background-color: #d8dee9;
-  width: 61px;
-  height: 61px;
+  width: 52px;
+  height: 52px;
   border-radius: 12px;
-  transform: translate(8px, 8px);
+  transform: translate(5px, 5px);
   filter: drop-shadow(1px 3px 4px rgba(0, 0, 0, 0.2));
 `;
 const ButtonGroup = styled.div`
-  transform: translate(calc(100% - 205px), -51px);
-  width: 204px;
-  margin-left: calc(100% - 205px);
+  transform: translate(calc(100% - 173px), -48px);
+  width: 171px;
+  margin-left: calc(100% - 171px);
 `;
 const ButtonDivDropdown = styled.div`
-  width: 61px;
-  margin-left: calc(100% - 61px);
-  transform: translate(calc(100% - 69px), -78px);
+  width: 48px;
+  margin-left: calc(100% - 48px);
+  transform: translate(calc(100% - 56px), -78px);
 `;
 
 const StyledRoundButton = styled(Button)`
   background-color: #d8dee9;
-  max-width: 61px;
-  max-height: 61px;
-  min-width: 61px;
-  min-height: 61px;
+  max-width: 52px;
+  max-height: 52px;
+  min-width: 52px;
+  min-height: 52px;
   border-radius: 100%;
   transform: translate(0px, 0px);
-  margin-right: 7px;
+  margin-right: 5px;
   filter: drop-shadow(1px 3px 4px rgba(0, 0, 0, 0.2));
 
   .dropdown {
@@ -171,15 +172,32 @@ const StyledRoundButton = styled(Button)`
     fill: #d8dee9;
   }
   .iconDark {
-    font-size: 1.9rem !important;
+    font-size: 1.7rem !important;
+    fill: #4c566a;
+  }
+  .play {
+    font-size: 2.2rem !important;
     fill: #4c566a;
   }
 `;
-const TextP = styled(Typography)`
+const TextP = styled(Box)`
   color: #d8dee9;
   font-size: 1.1rem;
-  transform: translate(77px, -36px);
-  width: 260px;
+  transform: translate(69px, -34px);
+  width: calc(100% - 120px);
+  height: 27px;
+  overflow-x: scroll;
+  white-space: nowrap;
+  display: flex;
+  mask-image: linear-gradient(90deg, rgba(0, 0, 0, 1.0) 95%, transparent);
+  div {
+    min-width: 20px;
+    height: 27px;
+    background-color: transparent;
+  }
+  ::-webkit-scrollbar {
+    display: none;
+  }
 `;
 
 const SImage = styled(Image)`

@@ -1,52 +1,35 @@
 import * as React from "react";
-import { alpha, ThemeProvider } from "@mui/material/styles";
-import Box from "@mui/material/Box";
-import Table from "@mui/material/Table";
-import TableBody from "@mui/material/TableBody";
-import TableCell from "@mui/material/TableCell";
-import TableContainer from "@mui/material/TableContainer";
-import TableHead from "@mui/material/TableHead";
-import TablePagination from "@mui/material/TablePagination";
-import TableRow from "@mui/material/TableRow";
-import TableSortLabel from "@mui/material/TableSortLabel";
-import Toolbar from "@mui/material/Toolbar";
-import Typography from "@mui/material/Typography";
-import Paper from "@mui/material/Paper";
-import Checkbox from "@mui/material/Checkbox";
-import IconButton from "@mui/material/IconButton";
-import Tooltip from "@mui/material/Tooltip";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import Switch from "@mui/material/Switch";
-import DeleteIcon from "@mui/icons-material/Delete";
-import FilterListIcon from "@mui/icons-material/FilterList";
-import { visuallyHidden } from "@mui/utils";
-import Image from "next/image";
-import { useSongMultiple } from "./hooks/useSongs";
-import { palette } from "../styles/palette";
+import { useEffect, useState, useRef } from "react";
 import styled from "styled-components";
-import VisibilityIcon from "@mui/icons-material/Visibility";
-import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
-import ReactPlayer from "react-player";
+import ListItemCustom from "./components/SongItem";
+import { alpha, ThemeProvider } from "@mui/material/styles";
+import {
+  Box,
+  Checkbox,
+  IconButton,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  TableSortLabel,
+  Toolbar,
+  Tooltip,
+  Typography,
+  Pagination,
+} from "@mui/material";
+import { visuallyHidden } from "@mui/utils";
+import { palette } from "../../../styles/palette";
 import ArrowCircleDownRoundedIcon from "@mui/icons-material/ArrowCircleDownRounded";
 import ArrowCircleUpRoundedIcon from "@mui/icons-material/ArrowCircleUpRounded";
-import {
-  Button,
-  FormControl,
-  InputLabel,
-  MenuItem,
-  Select,
-  SelectChangeEvent,
-  ToggleButton,
-  ToggleButtonGroup,
-} from "@mui/material";
-import AssessmentOutlinedIcon from "@mui/icons-material/AssessmentOutlined";
-import ModeEditOutlineOutlinedIcon from "@mui/icons-material/ModeEditOutlineOutlined";
-import DeleteOutlinedIcon from "@mui/icons-material/DeleteOutlined";
-import ListItemCustom from "./ListItem";
-import { useEffect, useState } from "react";
-import FilterOptions from "./FilterOptions";
-import PlayerStickyDown from "./PlayerStickyDown";
-import { useRef } from "react";
+import DeleteRounded from "@mui/icons-material/DeleteRounded";
+import { useSongMultiple } from "../../hooks/useSongs";
+import FilterOptions from "./components/FilterOptions";
+import PlayerStickyDown from "../player/PlayerStickyDown";
+import CardAddSong from "../cards/CardAddSong";
+import CreateItem from "./components/CreateItem";
+import CardEditSong from "../cards/CardEditSong";
 
 type Data = {
   _id: string;
@@ -92,26 +75,6 @@ type HeadCell = {
 };
 
 const headCells: readonly HeadCell[] = [
-  // {
-  //   id: "_id",
-  //   numeric: false,
-  //   disablePadding: true,
-  //   label: "ID",
-  // },
-  // {
-  //   id: "image_path",
-  //   numeric: false,
-  //   disablePadding: false,
-  //   label: "Image",
-  // },
-  // {
-  //   id: "name",
-  //   numeric: false,
-  //   disablePadding: false,
-  //   label: "Name",
-  //   width: 9 / 10,
-  //   isJsx: false,
-  // },
   {
     id: "file_path",
     numeric: false,
@@ -120,25 +83,6 @@ const headCells: readonly HeadCell[] = [
     width: 1,
     isJsx: true,
   },
-  // {
-  //   id: "isPublic",
-  //   numeric: false,
-  //   disablePadding: false,
-  //   label: "Is Public",
-  //   width: 1 / 10,
-  // },
-  // {
-  //   id: "modifiedDate",
-  //   numeric: true,
-  //   disablePadding: false,
-  //   label: "Modified Date",
-  // },
-  // {
-  //   id: "createdDate",
-  //   numeric: true,
-  //   disablePadding: false,
-  //   label: "Created Date",
-  // },
 ];
 
 type EnhancedTableProps = {
@@ -167,7 +111,9 @@ const EnhancedTableHead = (props: EnhancedTableProps) => {
 
   return (
     <TableHead sx={{ display: isVisible ? "table-caption" : "none" }}>
-      <TableRow sx={{width: '100%', display: 'flex', justifyContent: 'center'}}>
+      <TableRow
+        sx={{ width: "100%", display: "flex", justifyContent: "center" }}
+      >
         {headCells.map((headCell) =>
           headCell.isJsx ? (
             <STableCell
@@ -277,7 +223,7 @@ const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
       {numSelected > 0 ? (
         <Tooltip title="Delete">
           <IconButton>
-            <DeleteIcon />
+            <DeleteRounded />
           </IconButton>
         </Tooltip>
       ) : (
@@ -307,10 +253,14 @@ export const EnhancedTable: React.FC = () => {
   const [showChild, setShowChild] = useState(false);
   const [playingName, setPlayingName] = useState("");
   const [sorterVisible, setSorterVisible] = useState(false);
+  const [createSongVisible, setCreateSongVisible] = useState(false);
+  const [editSongVisible, setEditSongVisible] = useState(false);
+  const [editSongID, setEditSongID] = useState("");
+
   const { songs } = useSongMultiple();
   const audioRef = useRef<HTMLAudioElement>(null);
   const sendPlayBtnRef = useRef<HTMLButtonElement>(null);
-  const nameRef = useRef<HTMLSpanElement>(null);
+  const editBtnRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
     if (!showChild) setShowChild(true);
@@ -324,7 +274,6 @@ export const EnhancedTable: React.FC = () => {
       }
     };
     if (sendPlayBtnRef.current !== null) {
-      console.log(sendPlayBtnRef.current.value);
       sendPlayBtnRef.current.addEventListener("click", () => {
         handleChangeSrc(sendPlayBtnRef.current!.value);
         setPlayingName(sendPlayBtnRef.current!.name ?? "");
@@ -335,6 +284,25 @@ export const EnhancedTable: React.FC = () => {
         sendPlayBtnRef.current.removeEventListener("click", () =>
           handleChangeSrc(sendPlayBtnRef.current!.value)
         );
+      }
+    };
+  });
+
+  useEffect(() => {
+    const handleChangeID = () => {
+      if (editBtnRef.current !== null) {
+        setEditSongID(editBtnRef.current.value);
+        handleEditSong();
+      }
+    };
+    if (editBtnRef.current !== null) {
+      editBtnRef.current.addEventListener("click", () => {
+        handleChangeID();
+      });
+    }
+    return () => {
+      if (editBtnRef.current !== null) {
+        editBtnRef.current.removeEventListener("click", () => handleChangeID());
       }
     };
   });
@@ -352,7 +320,6 @@ export const EnhancedTable: React.FC = () => {
   });
 
   const handleRequestSort = (_orderBy: keyof Data, _order: Order = order) => {
-    console.log(_orderBy + " " + _order);
     setOrder(_order);
     setOrderBy(_orderBy);
   };
@@ -399,7 +366,7 @@ export const EnhancedTable: React.FC = () => {
   };
 
   const handleChangePage = (event: unknown, newPage: number) => {
-    setPage(newPage);
+    setPage(newPage - 1);
   };
 
   const handleChangeRowsPerPage = (
@@ -412,6 +379,16 @@ export const EnhancedTable: React.FC = () => {
   const isSelected = (name: string) => selected.indexOf(name) !== -1;
   const isSelectedPanel = (name: string) => selectedPanel === name;
 
+  const handleCreateNewSong = () => {
+    setCreateSongVisible(!createSongVisible);
+    setShowChild(!showChild);
+  };
+
+  const handleEditSong = () => {
+    setEditSongVisible(!editSongVisible);
+    setShowChild(!showChild);
+  };
+
   const emptyRows =
     page > 0
       ? Math.max(0, (1 + page) * rowsPerPage - (rows ? rows.length : 0))
@@ -419,7 +396,20 @@ export const EnhancedTable: React.FC = () => {
 
   return (
     <ThemeProvider theme={palette}>
-      <SBox sx={{ width: "100%", backgroundColor: "background.paper" }}>
+      <SBox sx={{ width: "100%", backgroundColor: "#2E3440" }}>
+        {createSongVisible ? (
+          <style jsx global>{`
+            body {
+              overflow: hidden;
+            }
+          `}</style>
+        ) : (
+          <style jsx global>{`
+            body {
+              overflow: auto;
+            }
+          `}</style>
+        )}
         <EnhancedTableToolbar
           onSelectAllClick={handleSelectAllClick}
           rowCount={rows?.length ?? 0}
@@ -427,7 +417,7 @@ export const EnhancedTable: React.FC = () => {
           setIsVisible={setSorterVisible}
           numSelected={selected.length}
         />
-        <TableContainer sx={{width: '100vw', display: 'contents'}}>
+        <TableContainer sx={{ width: "100vw", display: "contents" }}>
           <Table aria-labelledby="tableTitle" size={"small"}>
             <EnhancedTableHead
               numSelected={selected.length}
@@ -438,17 +428,26 @@ export const EnhancedTable: React.FC = () => {
               rowCount={rows?.length ?? 0}
               isVisible={sorterVisible}
             />
-            <TablePagination
-              rowsPerPageOptions={[5, 10, 25]}
-              component="div"
+            <Pagination
               sx={{ display: sorterVisible ? "table-header-group" : "none" }}
-              count={rows?.length ?? 0}
-              rowsPerPage={rowsPerPage}
-              page={page}
-              onPageChange={handleChangePage}
-              onRowsPerPageChange={handleChangeRowsPerPage}
+              count={Math.ceil((rows?.length ?? 0) / 10)}
+              page={page + 1}
+              onChange={handleChangePage}
             />
             <TableBody>
+              <TableRow
+                hover
+                role="button"
+                tabIndex={-1}
+                key="CreateSong"
+                sx={{
+                  backgroundColor: "initial !important",
+                }}
+              >
+                <STableCell>
+                  <CreateItem handleClick={handleCreateNewSong} />
+                </STableCell>
+              </TableRow>
               {rows
                 ?.sort((a, b) =>
                   order === "asc"
@@ -492,83 +491,12 @@ export const EnhancedTable: React.FC = () => {
                           file_path={row.file_path}
                           name={row.name}
                           btnRef={sendPlayBtnRef}
+                          editBtnRef={editBtnRef}
                           onClickDropDown={() => handlePanelClick(row._id)}
                           onClickMark={() => handleClick(row._id)}
                         />
                       </STableCell>
                     </TableRow>,
-                    // <TableRow
-                    //   hover
-                    //   onClick={(event) => handlePanelClick(event, row._id)}
-                    //   role="checkbox"
-                    //   aria-checked={isItemSelected}
-                    //   tabIndex={-1}
-                    //   key={row._id}
-                    //   selected={isItemSelected}
-                    // >
-                    //   <TableCell align="left">
-                    //     <Image
-                    //       onClick={(event) => handleClick(event, row._id)}
-                    //       src={row.image_path}
-                    //       height={"60px"}
-                    //       width={"60px"}
-                    //     />
-                    //   </TableCell>
-
-                    //   <TableCell align="left">{row.name}</TableCell>
-                    //   <TableCell align="right">
-                    //     {row.isPublic ? (
-                    //       <VisibilityIcon />
-                    //     ) : (
-                    //       <VisibilityOffIcon />
-                    //     )}
-                    //   </TableCell>
-                    // </TableRow>,
-                    // //player
-                    // <TableRow>
-                    //   {isPanelSelected ? (
-                    //     [
-                    //       // <div />,
-                    //       // <TableCell align="right">
-                    //       //   {new Date(
-                    //       //     Number(row.modifiedDate)
-                    //       //   ).toLocaleDateString("cs-CZ")}{" "}
-                    //       //   {new Date(
-                    //       //     Number(row.modifiedDate)
-                    //       //   ).toLocaleTimeString("cs-CZ")}
-                    //       // </TableCell>,
-                    //       // <TableCell align="right">
-                    //       //   {new Date(
-                    //       //     Number(row.createdDate)
-                    //       //   ).toLocaleDateString("cs-CZ")}{" "}
-                    //       //   {new Date(
-                    //       //     Number(row.createdDate)
-                    //       //   ).toLocaleTimeString("cs-CZ")}
-                    //       // </TableCell>,
-                    //       <PlayerTableCell colSpan={3}>
-                    //         <ReactPlayer
-                    //           forceAudio
-                    //           controls
-                    //           url={row.file_path}
-                    //           height="55px"
-                    //           width="90vw"
-                    //         />
-                    //       </PlayerTableCell>,
-
-                    //     ]
-                    //   ) : (
-                    //     <div></div>
-                    //   )}
-                    // </TableRow>,
-                    // <TableRow>
-                    //   {isPanelSelected ? (
-                    //   <ButtonsTableCell colSpan={3}>
-                    //         <Button variant="contained" color="success"><AssessmentOutlinedIcon/></Button>
-                    //         <Button variant="contained" color="primary"><ModeEditOutlineOutlinedIcon/></Button>
-                    //         <Button variant="contained" color="error"><DeleteOutlinedIcon/></Button>
-                    //       </ButtonsTableCell>)
-                    //       : (<div/>)}
-                    // </TableRow>,
                   ];
                 })}
               {emptyRows > 0 && (
@@ -583,10 +511,16 @@ export const EnhancedTable: React.FC = () => {
             </TableBody>
           </Table>
         </TableContainer>
-        <Placeholder/>
+        <Placeholder />
       </SBox>
       {showChild ? (
         <PlayerStickyDown name={playingName} audioRef={audioRef} />
+      ) : null}
+      {createSongVisible ? (
+        <CardAddSong setCreateSongVisible={handleCreateNewSong} />
+      ) : null}
+      {editSongVisible ? (
+        <CardEditSong songID={editSongID} setEditSongVisible={handleEditSong} />
       ) : null}
     </ThemeProvider>
   );
@@ -608,4 +542,4 @@ const STableCell = styled(TableCell)`
 const Placeholder = styled.div`
   height: 150px;
   width: 100%;
-`
+`;

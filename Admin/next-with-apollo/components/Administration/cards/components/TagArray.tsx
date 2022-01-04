@@ -6,24 +6,27 @@ import {
 import CheckIcon from "@mui/icons-material/Check";
 import styled from "styled-components";
 import { Chip } from "@mui/material";
-import { PlaylistsQuery } from "../__generated__/lib/viewer.graphql";
+import { PlaylistsQuery } from "../../../../__generated__/lib/viewer.graphql";
 import { useState, useEffect } from "react";
 import { FormikProps } from "formik";
-import { MyFormValues } from "./hooks/useFormikUI";
+import { MyFormValues } from "../../../hooks/useFormikUI";
 
-
-
-interface InputProps {
+type TagArrayProps = {
   playlists?: PlaylistsQuery["playlists"];
-  formikInstance : FormikProps<MyFormValues>;
+  formikInstance: FormikProps<MyFormValues>;
 }
 
-export const TagArray: React.FC<InputProps> = ({ playlists, formikInstance }) => {
-  const [noOfVal, setNoOfVal] = useState(0)
+export const TagArray: React.FC<TagArrayProps> = ({
+  playlists,
+  formikInstance,
+}) => {
+  const [noOfVal, setNoOfVal] = useState(0);
+
   var arrayer = playlists?.map((a) => {
     let toarray = a;
     return toarray;
   });
+
   if (!arrayer) {
     arrayer = [
       {
@@ -40,12 +43,14 @@ export const TagArray: React.FC<InputProps> = ({ playlists, formikInstance }) =>
       },
     ];
   }
-  useEffect(()=>{
-    if(noOfVal !== value.length) {
-      setNoOfVal(value.length)
+
+  useEffect(() => {
+    if (noOfVal !== value.length) {
+      setNoOfVal(value.length);
       formikInstance.setFieldValue("playlists", value);
     }
-  })
+  });
+
   const {
     getRootProps,
     getInputLabelProps,
@@ -71,6 +76,7 @@ export const TagArray: React.FC<InputProps> = ({ playlists, formikInstance }) =>
       }
     },
   });
+  
   return (
     <Root>
       <RelativeDiv
@@ -120,7 +126,6 @@ export const TagArray: React.FC<InputProps> = ({ playlists, formikInstance }) =>
             <Input
               {...getInputProps()}
               className="MuiOutlinedInput-input MuiInputBase-input css-p51h6s-MuiInputBase-input-MuiOutlinedInput-input"
-              
             />
           </Insider>
           <StyledFieldSet
@@ -140,9 +145,8 @@ export const TagArray: React.FC<InputProps> = ({ playlists, formikInstance }) =>
         </InsiderOutside>
       </RelativeDiv>
       {groupedOptions.length > 0 ? (
-        <Listbox {...getListboxProps()} >
-          {
-            (groupedOptions as PlaylistsQuery["playlists"])?.map(
+        <Listbox {...getListboxProps()}>
+          {(groupedOptions as PlaylistsQuery["playlists"])?.map(
             (option, index) => {
               var row = option
                 ? option
@@ -180,7 +184,7 @@ const Label = styled.label`
     font-weight: 400;
     font-size: 1rem;
     line-height: 1.4375em;
-    letter-spacing: 0.00938em;  
+    letter-spacing: 0.00938em;
     padding: 0;
     position: relative;
     display: block;

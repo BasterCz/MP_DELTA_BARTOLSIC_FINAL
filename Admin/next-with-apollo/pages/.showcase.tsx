@@ -23,7 +23,7 @@ const onDrop = useCallback((accFiles: File[], rejFiles: FileRejection[]) => {
 const { getRootProps, getInputProps } = useDropzone({
   onDrop,
   accept: ["image/*", "video/*", ".pdf"],
-  maxSize: 300 * 1024, // 300KB
+  maxSize: 300 * 1024,
 });
 
 const uploadFile = async (
@@ -32,7 +32,6 @@ const uploadFile = async (
 ) => {
   const fileProps = fs.stat(file.name, (Error, stats) => {
     fs.createReadStream(file.name)
-      //.pipe(progress({ length: stats.size, time: 100 }).on("progress", onProgress))
       .pipe(fs.createWriteStream(`./public/${file.name}`));
   });
   return `./public/${file.name}`;
@@ -85,9 +84,6 @@ const Test: NextPage = () => {
 export default Test;
 
 export interface UploadableFile {
-  // id was added after the video being released to fix a bug
-  // Video with the bug -> https://youtube-2021-feb-multiple-file-upload-formik-bmvantunes.vercel.app/bug-report-SMC-Alpha-thank-you.mov
-  // Thank you for the bug report SMC Alpha - https://www.youtube.com/channel/UC9C4AlREWdLoKbiLNiZ7XEA
   id: number;
   file: File;
   errors: FileError[];
@@ -97,7 +93,6 @@ export interface UploadableFile {
 let currentId = 0;
 
 function getNewId() {
-  // we could use a fancier solution instead of a sequential ID :)
   return ++currentId;
 }
 

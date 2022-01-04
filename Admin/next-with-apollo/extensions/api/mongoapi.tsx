@@ -247,3 +247,21 @@ export const playlistSongs = async (
         .toArray()
     return res;
 }
+
+export const songPlaylists = async (
+    _id: string,
+) => {
+    const { db } = await connectToDatabase();
+    
+    const find = {
+        songs: new ObjectId(_id)
+    }
+
+    const res = await db
+        .collection("playlists")
+        .find(
+            find
+        )
+        .toArray()
+    return res;
+}

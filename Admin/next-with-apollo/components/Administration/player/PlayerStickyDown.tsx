@@ -26,6 +26,7 @@ export const PlayerStickyDown: React.FC<PlayerStickyDownProps> = ({audioRef, nam
   const [audioTime, setAudioTime] = useState(1);
   const [audioBufferTime, setAudioBufferTime] = useState(1);
   const [audioCurrentTime, setAudioCurrentTime] = useState(0);
+  
   const playBtnRef = useRef<HTMLButtonElement>(null);
   const sliderRef = useRef<HTMLInputElement>(null);
   const fwdBtnRef = useRef<HTMLButtonElement>(null);
@@ -59,7 +60,6 @@ export const PlayerStickyDown: React.FC<PlayerStickyDownProps> = ({audioRef, nam
         } else {
           setIsPlaying(false);
           audioRef.current.pause();
-          setAudioTime(audioRef.current.duration);
         }
       }
     };
@@ -169,8 +169,8 @@ const SCard = styled(Card)`
   position: fixed;
   bottom: 0px;
   width: 100vw;
-  height: 106px;
-  background-color: #2E3440;
+  height: 96px;
+  background-color: #001e3c;
   border-radius: 30px 30px 0px 0px;
 `;
 const TopDiv = styled.div`
@@ -187,20 +187,20 @@ const ButtonGroupDiv = styled.div`
   align-items: flex-end;
   z-index: 1;
   .btn-smaller {
-    max-width: 65px;
-    max-height: 65px;
-    min-width: 65px;
-    min-height: 65px;
+    max-width: 60px;
+    max-height: 60px;
+    min-width: 60px;
+    min-height: 60px;
   }
   .btn-smaller svg {
     fill: rgb(41, 46, 57);
     font-size: 2rem;
   }
   .btn-bigger {
-    max-width: 80px;
-    max-height: 80px;
-    min-width: 80px;
-    min-height: 80px;
+    max-width: 70px;
+    max-height: 70px;
+    min-width: 70px;
+    min-height: 70px;
   }
   .btn-bigger svg {
     fill: rgb(41, 46, 57);
@@ -233,7 +233,9 @@ const StyledRoundButton = styled(Button)`
   border-radius: 100%;
   transform: translate(0px, 0px);
   filter: drop-shadow(1px 3px 4px rgba(0, 0, 0, 0.2));
-
+  :hover {
+    background-color: #d8dee9;
+  }
   .dropdown {
     font-size: 3rem !important;
     fill: #d8dee9;
