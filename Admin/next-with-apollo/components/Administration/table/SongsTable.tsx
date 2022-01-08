@@ -1,5 +1,5 @@
 import * as React from "react";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useLayoutEffect } from "react";
 import styled from "styled-components";
 import ListItemCustom from "./components/SongItem";
 import { alpha, ThemeProvider } from "@mui/material/styles";
@@ -96,6 +96,7 @@ type EnhancedTableProps = {
 };
 
 const EnhancedTableHead = (props: EnhancedTableProps) => {
+  
   const {
     onSelectAllClick,
     order,
@@ -281,9 +282,10 @@ export const EnhancedTable: React.FC = () => {
     }
     return () => {
       if (sendPlayBtnRef.current !== null) {
-        sendPlayBtnRef.current.removeEventListener("click", () =>
-          handleChangeSrc(sendPlayBtnRef.current!.value)
-        );
+        sendPlayBtnRef.current.removeEventListener("click", () => {
+          handleChangeSrc(sendPlayBtnRef.current!.value);
+          setPlayingName(sendPlayBtnRef.current!.name ?? "");
+        });
       }
     };
   });
@@ -295,10 +297,12 @@ export const EnhancedTable: React.FC = () => {
         handleEditSong();
       }
     };
+
     if (editBtnRef.current !== null) {
-      editBtnRef.current.addEventListener("click", () => {
-        handleChangeID();
-      });
+      if(!editSongVisible)
+      editBtnRef.current.addEventListener("click", () => handleChangeID());
+      else
+      editBtnRef.current.removeEventListener("click", () => handleChangeID());
     }
     return () => {
       if (editBtnRef.current !== null) {

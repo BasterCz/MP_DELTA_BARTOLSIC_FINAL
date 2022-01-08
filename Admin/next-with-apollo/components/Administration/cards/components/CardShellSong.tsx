@@ -8,7 +8,6 @@ import { ImageUpload } from "./ImageUpload_Comp";
 import { FileUpload } from "./FileUpload_Comp";
 import { MyFormValues, useFormikUIHLS } from "../../../hooks/useFormikUI";
 import { usePlaylistMultiple } from "../../../hooks/usePlaylist";
-import { useSongOne, useSongPlaylists } from "../../../hooks/useSongs";
 //* MUI
 import { palette } from "../../../../styles/palette";
 import {
@@ -21,48 +20,25 @@ import {
   Button,
 } from "@mui/material";
 import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
-import { ReactNode, useState, useEffect } from "react";
+import { ReactNode } from "react";
 import handleOnChangeUploadFormik from "../../../../extensions/api/formikOnChangeUpload";
 
 type CardShellSongProps = {
   setCardVisible: () => void;
   iconSend: ReactNode;
   id?: string;
+  initialValues? : MyFormValues;
 };
 
 export const CardShellSong: React.FC<CardShellSongProps> = ({
   setCardVisible,
   iconSend,
   id,
+  initialValues
 }) => {
-  const [initialValues, setInitialValues] = useState({
-    playlists: [],
-    isPublic: true,
-    name: "",
-    fileName: "",
-    imageName: "",
-  } as MyFormValues);
-  const [valueIsSet, setValueIsSet] = useState(true);
   const { playlists } = usePlaylistMultiple();
-  if (id) {
-    const { song } = useSongOne(id, true, false);
-    const { playlists } = useSongPlaylists(id, true, false);
-    if (song && playlists && valueIsSet){
-      setInitialValues({
-        playlists: playlists,
-        isPublic: song.isPublic,
-        name: song.name,
-        fileName: song.file_path,
-        imageName: song.image_path,
-      });
-      setValueIsSet(false)
-    }
-      
-  }
-
   const formikUI = useFormikUIHLS(axios, initialValues);
   const { handleSubmit, handleChange, values } = formikUI;
-
   return (
     <ThemeProvider theme={palette}>
       <Wrap>
@@ -98,6 +74,7 @@ export const CardShellSong: React.FC<CardShellSongProps> = ({
                 }
                 destination="./public/img/"
                 type="image"
+                editFileName={values.imageName}
               />
               <FileUpload
                 label="Audio file upload"
@@ -112,6 +89,7 @@ export const CardShellSong: React.FC<CardShellSongProps> = ({
                     formikUI
                   )
                 }
+                editFileName={values.fileName}
                 destination="./public/temp/"
                 type="file"
               />

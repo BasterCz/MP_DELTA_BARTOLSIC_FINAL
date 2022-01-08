@@ -17,6 +17,7 @@ type FileUploadProps = {
   uploadFileName: string;
   destination: string;
   type: "file" | "image";
+  editFileName?: string;
 };
 
 export const FileUpload: React.FC<FileUploadProps> = ({
@@ -27,12 +28,19 @@ export const FileUpload: React.FC<FileUploadProps> = ({
   uploadFileName,
   destination,
   type,
+  editFileName
 }) => {
   
   const [fileName, setFileName] = useState("");
+  const [setted, setSetted] = useState(false);
 
   const fileInputRef = React.useRef<HTMLInputElement | null>(null);
   const formRef = React.useRef<HTMLFormElement | null>(null);
+
+  if(editFileName !== undefined && !setted) {
+    setFileName(editFileName);
+    setSetted(true);
+  }
 
   const onClickHandler = () => {
     fileInputRef.current?.click();
@@ -81,7 +89,7 @@ export const FileUpload: React.FC<FileUploadProps> = ({
           <ReactPlayer
             forceAudio
             controls
-            url={"/temp/" + fileName.replaceAll(" ", "_")}
+            url={setted? fileName : "/temp/" + fileName.replaceAll(" ", "_")}
             height="55px"
           />
         </StyledContainer>
