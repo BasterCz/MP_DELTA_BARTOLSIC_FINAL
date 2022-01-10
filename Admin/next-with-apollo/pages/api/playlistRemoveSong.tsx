@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import nextConnect from "next-connect";
-import songAddToPlaylist from "../../lib/songAddToPlaylist";
+import songRemoveFromPlaylist from "../../lib/songRemoveFromPlaylist";
 
 const apiRoute = nextConnect({
   onNoMatch(req: NextApiRequest, res: NextApiResponse) {
@@ -9,7 +9,7 @@ const apiRoute = nextConnect({
 });
 
 apiRoute.post(async (req, res) => {
-  var response = await songAddToPlaylist(
+  var response = await songRemoveFromPlaylist(
     req.headers["id"] as string,
     req.headers["song"] as string
   );

@@ -1,9 +1,13 @@
 import { AxiosStatic } from "axios";
 import { useFormik } from "formik";
+import React from "react";
 import { createNewSong } from "../../extensions/createNewSong";
+import { updateSong } from "../../extensions/updateSong";
 import { PlaylistsQuery } from "../../__generated__/lib/viewer.graphql";
 
 export type MyFormValues = {
+  _id?: string;
+  initialPlaylists?: PlaylistsQuery["playlists"];
   playlists?: PlaylistsQuery["playlists"];
   isPublic: boolean;
   name: string;
@@ -11,6 +15,8 @@ export type MyFormValues = {
   imageName: string;
 }
 const initialValues: MyFormValues = {
+  _id: "",
+  initialPlaylists: [],
   playlists: [],
   isPublic: true,
   name: "",
@@ -23,13 +29,26 @@ type ResponseType = {
   _id: string;
 };
 
-export const useFormikUIHLS = (axios: AxiosStatic, iniValues : MyFormValues = initialValues) => {
+export const useFormikUIHLS = (axios: AxiosStatic, toEdit: boolean, iniValues : MyFormValues = initialValues, setValueIsSetAndLoaded?: React.Dispatch<React.SetStateAction<boolean>>) => {
   const formikUI = useFormik({
     initialValues: iniValues,
     onSubmit: async (
-      { playlists, isPublic, name, fileName, imageName },
+      {_id = "", initialPlaylists, playlists, isPublic, name, fileName, imageName },
       actions
     ) => {
+      toEdit?
+      updateSong({
+        _id: _id,
+        initialPlaylists: initialPlaylists,
+        playlists: playlists,
+        isPublic: isPublic,
+        name: name,
+        fileName: fileName,
+        imageName: imageName,
+        axios: axios,
+        setValueIsSetAndLoaded: setValueIsSetAndLoaded
+      })
+      :
       createNewSong({
         playlists: playlists,
         isPublic: isPublic,

@@ -1,4 +1,5 @@
 import { ThemeProvider, Button } from "@mui/material";
+import FileUploadRoundedIcon from '@mui/icons-material/FileUploadRounded';
 import React, { useState } from "react";
 import ReactPlayer from "react-player";
 import styled from "styled-components";
@@ -28,17 +29,18 @@ export const FileUpload: React.FC<FileUploadProps> = ({
   uploadFileName,
   destination,
   type,
-  editFileName
+  editFileName,
 }) => {
-  
   const [fileName, setFileName] = useState("");
   const [setted, setSetted] = useState(false);
+  const [changed, setChanged] = useState(true);
 
   const fileInputRef = React.useRef<HTMLInputElement | null>(null);
   const formRef = React.useRef<HTMLFormElement | null>(null);
 
-  if(editFileName !== undefined && !setted) {
+  if (editFileName !== undefined && !setted) {
     setFileName(editFileName);
+    setChanged(false);
     setSetted(true);
   }
 
@@ -57,6 +59,7 @@ export const FileUpload: React.FC<FileUploadProps> = ({
       formData.append(event.target.name, file);
       setFileName(file.name);
       onChange(formData, destination, type, file.name);
+      setChanged(true)
     });
 
     formRef.current?.reset();
@@ -86,12 +89,31 @@ export const FileUpload: React.FC<FileUploadProps> = ({
         </StyledForm>
       ) : (
         <StyledContainer>
+          <StyledForm ref={formRef}>
+            <SButton
+              variant="contained"
+              color="primary"
+              type="button"
+              onClick={onClickHandler}
+            >
+              <FileUploadRoundedIcon className="iconDark"/>
+            </SButton>
+            <input
+              accept={acceptedFileTypes}
+              multiple={allowMultipleFiles}
+              name={uploadFileName}
+              onChange={onChangeHandler}
+              ref={fileInputRef}
+              style={{ display: "none" }}
+              type="file"
+            />
+          </StyledForm>
           <ReactPlayer
             forceAudio
             controls
-            url={setted? fileName : "/temp/" + fileName.replaceAll(" ", "_")}
-            height="55px"
+            url={!changed ? fileName : "/temp/" + fileName.replaceAll(" ", "_")}
           />
+          
         </StyledContainer>
       )}
     </ThemeProvider>
@@ -111,16 +133,23 @@ const StyledContainer = styled.div`
   grid-row-start: 4;
   grid-row-end: 5;
   place-self: center;
+  display: flex;
+  width: 100%;
+
   @media only screen and (min-width: 376px) {
-    grid-column-start: 3;
-    grid-column-end: 7;
+    grid-column-start: 2;
+    grid-column-end: 8;
   }
   @media only screen and (min-width: 481px) {
     grid-column-start: 2;
     grid-column-end: 5;
     grid-row-start: 8;
     grid-row-end: 9;
-  } ;
+  }
+  div {
+    height: 55px !important;
+    width: 100% !important;
+  }
 `;
 
 const StyledForm = styled.form`
@@ -130,8 +159,8 @@ const StyledForm = styled.form`
   grid-row-end: 5;
   place-self: center;
   @media only screen and (min-width: 376px) {
-    grid-column-start: 3;
-    grid-column-end: 7;
+    grid-column-start: 2;
+    grid-column-end: 8;
   }
   @media only screen and (min-width: 481px) {
     grid-column-start: 2;
@@ -140,3 +169,17 @@ const StyledForm = styled.form`
     grid-row-end: 9;
   } ;
 `;
+
+const SButton = styled(Button)`
+  margin: 0px 7px 0px 0px;
+  background-color: white;
+  max-width: 55px;
+  max-height: 55px;
+  min-width: 55px;
+  min-height: 55px;
+  border-radius: 100%;
+  .iconDark {
+    font-size: 1.8rem !important;
+    fill: black;
+  }
+`

@@ -13,14 +13,24 @@ import { MyFormValues } from "../../../hooks/useFormikUI";
 
 type TagArrayProps = {
   playlists?: PlaylistsQuery["playlists"];
+  initialPlaylists?: PlaylistsQuery["playlists"];
   formikInstance: FormikProps<MyFormValues>;
-}
+};
 
 export const TagArray: React.FC<TagArrayProps> = ({
   playlists,
+  initialPlaylists,
   formikInstance,
 }) => {
   const [noOfVal, setNoOfVal] = useState(0);
+  const [setted, setSetted] = useState(false);
+
+  useEffect(() => {
+    if (initialPlaylists !== undefined && !setted) {
+      formikInstance.setFieldValue("playlists", initialPlaylists);
+      setSetted(true);
+    }
+  });
 
   var arrayer = playlists?.map((a) => {
     let toarray = a;
@@ -65,9 +75,26 @@ export const TagArray: React.FC<TagArrayProps> = ({
     inputValue,
   } = useAutocomplete({
     id: "customized-hook-demo",
-    defaultValue: [],
+    defaultValue: initialPlaylists ?? [
+      {
+        createdDate: "1",
+        description: "No data found.",
+        image_path: "-",
+        isPublic: true,
+        modifiedDate: "1",
+        name: "No data found.",
+        songs: [],
+        __typename: "Playlist",
+        _deleted: false,
+        _id: "-1",
+      },
+    ],
     multiple: true,
     options: arrayer,
+    isOptionEqualToValue: (option, value) => {
+      return option?._id == value?._id;
+    },
+
     getOptionLabel: (option) => {
       if (option) {
         return option._id;
@@ -76,104 +103,113 @@ export const TagArray: React.FC<TagArrayProps> = ({
       }
     },
   });
+
+  if (setted || initialPlaylists == [])
   
-  return (
-    <Root>
-      <RelativeDiv
-        {...getRootProps()}
-        className="MuiFormControl-root MuiTextField-root css-1375zuz-MuiFormControl-root-MuiTextField-root"
-      >
-        <Label
-          {...getInputLabelProps()}
-          className={
-            (focused ? "Mui-focused " : "") +
-            (value.length !== 0 || inputValue.length !== 0
-              ? "MuiFormLabel-filled "
-              : "") +
-            (value.length === 0 && inputValue.length === 0 && !focused
-              ? "maxed-label "
-              : "css-1a4xo9e-MuiFormLabel-root-MuiInputLabel-root ") +
-            "MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-outlined MuiFormLabel-root MuiFormLabel-colorPrimary"
-          }
+    return (
+      <Root>
+        <RelativeDiv
+          {...getRootProps()}
+          className="MuiFormControl-root MuiTextField-root css-1375zuz-MuiFormControl-root-MuiTextField-root"
         >
-          Playlists
-        </Label>
-        <InsiderOutside
-          ref={setAnchorEl}
-          className={
-            (focused ? "Mui-focused " : "") +
-            "MuiOutlinedInput-root MuiInputBase-root MuiInputBase-colorPrimary MuiInputBase-formControl css-1hvt7ig-MuiInputBase-root-MuiOutlinedInput-root"
-          }
-        >
-          <Insider>
-            {value?.map((option, index: number) => {
-              var row = option
-                ? option
-                : {
-                    createdDate: "1",
-                    description: "No data found.",
-                    image_path: "-",
-                    isPublic: true,
-                    modifiedDate: "1",
-                    name: "No data found.",
-                    songs: [],
-                    __typename: "Playlist",
-                    _deleted: false,
-                    _id: "-1",
-                  };
-              return <StyledTag label={row.name} {...getTagProps({ index })} />;
-            })}
-            <Input
-              {...getInputProps()}
-              className="MuiOutlinedInput-input MuiInputBase-input css-p51h6s-MuiInputBase-input-MuiOutlinedInput-input"
-            />
-          </Insider>
-          <StyledFieldSet
-            aria-hidden="true"
-            className="MuiOutlinedInput-notchedOutline css-9425fu-MuiOutlinedInput-notchedOutline"
-          >
-            <legend
-              className={
-                value.length === 0 && inputValue.length === 0 && !focused
-                  ? "unshrunk"
-                  : "shrunk"
-              }
-            >
-              <span>Playlists</span>
-            </legend>
-          </StyledFieldSet>
-        </InsiderOutside>
-      </RelativeDiv>
-      {groupedOptions.length > 0 ? (
-        <Listbox {...getListboxProps()}>
-          {(groupedOptions as PlaylistsQuery["playlists"])?.map(
-            (option, index) => {
-              var row = option
-                ? option
-                : {
-                    createdDate: "1",
-                    description: "No data found.",
-                    image_path: "-",
-                    isPublic: true,
-                    modifiedDate: "1",
-                    name: "No data found.",
-                    songs: [],
-                    __typename: "Playlist",
-                    _deleted: false,
-                    _id: "-1",
-                  };
-              return (
-                <li {...getOptionProps({ option, index })}>
-                  <span>{row.name}</span>
-                  <CheckIcon fontSize="small" />
-                </li>
-              );
+          <Label
+            {...getInputLabelProps()}
+            className={
+              (focused ? "Mui-focused " : "") +
+              (value.length !== 0 || inputValue.length !== 0
+                ? "MuiFormLabel-filled "
+                : "") +
+              (value.length === 0 && inputValue.length === 0 && !focused
+                ? "maxed-label "
+                : "css-1a4xo9e-MuiFormLabel-root-MuiInputLabel-root ") +
+              "MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-outlined MuiFormLabel-root MuiFormLabel-colorPrimary"
             }
-          )}
-        </Listbox>
-      ) : null}
-    </Root>
-  );
+          >
+            Playlists
+          </Label>
+          <InsiderOutside
+            ref={setAnchorEl}
+            className={
+              (focused ? "Mui-focused " : "") +
+              "MuiOutlinedInput-root MuiInputBase-root MuiInputBase-colorPrimary MuiInputBase-formControl css-1hvt7ig-MuiInputBase-root-MuiOutlinedInput-root"
+            }
+          >
+            <Insider>
+              {value?.map((option, index: number) => {
+                var row = option
+                  ? option
+                  : {
+                      createdDate: "1",
+                      description: "No data found.",
+                      image_path: "-",
+                      isPublic: true,
+                      modifiedDate: "1",
+                      name: "No data found.",
+                      songs: [],
+                      __typename: "Playlist",
+                      _deleted: false,
+                      _id: "-1",
+                    };
+                return (
+                  <StyledTag label={row.name} {...getTagProps({ index })} />
+                );
+              })}
+              <Input
+                {...getInputProps()}
+                className="MuiOutlinedInput-input MuiInputBase-input css-p51h6s-MuiInputBase-input-MuiOutlinedInput-input"
+              />
+            </Insider>
+            <StyledFieldSet
+              aria-hidden="true"
+              className="MuiOutlinedInput-notchedOutline css-9425fu-MuiOutlinedInput-notchedOutline"
+            >
+              <legend
+                className={
+                  value.length === 0 && inputValue.length === 0 && !focused
+                    ? "unshrunk"
+                    : "shrunk"
+                }
+              >
+                <span>Playlists</span>
+              </legend>
+            </StyledFieldSet>
+          </InsiderOutside>
+        </RelativeDiv>
+        {groupedOptions.length > 0 ? (
+          <Listbox {...getListboxProps()}>
+            {(groupedOptions as PlaylistsQuery["playlists"])?.map(
+              (option, index) => {
+                var row = option
+                  ? option
+                  : {
+                      createdDate: "1",
+                      description: "No data found.",
+                      image_path: "-",
+                      isPublic: true,
+                      modifiedDate: "1",
+                      name: "No data found.",
+                      songs: [],
+                      __typename: "Playlist",
+                      _deleted: false,
+                      _id: "-1",
+                    };
+                return (
+                  <li {...getOptionProps({ option, index })}>
+                    <span>{row.name}</span>
+                    <CheckIcon fontSize="small" />
+                  </li>
+                );
+              }
+            )}
+          </Listbox>
+        ) : null}
+      </Root>
+    );
+  else return <Input
+  disabled={true}
+  {...getInputProps()}
+  className="MuiOutlinedInput-input MuiInputBase-input css-p51h6s-MuiInputBase-input-MuiOutlinedInput-input"
+/>;
 };
 
 const Label = styled.label`

@@ -19,15 +19,17 @@ export const CardEditSong: React.FC<CardEditSongProps> = ({
   );
   const [valueIsSetAndLoaded, setValueIsSetAndLoaded] = useState(false);
 
-  const { song } = useSongOne(songID as string, true, false);
+  const { song } = useSongOne(songID as string, true, true);
   const { playlists: playlists_Song } = useSongPlaylists(
     songID as string,
     true,
-    false
+    true
   );
 
   if (song && playlists_Song && !valueIsSetAndLoaded) {
     setInitialValues({
+      _id: songID,
+      initialPlaylists: playlists_Song,
       playlists: playlists_Song,
       isPublic: song.isPublic,
       name: song.name,
@@ -35,7 +37,6 @@ export const CardEditSong: React.FC<CardEditSongProps> = ({
       imageName: song.image_path,
     });
     setValueIsSetAndLoaded(true);
-    console.log("run");
   }
   if (initialValues !== undefined)
     return (
@@ -44,6 +45,7 @@ export const CardEditSong: React.FC<CardEditSongProps> = ({
         iconSend={<EditRoundedIcon />}
         id={songID}
         initialValues={initialValues}
+        setValueIsSetAndLoaded={setValueIsSetAndLoaded}
       />
     );
   else return null;

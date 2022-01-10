@@ -20,7 +20,7 @@ import {
   Button,
 } from "@mui/material";
 import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
-import { ReactNode } from "react";
+import { ReactNode, useEffect, useState } from "react";
 import handleOnChangeUploadFormik from "../../../../extensions/api/formikOnChangeUpload";
 
 type CardShellSongProps = {
@@ -28,19 +28,26 @@ type CardShellSongProps = {
   iconSend: ReactNode;
   id?: string;
   initialValues? : MyFormValues;
+  setValueIsSetAndLoaded? : React.Dispatch<React.SetStateAction<boolean>>;
 };
 
 export const CardShellSong: React.FC<CardShellSongProps> = ({
   setCardVisible,
   iconSend,
   id,
-  initialValues
+  initialValues,
+  setValueIsSetAndLoaded
 }) => {
+  const [setted, setSetted] = useState(false);
   const { playlists } = usePlaylistMultiple();
-  const formikUI = useFormikUIHLS(axios, initialValues);
+  const formikUI = useFormikUIHLS(axios, (id !== undefined), initialValues, setValueIsSetAndLoaded);
   const { handleSubmit, handleChange, values } = formikUI;
+  useEffect(() => {
+    if(initialValues !==undefined && !setted)
+    setSetted(true);
+  })
   return (
-    <ThemeProvider theme={palette}>
+    <ThemeProvider theme={palette}>defaultva
       <Wrap>
         <SCard
           sx={{
@@ -97,7 +104,11 @@ export const CardShellSong: React.FC<CardShellSongProps> = ({
                 control={<Checkbox defaultChecked />}
                 label="Public"
               />
-              <TagArray playlists={playlists} formikInstance={formikUI} />
+              {(setted || values.playlists === []) ?
+                <TagArray playlists={playlists} formikInstance={formikUI} initialPlaylists={values.playlists} />
+                : null
+              }
+              
               <Placeholder />
               <br />
             </FormGrid>

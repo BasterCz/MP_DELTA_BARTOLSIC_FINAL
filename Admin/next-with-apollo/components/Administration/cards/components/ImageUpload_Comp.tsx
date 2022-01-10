@@ -18,11 +18,20 @@ type ImageUploadProps = {
   destination: string;
   type: "file" | "image";
   editFileName?: string;
-}
+};
 
-export const ImageUpload: React.FC<ImageUploadProps> = ({acceptedFileTypes, allowMultipleFiles, onChange, uploadFileName, destination, type, editFileName}) => {
+export const ImageUpload: React.FC<ImageUploadProps> = ({
+  acceptedFileTypes,
+  allowMultipleFiles,
+  onChange,
+  uploadFileName,
+  destination,
+  type,
+  editFileName,
+}) => {
   const [imageName, setImageName] = useState("");
   const [setted, setSetted] = useState(false);
+  const [changed, setChanged] = useState(true);
 
   const fileInputRef = React.useRef<HTMLInputElement | null>(null);
   const formRef = React.useRef<HTMLFormElement | null>(null);
@@ -30,6 +39,7 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({acceptedFileTypes, allo
 
   if (editFileName !== undefined && !setted) {
     setImageName(editFileName);
+    setChanged(false);
     setSetted(true);
   }
 
@@ -46,6 +56,7 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({acceptedFileTypes, allo
       formData.append(event.target.name, file);
       setImageName(file.name);
       onChange(formData, destination, type, file.name);
+      setChanged(true);
     });
 
     formRef.current?.reset();
@@ -63,7 +74,11 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({acceptedFileTypes, allo
           {imageName.length === 0 ? (
             <SAddPhotoAlternateOutlinedIcon />
           ) : (
-            <Image src={setted? (imageName):("/img/" + imageName)} width="300px" height="300px" />
+            <Image
+              src={!changed ? imageName : "/img/" + imageName}
+              width="300px"
+              height="300px"
+            />
           )}
         </SCard>
         <input
