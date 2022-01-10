@@ -5,7 +5,7 @@
       "dom",
       "dom.iterable",
       "esnext"
-    ],  
+    ],
     "allowJs": true,
     "skipLibCheck": true,
     "strict": true,
@@ -23,9 +23,11 @@
   "include": [
     "next-env.d.ts",
     "**/*.ts",
-    "**/*.tsx", 
-    "pages/_document.tsx",  
-    "additional.d.ts"
+    "**/*.tsx",
+    "pages/_document.tsx",
+    "additional.d.ts",
+    "pages/.showcase.tsx",
+    "components/Administration/cards/components/.showcase.tsx"
   ],
   "exclude": [
     "node_modules"

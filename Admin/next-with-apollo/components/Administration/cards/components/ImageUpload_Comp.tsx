@@ -1,11 +1,11 @@
 import { ThemeProvider, Card } from "@mui/material";
 import React, { useState } from "react";
-import { palette } from "../styles/palette";
+import { palette } from "../../../../styles/palette";
 import AddPhotoAlternateOutlinedIcon from "@mui/icons-material/AddPhotoAlternateOutlined";
 import styled from "styled-components";
-import Image from 'next/image'
+import Image from "next/image";
 
-export interface IProps {
+type ImageUploadProps = {
   acceptedFileTypes?: string;
   allowMultipleFiles?: boolean;
   onChange: (
@@ -17,12 +17,31 @@ export interface IProps {
   uploadFileName: string;
   destination: string;
   type: "file" | "image";
-}
+  editFileName?: string;
+};
 
-export const ImageInputBox: React.FC<IProps> = (props) => {
+export const ImageUpload: React.FC<ImageUploadProps> = ({
+  acceptedFileTypes,
+  allowMultipleFiles,
+  onChange,
+  uploadFileName,
+  destination,
+  type,
+  editFileName,
+}) => {
+  const [imageName, setImageName] = useState("");
+  const [setted, setSetted] = useState(false);
+  const [changed, setChanged] = useState(true);
+
   const fileInputRef = React.useRef<HTMLInputElement | null>(null);
   const formRef = React.useRef<HTMLFormElement | null>(null);
-  const [imageName, setImageName] = useState("");
+  const formData = new FormData();
+
+  if (editFileName !== undefined && !setted) {
+    setImageName(editFileName);
+    setChanged(false);
+    setSetted(true);
+  }
 
   const onClickHandler = () => {
     fileInputRef.current?.click();
@@ -33,15 +52,13 @@ export const ImageInputBox: React.FC<IProps> = (props) => {
       return;
     }
 
-    const formData = new FormData();
-    console.log(Array.from(event.target.files))
     Array.from(event.target.files).forEach((file) => {
       formData.append(event.target.name, file);
       setImageName(file.name);
-      props.onChange(formData, props.destination, props.type, file.name);
+      onChange(formData, destination, type, file.name);
+      setChanged(true);
     });
-    
-    
+
     formRef.current?.reset();
   };
 
@@ -54,20 +71,20 @@ export const ImageInputBox: React.FC<IProps> = (props) => {
             bgcolor: "background.default",
           }}
         >
-          {imageName.length===0 ?
-          (<SAddPhotoAlternateOutlinedIcon />)
-          :
-          (<Image 
-            src={"/img/"+imageName}
-            width="300px"
-            height="300px"
-          />)
-          }
+          {imageName.length === 0 ? (
+            <SAddPhotoAlternateOutlinedIcon />
+          ) : (
+            <Image
+              src={!changed ? imageName : "/img/" + imageName}
+              width="300px"
+              height="300px"
+            />
+          )}
         </SCard>
         <input
-          accept={props.acceptedFileTypes}
-          multiple={props.allowMultipleFiles}
-          name={props.uploadFileName}
+          accept={acceptedFileTypes}
+          multiple={allowMultipleFiles}
+          name={uploadFileName}
           onChange={onChangeHandler}
           ref={fileInputRef}
           style={{ display: "none" }}
@@ -78,10 +95,12 @@ export const ImageInputBox: React.FC<IProps> = (props) => {
   );
 };
 
-ImageInputBox.defaultProps = {
+ImageUpload.defaultProps = {
   acceptedFileTypes: "",
   allowMultipleFiles: false,
 };
+
+export default ImageUpload;
 
 const StyledForm = styled.form`
   grid-column-start: 3;

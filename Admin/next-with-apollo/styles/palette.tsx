@@ -4,20 +4,17 @@ export const palette = createTheme({
   palette: {
     mode: 'dark',
     primary: {
-      main: "#81A1C1",
+      main: "#009688",
     },
     secondary: {
-      main: "#EBCB8B",
+      main: "#ff817f",
     },
     background: {
-      default: "#3B4252",
-      paper: "#2E3440",
+      default: "#0a1929",
+      paper: "#001e3c",
     },
     error: {
-      main: "#BF616A",
+      main: "#ff2919",
     },
-    success: {
-      main: "#A3BE8C"
-    }
   },
 });

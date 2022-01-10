@@ -1,12 +1,15 @@
 import * as React from "react";
-import { useState } from "react";
-import {
-  FormikProvider,
-} from "formik";
-import { UiFileInputButton } from "./uiFileInputButton";
+import { FormikProvider } from "formik";
 import axios from "axios";
-import hlsCreate from "../lib/hlsCreate";
-import { TagArray } from "./tagArray";
+import styled from "styled-components";
+//* CUSTOM
+import { TagArray } from "./TagArray";
+import { ImageUpload } from "./ImageUpload_Comp";
+import { FileUpload } from "./FileUpload_Comp";
+import { MyFormValues, useFormikUIHLS } from "../../../hooks/useFormikUI";
+import { usePlaylistMultiple } from "../../../hooks/usePlaylist";
+//* MUI
+import { palette } from "../../../../styles/palette";
 import {
   Fab,
   Card,
@@ -16,58 +19,35 @@ import {
   ThemeProvider,
   Button,
 } from "@mui/material";
-import { useFormikUIHLS } from "./hooks/useFormikUI";
-import styled from "styled-components";
-import { palette } from "../styles/palette";
-import FileUploadOutlinedIcon from "@mui/icons-material/FileUploadOutlined";
-import { ImageInputBox } from "./imageInputBox";
-import { usePlaylistMultiple } from "./hooks/usePlaylist";
+import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
+import { ReactNode, useEffect, useState } from "react";
+import handleOnChangeUploadFormik from "../../../../extensions/api/formikOnChangeUpload";
 
-export const CardAddSong: React.FC = () => {
+type CardShellSongProps = {
+  setCardVisible: () => void;
+  iconSend: ReactNode;
+  id?: string;
+  initialValues? : MyFormValues;
+  setValueIsSetAndLoaded? : React.Dispatch<React.SetStateAction<boolean>>;
+};
 
+export const CardShellSong: React.FC<CardShellSongProps> = ({
+  setCardVisible,
+  iconSend,
+  id,
+  initialValues,
+  setValueIsSetAndLoaded
+}) => {
+  const [setted, setSetted] = useState(false);
   const { playlists } = usePlaylistMultiple();
-  console.log(playlists)
-  const formikUI = useFormikUIHLS(axios);
-
-  const onChange = async (
-    formData: FormData,
-    destination: string,
-    type: "file" | "image",
-    fileName: string
-  ) => {
-
-    const config = {
-      headers: {
-        "content-type": "multipart/form-data",
-        destination: destination,
-      },
-      onUploadProgress: (event: { loaded: number; total: number }) => {
-        console.log(
-          `Current progress:`,
-          Math.round((event.loaded * 100) / event.total)
-        );
-      },
-    };
-    
-    const response = await axios.post("/api/upload", formData, config);
-    
-    switch (type) {
-      case "file":
-        formikUI.setFieldValue("fileName", fileName);
-        console.log(fileName)
-        break;
-      case "image":
-        formikUI.setFieldValue("imageName", fileName);
-        console.log(fileName)
-        break;
-    }
-    console.log("response", response.data);
-  };
-
-  
-
+  const formikUI = useFormikUIHLS(axios, (id !== undefined), initialValues, setValueIsSetAndLoaded);
+  const { handleSubmit, handleChange, values } = formikUI;
+  useEffect(() => {
+    if(initialValues !==undefined && !setted)
+    setSetted(true);
+  })
   return (
-    <ThemeProvider theme={palette}>
+    <ThemeProvider theme={palette}>defaultva
       <Wrap>
         <SCard
           sx={{
@@ -76,38 +56,59 @@ export const CardAddSong: React.FC = () => {
           }}
         >
           <FormikProvider value={formikUI}>
-            <FormGrid onSubmit={formikUI.handleSubmit} id="addForm">
+            <FormGrid onSubmit={handleSubmit} id="addForm">
               <STextField
                 id="name"
                 name="name"
                 label="Name"
-                value={formikUI.values.name}
-                onChange={formikUI.handleChange}
+                value={values.name}
+                onChange={handleChange}
                 variant="outlined"
                 color="primary"
               />
               <br />
-              <UiFileInputButton
-                label="Audio file upload"
+              <ImageUpload
                 uploadFileName="theFiles"
-                onChange={onChange}
-                destination="./public/temp/"
-                type="file"
-              />
-              <ImageInputBox
-                uploadFileName="theFiles"
-                onChange={onChange}
+                onChange={(formData, destination, type, fileName) =>
+                  handleOnChangeUploadFormik(
+                    formData,
+                    destination,
+                    type,
+                    fileName,
+                    axios,
+                    formikUI
+                  )
+                }
                 destination="./public/img/"
                 type="image"
+                editFileName={values.imageName}
+              />
+              <FileUpload
+                label="Audio file upload"
+                uploadFileName="theFiles"
+                onChange={(formData, destination, type, fileName) =>
+                  handleOnChangeUploadFormik(
+                    formData,
+                    destination,
+                    type,
+                    fileName,
+                    axios,
+                    formikUI
+                  )
+                }
+                editFileName={values.fileName}
+                destination="./public/temp/"
+                type="file"
               />
               <SFormControlLabel
                 control={<Checkbox defaultChecked />}
                 label="Public"
               />
-              <TagArray 
-                playlists={playlists}
-                formikInstance={formikUI}
-              />
+              {(setted || values.playlists === []) ?
+                <TagArray playlists={playlists} formikInstance={formikUI} initialPlaylists={values.playlists} />
+                : null
+              }
+              
               <Placeholder />
               <br />
             </FormGrid>
@@ -124,15 +125,27 @@ export const CardAddSong: React.FC = () => {
             right: "10vw",
           }}
         >
-          <FileUploadOutlinedIcon />
+          {iconSend}
         </Fab>
+        <Button
+          sx={{
+            position: "fixed",
+            top: "3vh",
+            left: "3vw",
+          }}
+          onClick={setCardVisible}
+        >
+          <CloseRoundedIcon sx={{ fontSize: "2.5rem" }} />
+        </Button>
       </Wrap>
     </ThemeProvider>
   );
 };
-export default CardAddSong;
+
+export default CardShellSong;
+
 const SCard = styled(Card)`
-  height: 95vh;
+  height: 80vh;
   width: 90%;
   max-width: 810px;
   padding: 3;
@@ -150,6 +163,10 @@ const Wrap = styled.div`
   align-content: center;
   height: 100vh;
   margin: 0;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100vw;
 `;
 
 const FormGrid = styled.form`

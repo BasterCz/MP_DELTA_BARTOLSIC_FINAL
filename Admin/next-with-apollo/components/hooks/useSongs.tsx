@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useSongQuery, useSongsDeleteMutation, useSongsQuery } from "../../__generated__/lib/viewer.graphql";
+import { useSongPlaylistsQuery, useSongQuery, useSongsDeleteMutation, useSongsQuery } from "../../__generated__/lib/viewer.graphql";
 export const useSongMultiple = () => {
     const { data, loading, error } = useSongsQuery({ pollInterval: 500 });
     const [songs, setSongs] = useState(data?.songs);
@@ -18,8 +18,8 @@ export const useSongMultiple = () => {
         onDeleteSong: onDelete
     }
 }
-export const useSongOne = (id: string, isReady : boolean) => {
-    const { data: dataS, loading: loadingS, error: errorS, startPolling } = useSongQuery({ variables: { _id: id as string }, skip: Number.isNaN(id) });
+export const useSongOne = (id: string, isReady : boolean, withPoll : boolean = true) => {
+    const { data: dataS, loading: loadingS, error: errorS, startPolling} = useSongQuery({ variables: { _id: id as string }, skip: Number.isNaN(id) });
 
     const [song, setSong] = useState(dataS?.song);
 
@@ -31,11 +31,26 @@ export const useSongOne = (id: string, isReady : boolean) => {
     useEffect(() => {
         if (isReady) {
             setSong(dataS?.song);
-            startPolling(500);
+            if (withPoll) startPolling(500);
         }
     })
     return {
         song: song,
         onDeleteSong: onDelete
+    }
+}
+export const useSongPlaylists = (id: string, isReady : boolean, withPoll : boolean = true) => {
+    const { data: dataP, loading: loadingP, error: errorP, startPolling } = useSongPlaylistsQuery({ variables: { _id: id as string }, skip: Number.isNaN(id) });
+
+    const [playlists, setPlaylists] = useState(dataP?.songPlaylists);
+
+    useEffect(() => {
+        if (isReady) {
+            setPlaylists(dataP?.songPlaylists);
+            if (withPoll) startPolling(500);
+        }
+    })
+    return {
+        playlists: playlists
     }
 }

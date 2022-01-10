@@ -60,6 +60,12 @@ query PlaylistSongs($_id: ID!){
   }
 }
 
+query SongPlaylists($_id: ID!){
+  songPlaylists(_id: $_id) {
+    ...ClientPlaylist
+  }
+}
+
 mutation SongsUpdate(
   $_id: ID!
   $name: String!

@@ -1,6 +1,6 @@
 import { QueryResolvers, MutationResolvers } from './type-defs.graphqls'
 import { ResolverContext } from './apollo'
-import { playlistAdd, playlistAddSong, playlistDelete, playlistGet, playlistGetOne, playlistRemoveSong, playlistSongs, playlistUpdate, songsAdd, songsDelete, songsGet, songsGetOne, songsUpdate, } from '../extensions/api/mongoapi'
+import { playlistAdd, playlistAddSong, playlistDelete, playlistGet, playlistGetOne, playlistRemoveSong, playlistSongs, playlistUpdate, songPlaylists, songsAdd, songsDelete, songsGet, songsGetOne, songsUpdate, } from '../extensions/api/mongoapi'
 
 const Query: Required<QueryResolvers<ResolverContext>> = {
   async songs(_parent, args, _context, _info) {
@@ -17,6 +17,9 @@ const Query: Required<QueryResolvers<ResolverContext>> = {
   },
   async playlistSongs(_parent, args, _context, _info) {
     return await playlistSongs(args._id);
+  },
+  async songPlaylists(_parent, args, _context, _info) {
+    return await songPlaylists(args._id);
   },
 }
 
