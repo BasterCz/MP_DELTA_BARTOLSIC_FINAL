@@ -1,7 +1,7 @@
 import { AxiosStatic } from "axios";
 import { useFormik } from "formik";
 import React from "react";
-import { createNewSong } from "../../extensions/createNewSong";
+import { createSong } from "../../extensions/createSong";
 import { updateSong } from "../../extensions/updateSong";
 import { PlaylistsQuery } from "../../__generated__/lib/viewer.graphql";
 
@@ -49,7 +49,7 @@ export const useFormikUIHLS = (axios: AxiosStatic, toEdit: boolean, iniValues : 
         setValueIsSetAndLoaded: setValueIsSetAndLoaded
       })
       :
-      createNewSong({
+      createSong({
         playlists: playlists,
         isPublic: isPublic,
         name: name,

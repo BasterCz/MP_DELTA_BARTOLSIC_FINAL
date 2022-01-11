@@ -1,0 +1,15 @@
+{
+  "entryFilePath": "/Admin/next-with-apollo/pages/administration/index.tsx",
+  "alias": {
+    "@": "./src"
+  },
+  "resolveExtensions": [
+    ".js",
+    ".jsx",
+    ".ts",
+    ".tsx",
+    ".vue",
+    ".scss",
+    ".less"
+  ]
+}

@@ -21,6 +21,7 @@ type InputProps = {
   onClickMark: () => void;
   btnRef: React.RefObject<HTMLButtonElement>;
   editBtnRef: React.RefObject<HTMLButtonElement>;
+  deleteBtnRef: React.RefObject<HTMLButtonElement>;
 };
 
 const SongItem: React.FC<InputProps> = (props: InputProps) => {
@@ -58,7 +59,7 @@ const SongItem: React.FC<InputProps> = (props: InputProps) => {
               <StyledRoundButton ref={props.editBtnRef} value={props.id} className="cstmbtn-blue cstmbtn-edit">
                 <EditRoundedIcon className="iconDark" />
               </StyledRoundButton>
-              <StyledRoundButton className="cstmbtn-red cstmbtn-delete">
+              <StyledRoundButton ref={props.deleteBtnRef} value={props.id} className="cstmbtn-red cstmbtn-delete">
                 <DeleteRoundedIcon className="iconDark" />
               </StyledRoundButton>
             </ButtonGroup>

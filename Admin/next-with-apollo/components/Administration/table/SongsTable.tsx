@@ -30,6 +30,7 @@ import PlayerStickyDown from "../player/PlayerStickyDown";
 import CardAddSong from "../cards/CardAddSong";
 import CreateItem from "./components/CreateItem";
 import CardEditSong from "../cards/CardEditSong";
+import CardDeleteSong from "../cards/CardDeleteSong";
 
 type Data = {
   _id: string;
@@ -257,11 +258,14 @@ export const EnhancedTable: React.FC = () => {
   const [createSongVisible, setCreateSongVisible] = useState(false);
   const [editSongVisible, setEditSongVisible] = useState(false);
   const [editSongID, setEditSongID] = useState("");
+  const [deleteSongVisible, setDeleteSongVisible] = useState(false);
+  const [deleteSongID, setDeleteSongID] = useState("");
 
   const { songs } = useSongMultiple();
   const audioRef = useRef<HTMLAudioElement>(null);
   const sendPlayBtnRef = useRef<HTMLButtonElement>(null);
   const editBtnRef = useRef<HTMLButtonElement>(null);
+  const deleteBtnRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
     if (!showChild) setShowChild(true);
@@ -307,6 +311,27 @@ export const EnhancedTable: React.FC = () => {
     return () => {
       if (editBtnRef.current !== null) {
         editBtnRef.current.removeEventListener("click", () => handleChangeID());
+      }
+    };
+  });
+
+  useEffect(() => {
+    const handleDeleteID = () => {
+      if (deleteBtnRef.current !== null) {
+        setDeleteSongID(deleteBtnRef.current.value);
+        handleDeleteSong();
+      }
+    };
+
+    if (deleteBtnRef.current !== null) {
+      if(!deleteSongVisible)
+      deleteBtnRef.current.addEventListener("click", () => handleDeleteID());
+      else
+      deleteBtnRef.current.removeEventListener("click", () => handleDeleteID());
+    }
+    return () => {
+      if (deleteBtnRef.current !== null) {
+        deleteBtnRef.current.removeEventListener("click", () => handleDeleteID());
       }
     };
   });
@@ -383,13 +408,18 @@ export const EnhancedTable: React.FC = () => {
   const isSelected = (name: string) => selected.indexOf(name) !== -1;
   const isSelectedPanel = (name: string) => selectedPanel === name;
 
-  const handleCreateNewSong = () => {
+  const handleCreateSong = () => {
     setCreateSongVisible(!createSongVisible);
     setShowChild(!showChild);
   };
 
   const handleEditSong = () => {
     setEditSongVisible(!editSongVisible);
+    setShowChild(!showChild);
+  };
+
+  const handleDeleteSong = () => {
+    setDeleteSongVisible(!editSongVisible);
     setShowChild(!showChild);
   };
 
@@ -449,7 +479,7 @@ export const EnhancedTable: React.FC = () => {
                 }}
               >
                 <STableCell>
-                  <CreateItem handleClick={handleCreateNewSong} />
+                  <CreateItem handleClick={handleCreateSong} />
                 </STableCell>
               </TableRow>
               {rows
@@ -496,6 +526,7 @@ export const EnhancedTable: React.FC = () => {
                           name={row.name}
                           btnRef={sendPlayBtnRef}
                           editBtnRef={editBtnRef}
+                          deleteBtnRef={deleteBtnRef}
                           onClickDropDown={() => handlePanelClick(row._id)}
                           onClickMark={() => handleClick(row._id)}
                         />
@@ -521,10 +552,13 @@ export const EnhancedTable: React.FC = () => {
         <PlayerStickyDown name={playingName} audioRef={audioRef} />
       ) : null}
       {createSongVisible ? (
-        <CardAddSong setCreateSongVisible={handleCreateNewSong} />
+        <CardAddSong setCreateSongVisible={handleCreateSong} />
       ) : null}
       {editSongVisible ? (
         <CardEditSong songID={editSongID} setEditSongVisible={handleEditSong} />
+      ) : null}
+      {deleteSongVisible ? (
+        <CardDeleteSong songID={editSongID} setDeleteSongVisible={handleDeleteSong} />
       ) : null}
     </ThemeProvider>
   );

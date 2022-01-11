@@ -1,7 +1,7 @@
 import { AxiosStatic } from "axios";
 import { PlaylistsQuery } from "../__generated__/lib/viewer.graphql";
 
-type createNewSongProps = {
+type createSongProps = {
   playlists?: PlaylistsQuery["playlists"];
   isPublic: boolean;
   name: string;
@@ -15,7 +15,7 @@ type ResponseType = {
     _id: string;
   };
 
-export const createNewSong = async ({playlists, isPublic, name, fileName, imageName, axios} : createNewSongProps) => {
+export const createSong = async ({playlists, isPublic, name, fileName, imageName, axios} : createSongProps) => {
 
 //* HLS create ↓
     const outputFN =
