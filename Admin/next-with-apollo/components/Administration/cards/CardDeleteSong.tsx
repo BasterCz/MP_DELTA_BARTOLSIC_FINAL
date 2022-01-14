@@ -34,6 +34,7 @@ export const CardDeleteSong: React.FC<CardDeleteSongProps> = ({
       fileName: song.file_path,
       imageName: song.image_path,
     });
+    console.log(playlists_Song);
     setValueIsSetAndLoaded(true);
   }
   if (initialValues !== undefined)

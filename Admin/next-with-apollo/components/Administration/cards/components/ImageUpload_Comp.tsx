@@ -4,6 +4,7 @@ import { palette } from "../../../../styles/palette";
 import AddPhotoAlternateOutlinedIcon from "@mui/icons-material/AddPhotoAlternateOutlined";
 import styled from "styled-components";
 import Image from "next/image";
+import FormData from "form-data";
 
 type ImageUploadProps = {
   acceptedFileTypes?: string;
@@ -18,6 +19,7 @@ type ImageUploadProps = {
   destination: string;
   type: "file" | "image";
   editFileName?: string;
+  uploaded: boolean;
 };
 
 export const ImageUpload: React.FC<ImageUploadProps> = ({
@@ -28,6 +30,7 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({
   destination,
   type,
   editFileName,
+  uploaded
 }) => {
   const [imageName, setImageName] = useState("");
   const [setted, setSetted] = useState(false);
@@ -48,6 +51,7 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({
   };
 
   const onChangeHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
+    
     if (!event.target.files?.length) {
       return;
     }
@@ -57,6 +61,7 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({
       setImageName(file.name);
       onChange(formData, destination, type, file.name);
       setChanged(true);
+      console.log(file.name)
     });
 
     formRef.current?.reset();
@@ -71,13 +76,15 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({
             bgcolor: "background.default",
           }}
         >
-          {imageName.length === 0 ? (
+          {!uploaded || imageName.length === 0? (
             <SAddPhotoAlternateOutlinedIcon />
           ) : (
             <Image
-              src={!changed ? imageName : "/img/" + imageName}
-              width="300px"
-              height="300px"
+              src={!changed ? imageName.replaceAll(" ", "_").normalize("NFD").replace(/[\u0300-\u036f]/g, "") : "/img/" + imageName.replaceAll(" ", "_").normalize("NFD").replace(/[\u0300-\u036f]/g, "")}
+              layout="intrinsic"
+              height="500px"
+              width="500px"
+              quality="100"
             />
           )}
         </SCard>

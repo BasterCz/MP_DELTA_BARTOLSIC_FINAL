@@ -9,9 +9,10 @@ export type MyFormValues = {
   name: string;
   fileName: string;
   imageName: string;
+  
 }
 
-export const useFormikDelete = (axios: AxiosStatic, iniValues : MyFormValues) => {
+export const useFormikDelete = (axios: AxiosStatic, iniValues : MyFormValues, setCardVisible : ()=> void) => {
   const formikUI = useFormik({
     initialValues: iniValues,
     onSubmit: async (
@@ -24,6 +25,7 @@ export const useFormikDelete = (axios: AxiosStatic, iniValues : MyFormValues) =>
         fileName: fileName,
         playlists: iniValues.playlists,
       })
+      setCardVisible();
     },
   });
   return formikUI;

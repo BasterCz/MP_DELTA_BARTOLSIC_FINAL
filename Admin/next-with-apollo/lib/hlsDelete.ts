@@ -8,8 +8,8 @@ export const hlsDelete =(
   resultPath: string,
 ) => {
   
-  if (!fs.existsSync(resultPath)) {
-    fs.rmdirSync(resultPath, { recursive: true });
+  if (fs.existsSync(resultPath)) {
+    fs.rmSync(resultPath, { recursive: true });
     return true;
   }
   else {

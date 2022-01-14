@@ -29,6 +29,8 @@ type CardShellSongProps = {
   id?: string;
   initialValues? : MyFormValues;
   setValueIsSetAndLoaded? : React.Dispatch<React.SetStateAction<boolean>>;
+  setDeleteDataLoaded?: React.Dispatch<React.SetStateAction<boolean>>;
+  deleteDataLoaded?: boolean;
 };
 
 export const CardShellSong: React.FC<CardShellSongProps> = ({
@@ -36,11 +38,14 @@ export const CardShellSong: React.FC<CardShellSongProps> = ({
   iconSend,
   id,
   initialValues,
-  setValueIsSetAndLoaded
+  setValueIsSetAndLoaded,
+  setDeleteDataLoaded,
+  deleteDataLoaded,
 }) => {
   const [setted, setSetted] = useState(false);
+  const [uploaded, setUpload] = useState(false);
   const { playlists } = usePlaylistMultiple();
-  const formikUI = useFormikUIHLS(axios, (id !== undefined), initialValues, setValueIsSetAndLoaded);
+  const formikUI = useFormikUIHLS(axios, (id !== undefined), initialValues, setValueIsSetAndLoaded, setDeleteDataLoaded, deleteDataLoaded);
   const { handleSubmit, handleChange, values } = formikUI;
   useEffect(() => {
     if(initialValues !==undefined && !setted)
@@ -68,6 +73,7 @@ export const CardShellSong: React.FC<CardShellSongProps> = ({
               />
               <br />
               <ImageUpload
+                uploaded={uploaded}
                 uploadFileName="theFiles"
                 onChange={(formData, destination, type, fileName) =>
                   handleOnChangeUploadFormik(
@@ -76,7 +82,8 @@ export const CardShellSong: React.FC<CardShellSongProps> = ({
                     type,
                     fileName,
                     axios,
-                    formikUI
+                    formikUI,
+                    setUpload
                   )
                 }
                 destination="./public/img/"
@@ -84,6 +91,7 @@ export const CardShellSong: React.FC<CardShellSongProps> = ({
                 editFileName={values.imageName}
               />
               <FileUpload
+              uploaded={uploaded}
                 label="Audio file upload"
                 uploadFileName="theFiles"
                 onChange={(formData, destination, type, fileName) =>
@@ -93,7 +101,8 @@ export const CardShellSong: React.FC<CardShellSongProps> = ({
                     type,
                     fileName,
                     axios,
-                    formikUI
+                    formikUI,
+                    setUpload
                   )
                 }
                 editFileName={values.fileName}

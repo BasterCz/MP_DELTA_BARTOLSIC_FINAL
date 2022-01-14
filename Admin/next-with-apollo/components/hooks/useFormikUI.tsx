@@ -13,7 +13,7 @@ export type MyFormValues = {
   name: string;
   fileName: string;
   imageName: string;
-}
+};
 const initialValues: MyFormValues = {
   _id: "",
   initialPlaylists: [],
@@ -29,34 +29,50 @@ type ResponseType = {
   _id: string;
 };
 
-export const useFormikUIHLS = (axios: AxiosStatic, toEdit: boolean, iniValues : MyFormValues = initialValues, setValueIsSetAndLoaded?: React.Dispatch<React.SetStateAction<boolean>>) => {
+export const useFormikUIHLS = (
+  axios: AxiosStatic,
+  toEdit: boolean,
+  iniValues: MyFormValues = initialValues,
+  setValueIsSetAndLoaded?: React.Dispatch<React.SetStateAction<boolean>>,
+  setDeleteDataLoaded?: React.Dispatch<React.SetStateAction<boolean>>,
+  deleteDataLoaded?: boolean
+) => {
   const formikUI = useFormik({
     initialValues: iniValues,
     onSubmit: async (
-      {_id = "", initialPlaylists, playlists, isPublic, name, fileName, imageName },
+      {
+        _id = "",
+        initialPlaylists,
+        playlists,
+        isPublic,
+        name,
+        fileName,
+        imageName,
+      },
       actions
     ) => {
-      toEdit?
-      updateSong({
-        _id: _id,
-        initialPlaylists: initialPlaylists,
-        playlists: playlists,
-        isPublic: isPublic,
-        name: name,
-        fileName: fileName,
-        imageName: imageName,
-        axios: axios,
-        setValueIsSetAndLoaded: setValueIsSetAndLoaded
-      })
-      :
-      createSong({
-        playlists: playlists,
-        isPublic: isPublic,
-        name: name,
-        fileName: fileName,
-        imageName: imageName,
-        axios: axios,
-      });
+      toEdit
+        ? updateSong({
+            _id: _id,
+            initialPlaylists: initialPlaylists,
+            playlists: playlists,
+            isPublic: isPublic,
+            name: name,
+            fileName: fileName,
+            imageName: imageName,
+            axios: axios,
+            setValueIsSetAndLoaded: setValueIsSetAndLoaded,
+            setDeleteDataLoaded: setDeleteDataLoaded,
+            deleteDataLoaded: deleteDataLoaded,
+          })
+        : createSong({
+            playlists: playlists,
+            isPublic: isPublic,
+            name: name,
+            fileName: fileName,
+            imageName: imageName,
+            axios: axios,
+          });
     },
   });
   return formikUI;

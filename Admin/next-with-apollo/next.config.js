@@ -4,6 +4,7 @@ const optimizedImages = require('next-optimized-images');
 
 const circularDep = withNextCircularDeps(optimizedImages(withCSS({
   exclude: /node_modules/,
+  exclude: /public/,
   failOnError: false,
 })))
 
@@ -35,6 +36,6 @@ module.exports = {
   },
   circularDep,
   images: {
-    domains: ['cloud-object-storage-s5-cos-standard-4m2.s3.eu-de.cloud-object-storage.appdomain.cloud']
+    domains: ['cloud-object-storage-s5-cos-standard-4m2.s3.eu-de.cloud-object-storage.appdomain.cloud', 'koinonia-music-images.s3.eu-de.cloud-object-storage.appdomain.cloud']
   }
 };

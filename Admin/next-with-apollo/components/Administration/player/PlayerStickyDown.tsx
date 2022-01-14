@@ -12,13 +12,26 @@ import PlayArrowRoundedIcon from "@mui/icons-material/PlayArrowRounded";
 import PauseRoundedIcon from "@mui/icons-material/PauseRounded";
 import FastRewindRoundedIcon from "@mui/icons-material/FastRewindRounded";
 import FastForwardRoundedIcon from "@mui/icons-material/FastForwardRounded";
+import ReactPlayer from "react-player";
 
 type PlayerStickyDownProps = {
-  audioRef : React.RefObject<HTMLAudioElement>;
+  audioRef: React.RefObject<ReactPlayer>;
   name: string;
-}
+  src: string;
+};
 
-export const PlayerStickyDown: React.FC<PlayerStickyDownProps> = ({audioRef, name = ""}) => {
+type ReactPlayerState = {
+  played: number;
+  playedSeconds: number;
+  loaded: number;
+  loadedSeconds: number;
+};
+
+export const PlayerStickyDown: React.FC<PlayerStickyDownProps> = ({
+  audioRef,
+  name = "",
+  src,
+}) => {
   const [sliderValue, setSliderValue] = useState(0);
   const [commited, setCommited] = useState(-1);
   const [isSliderMoving, setIsSliderMoving] = useState(false);
@@ -26,26 +39,26 @@ export const PlayerStickyDown: React.FC<PlayerStickyDownProps> = ({audioRef, nam
   const [audioTime, setAudioTime] = useState(1);
   const [audioBufferTime, setAudioBufferTime] = useState(1);
   const [audioCurrentTime, setAudioCurrentTime] = useState(0);
-  
+
   const playBtnRef = useRef<HTMLButtonElement>(null);
   const sliderRef = useRef<HTMLInputElement>(null);
   const fwdBtnRef = useRef<HTMLButtonElement>(null);
   const revBtnRef = useRef<HTMLButtonElement>(null);
 
   const toMinuteSecond = (num: number) => {
-    return new Date(sliderValue *1000).toISOString().substr(14, 5)
-  }
+    return new Date(sliderValue * 1000).toISOString().substr(14, 5);
+  };
 
   const handleChangeSlider = (
     event: Event | SyntheticEvent<Element, Event>,
-    value: number | number[],
+    value: number | number[]
   ) => {
     setIsSliderMoving(true);
     setSliderValue(value as number);
   };
   const handleChangeCommitSlider = (
     event: Event | SyntheticEvent<Element, Event>,
-    value: number | number[],
+    value: number | number[]
   ) => {
     setCommited(value as number);
     setIsSliderMoving(false);
@@ -53,70 +66,64 @@ export const PlayerStickyDown: React.FC<PlayerStickyDownProps> = ({audioRef, nam
 
   useLayoutEffect(() => {
     const handleAudio = () => {
-      if (audioRef.current !== null) {
-        if (!isPlaying) {
-          setIsPlaying(true);
-          audioRef.current.play();
-        } else {
-          setIsPlaying(false);
-          audioRef.current.pause();
-        }
+      if (!isPlaying) {
+        setIsPlaying(true);
+      } else {
+        setIsPlaying(false);
       }
     };
     const fastForward = () => {
-      if (audioRef.current !== null) audioRef.current.currentTime += 5;
+      if (audioRef.current !== null)
+        audioRef.current.seekTo(audioRef.current.getCurrentTime() + 5);
     };
 
     const revert = () => {
-      if (audioRef.current !== null) audioRef.current.currentTime -= 5;
+      if (audioRef.current !== null)
+        audioRef.current.seekTo(audioRef.current.getCurrentTime() - 5);
     };
 
-    const setDurationH = () => {
-      if (audioRef.current !== null) setAudioTime(audioRef.current.duration);
-    };
-
-    audioRef.current?.addEventListener("durationchange", setDurationH);
     playBtnRef.current?.addEventListener("click", handleAudio);
     revBtnRef.current?.addEventListener("click", revert);
     fwdBtnRef.current?.addEventListener("click", fastForward);
     return () => {
-      audioRef.current?.removeEventListener("durationchange", setDurationH);
       playBtnRef.current?.removeEventListener("click", handleAudio);
       revBtnRef.current?.removeEventListener("click", revert);
       fwdBtnRef.current?.removeEventListener("click", fastForward);
     };
   }, [isPlaying]);
 
-  useLayoutEffect(()=>{
-    const setCurrentTimeH = () => {
-      if (audioRef.current !== null) 
-      {
-        setAudioCurrentTime(audioRef.current.currentTime);
-        if(audioRef.current!.buffered.length > 0) setAudioBufferTime(audioRef.current!.buffered.end(0));
-        if (!isSliderMoving) setSliderValue(audioRef.current.currentTime);
-        else if(commited !== -1) {
-          audioRef.current.currentTime =commited;
-          setCommited(-1);
-        }
-      }
-    };
-    setCurrentTimeH();
-    const currentTimeH = setInterval(()=>{
-      setCurrentTimeH();
-      },1000)
-      return () => clearInterval(currentTimeH)
-  }, [isSliderMoving, commited])
+  useLayoutEffect(() => {
+    if (commited !== -1 && audioRef.current !== null) {
+      audioRef.current.seekTo(commited);
+      setCommited(-1);
+    }
+  }, [commited]);
 
-  useLayoutEffect(()=>{
-    if (audioRef.current !== null )
-    if(audioRef.current.error === null) setIsPlaying(!audioRef.current.paused);
-    else setIsPlaying(false);
-  }, [audioRef.current?.src])
+  useLayoutEffect(() => {
+    console.log(src);
+    if (audioRef.current !== null) setIsPlaying(true);
+  }, [src]);
+
+  const progressHandler = (state: ReactPlayerState) => {
+    setAudioCurrentTime(state.playedSeconds);
+    if (!isSliderMoving) setSliderValue(state.playedSeconds);
+    setAudioBufferTime(state.loadedSeconds);
+  };
+
+  const handleDuration = (duration: number) => {
+    if (audioRef.current !== null) setAudioTime(audioRef.current.getDuration());
+  };
 
   return (
     <Wrapper>
-      <audio
+      <ReactPlayer
         ref={audioRef}
+        playing={isPlaying}
+        url={src}
+        onDuration={handleDuration}
+        onProgress={progressHandler}
+        height={0}
+        width={0}
       />
       <PlayerWrapper>
         <TopDiv>
@@ -138,15 +145,27 @@ export const PlayerStickyDown: React.FC<PlayerStickyDownProps> = ({audioRef, nam
           </MidDiv>
           <BottomDiv>
             <CustomSliderDiv>
-              <LeftTime>{new Date(audioCurrentTime *1000).toISOString().substr(14, 5)}</LeftTime>
+              <LeftTime>
+                {new Date(audioCurrentTime * 1000).toISOString().substr(14, 5)}
+              </LeftTime>
               <CustomBuffer
                 variant="buffer"
-                value={audioCurrentTime*100/audioTime}
-                valueBuffer={audioBufferTime*100/audioTime + 10}
-                
+                value={(audioCurrentTime * 100) / audioTime}
+                valueBuffer={(audioBufferTime * 100) / audioTime + 10}
               />
-              <RightTime>{new Date(audioTime *1000).toISOString().substr(14, 5)}</RightTime>
-              <CustomSlider valueLabelDisplay="auto" valueLabelFormat={toMinuteSecond} ref={sliderRef} min={0} max={audioTime} value={sliderValue} onChange={handleChangeSlider} onChangeCommitted={handleChangeCommitSlider} />
+              <RightTime>
+                {new Date(audioTime * 1000).toISOString().substr(14, 5)}
+              </RightTime>
+              <CustomSlider
+                valueLabelDisplay="auto"
+                valueLabelFormat={toMinuteSecond}
+                ref={sliderRef}
+                min={0}
+                max={audioTime}
+                value={sliderValue}
+                onChange={handleChangeSlider}
+                onChangeCommitted={handleChangeCommitSlider}
+              />
             </CustomSliderDiv>
           </BottomDiv>
         </SCard>

@@ -1,6 +1,7 @@
 import { MyFormValues, useFormikUIHLS } from "../../components/hooks/useFormikUI";
 import { AxiosStatic } from "axios";
 import { FormikProps } from "formik";
+import FormData from "form-data";
 
 export const handleOnChangeUploadFormik = async (
     formData: FormData,
@@ -8,8 +9,10 @@ export const handleOnChangeUploadFormik = async (
     type: "file" | "image",
     fileName: string,
     axios: AxiosStatic,
-    formikInstance: FormikProps<MyFormValues>
+    formikInstance: FormikProps<MyFormValues>,
+    setUploaded: React.Dispatch<React.SetStateAction<boolean>>
   ) => {
+    setUploaded(false);
     const config = {
       headers: {
         "content-type": "multipart/form-data",
@@ -34,6 +37,7 @@ export const handleOnChangeUploadFormik = async (
         break;
     }
     console.log("response", response.data);
+    setUploaded(true)
   };
 
   export default handleOnChangeUploadFormik

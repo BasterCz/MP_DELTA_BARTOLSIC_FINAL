@@ -1,4 +1,5 @@
 import { AxiosStatic } from "axios";
+import utf8 from "utf8";
 import { PlaylistsQuery } from "../__generated__/lib/viewer.graphql";
 
 type updateSongProps = {
@@ -11,6 +12,8 @@ type updateSongProps = {
   imageName: string;
   axios: AxiosStatic;
   setValueIsSetAndLoaded?: React.Dispatch<React.SetStateAction<boolean>>;
+  setDeleteDataLoaded?: React.Dispatch<React.SetStateAction<boolean>>;
+  deleteDataLoaded?: boolean;
 };
 
 type ResponseType = {
@@ -27,26 +30,32 @@ export const updateSong = async ({
   fileName,
   imageName,
   axios,
-  setValueIsSetAndLoaded
+  setValueIsSetAndLoaded,
+  setDeleteDataLoaded,
+  deleteDataLoaded,
 }: updateSongProps) => {
   //* HLS create ↓
   const outputFN =
-    fileName.replaceAll(" ", "_").substr(0, fileName.lastIndexOf(".")) ||
-    fileName.replaceAll(" ", "_");
+    fileName.replaceAll(" ", "_").normalize("NFD").replace(/[\u0300-\u036f]/g, "").substr(0, fileName.lastIndexOf(".")) ||
+    fileName.replaceAll(" ", "_").normalize("NFD").replace(/[\u0300-\u036f]/g, "");
 
   const config = {
     headers: {
       _id: _id,
-      source: "./public/temp/" + fileName.replaceAll(" ", "_"),
+      source: "./public/temp/" + fileName.replaceAll(" ", "_").normalize("NFD").replace(/[\u0300-\u036f]/g, ""),
       destinationFolder: "./public/audio/" + outputFN,
-      destinationImage: "/img/" + imageName.replaceAll(" ", "_"),
+      destinationImage: "/img/" + imageName.replaceAll(" ", "_").normalize("NFD").replace(/[\u0300-\u036f]/g, ""),
       destinationFile: "/audio/" + outputFN + "/" + outputFN + ".m3u8",
       destination: "./public/audio/" + outputFN + "/" + outputFN + ".m3u8",
-      name: name + "",
+      name: utf8.encode(name) + "",
       isPublic: isPublic + "",
-      imageIsInitial: imageName.startsWith("/img/") + "",
+      imageIsInitial:
+        (imageName.startsWith("/img/") || imageName.startsWith("https://")) +
+        "",
       possibleInitialImage: imageName,
-      fileIsInitial: fileName.startsWith("/audio/") + "",
+      fileIsInitial:
+        (fileName.startsWith("/audio/") || imageName.startsWith("https://")) +
+        "",
       possibleInitialFile: fileName,
     },
   };
@@ -86,6 +95,8 @@ export const updateSong = async ({
       }
     );
   });
-  if(setValueIsSetAndLoaded)
-  setValueIsSetAndLoaded(false)
+  if (setValueIsSetAndLoaded && setDeleteDataLoaded && deleteDataLoaded) {
+    setValueIsSetAndLoaded(false);
+    if (deleteDataLoaded) setDeleteDataLoaded(false);
+  }
 };

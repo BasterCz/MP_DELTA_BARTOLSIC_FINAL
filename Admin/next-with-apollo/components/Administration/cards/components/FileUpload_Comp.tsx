@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import ReactPlayer from "react-player";
 import styled from "styled-components";
 import { palette } from "../../../../styles/palette";
+import FormData from "form-data";
 
 type FileUploadProps = {
   acceptedFileTypes?: string;
@@ -19,6 +20,7 @@ type FileUploadProps = {
   destination: string;
   type: "file" | "image";
   editFileName?: string;
+  uploaded: boolean;
 };
 
 export const FileUpload: React.FC<FileUploadProps> = ({
@@ -30,6 +32,7 @@ export const FileUpload: React.FC<FileUploadProps> = ({
   destination,
   type,
   editFileName,
+  uploaded
 }) => {
   const [fileName, setFileName] = useState("");
   const [setted, setSetted] = useState(false);
@@ -108,12 +111,13 @@ export const FileUpload: React.FC<FileUploadProps> = ({
               type="file"
             />
           </StyledForm>
+          {uploaded?
           <ReactPlayer
             forceAudio
             controls
-            url={!changed ? fileName : "/temp/" + fileName.replaceAll(" ", "_")}
-          />
-          
+            url={!changed ? fileName.replaceAll(" ", "_").normalize("NFD").replace(/[\u0300-\u036f]/g, "") : "/temp/" + fileName.replaceAll(" ", "_").normalize("NFD").replace(/[\u0300-\u036f]/g, "")}
+          />: null
+}
         </StyledContainer>
       )}
     </ThemeProvider>

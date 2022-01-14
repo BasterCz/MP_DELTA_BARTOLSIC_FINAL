@@ -1,5 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import nextConnect from "next-connect";
+import utf8 from "utf8";
 import hlsCreate from "../../lib/hlsCreate";
 import songEditMongoDB from "../../lib/songEditMongoDB";
 
@@ -10,6 +11,7 @@ const apiRoute = nextConnect({
 });
 
 apiRoute.post(async (req, res) => {
+  console.log("passed")
   if (req.headers["fileisinitial"] !== "true") {
     hlsCreate(
       req.headers["source"] as string,
@@ -17,10 +19,10 @@ apiRoute.post(async (req, res) => {
       req.headers["destination"] as string
     );
   }
-
+  console.log("passed")
   await songEditMongoDB(
     req.headers["_id"] as string,
-    req.headers["name"] as string,
+    utf8.decode(req.headers["name"] as string),
     req.headers["fileisinitial"] === "true" ? req.headers["possibleinitialfile"] as string : req.headers["destinationfile"] as string,
     req.headers["imageisinitial"] === "true" ? req.headers["possibleinitialimage"] as string :req.headers["destinationimage"] as string,
     (req.headers["ispublic"] as string) === "true"

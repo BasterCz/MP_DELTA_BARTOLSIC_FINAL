@@ -7,9 +7,6 @@ const apiRoute = nextConnect({
   onNoMatch(req: NextApiRequest, res: NextApiResponse) {
     res.status(405).json({ error: `Method '${req.method}' Not Allowed` });
   },
-  onError(res: NextApiResponse) {
-    res.status(511).json({ error: `Error occured while deleteing` });
-  },
 });
 
 apiRoute.post(async (req, res) => {

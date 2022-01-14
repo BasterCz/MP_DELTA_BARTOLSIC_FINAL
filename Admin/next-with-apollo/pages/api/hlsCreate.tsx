@@ -1,5 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import nextConnect from "next-connect";
+import utf8 from "utf8";
 import hlsCreate from "../../lib/hlsCreate";
 import songUploadMongoDB from "../../lib/songUploadMongoDB";
 
@@ -17,7 +18,7 @@ apiRoute.post(async (req, res) => {
     req.headers["destination"] as string
   );
   var response = await songUploadMongoDB(
-    req.headers["name"] as string,
+    utf8.decode(req.headers["name"] as string),
     req.headers["destinationfile"] as string,
     req.headers["destinationimage"] as string,
     (req.headers["ispublic"] as string) === "true"

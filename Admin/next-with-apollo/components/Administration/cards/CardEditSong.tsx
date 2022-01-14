@@ -7,11 +7,15 @@ import { useSongOne, useSongPlaylists } from "../../hooks/useSongs";
 
 type CardEditSongProps = {
   setEditSongVisible: () => void;
+  setDeleteDataLoaded: React.Dispatch<React.SetStateAction<boolean>>
+  deleteDataLoaded: boolean;
   songID: string;
 };
 
 export const CardEditSong: React.FC<CardEditSongProps> = ({
   setEditSongVisible,
+  setDeleteDataLoaded,
+  deleteDataLoaded,
   songID,
 }) => {
   const [initialValues, setInitialValues] = useState(
@@ -46,6 +50,8 @@ export const CardEditSong: React.FC<CardEditSongProps> = ({
         id={songID}
         initialValues={initialValues}
         setValueIsSetAndLoaded={setValueIsSetAndLoaded}
+        setDeleteDataLoaded={setDeleteDataLoaded}
+        deleteDataLoaded={deleteDataLoaded}
       />
     );
   else return null;

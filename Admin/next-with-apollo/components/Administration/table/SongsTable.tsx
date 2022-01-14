@@ -31,6 +31,7 @@ import CardAddSong from "../cards/CardAddSong";
 import CreateItem from "./components/CreateItem";
 import CardEditSong from "../cards/CardEditSong";
 import CardDeleteSong from "../cards/CardDeleteSong";
+import ReactPlayer from "react-player";
 
 type Data = {
   _id: string;
@@ -260,9 +261,11 @@ export const EnhancedTable: React.FC = () => {
   const [editSongID, setEditSongID] = useState("");
   const [deleteSongVisible, setDeleteSongVisible] = useState(false);
   const [deleteSongID, setDeleteSongID] = useState("");
+  const [deleteDataLoaded, setDeleteDataLoaded] = useState(false);
+  const [src, setSrc] = useState("");
 
   const { songs } = useSongMultiple();
-  const audioRef = useRef<HTMLAudioElement>(null);
+  const audioRef = useRef<ReactPlayer>(null);
   const sendPlayBtnRef = useRef<HTMLButtonElement>(null);
   const editBtnRef = useRef<HTMLButtonElement>(null);
   const deleteBtnRef = useRef<HTMLButtonElement>(null);
@@ -273,10 +276,8 @@ export const EnhancedTable: React.FC = () => {
 
   useEffect(() => {
     const handleChangeSrc = (_src: string) => {
-      if (audioRef.current !== null) {
-        audioRef.current.src = _src;
-        audioRef.current.play();
-      }
+        setSrc(_src);
+        console.log(_src)
     };
     if (sendPlayBtnRef.current !== null) {
       sendPlayBtnRef.current.addEventListener("click", () => {
@@ -419,7 +420,7 @@ export const EnhancedTable: React.FC = () => {
   };
 
   const handleDeleteSong = () => {
-    setDeleteSongVisible(!editSongVisible);
+    setDeleteSongVisible(!deleteSongVisible);
     setShowChild(!showChild);
   };
 
@@ -431,11 +432,12 @@ export const EnhancedTable: React.FC = () => {
   return (
     <ThemeProvider theme={palette}>
       <SBox sx={{ width: "100%", backgroundColor: "#2E3440" }}>
-        {createSongVisible ? (
+        {createSongVisible || editSongVisible || deleteSongVisible ? (
           <style jsx global>{`
             body {
               overflow: hidden;
             }
+
           `}</style>
         ) : (
           <style jsx global>{`
@@ -549,16 +551,16 @@ export const EnhancedTable: React.FC = () => {
         <Placeholder />
       </SBox>
       {showChild ? (
-        <PlayerStickyDown name={playingName} audioRef={audioRef} />
+        <PlayerStickyDown name={playingName} audioRef={audioRef} src={src} />
       ) : null}
       {createSongVisible ? (
         <CardAddSong setCreateSongVisible={handleCreateSong} />
       ) : null}
       {editSongVisible ? (
-        <CardEditSong songID={editSongID} setEditSongVisible={handleEditSong} />
+        <CardEditSong songID={editSongID} setEditSongVisible={handleEditSong} setDeleteDataLoaded={setDeleteDataLoaded} deleteDataLoaded={deleteDataLoaded} />
       ) : null}
       {deleteSongVisible ? (
-        <CardDeleteSong songID={editSongID} setDeleteSongVisible={handleDeleteSong} />
+        <CardDeleteSong songID={deleteSongID} setDeleteSongVisible={handleDeleteSong}/>
       ) : null}
     </ThemeProvider>
   );

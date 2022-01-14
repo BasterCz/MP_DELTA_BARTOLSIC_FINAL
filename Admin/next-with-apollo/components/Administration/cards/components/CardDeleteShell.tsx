@@ -25,13 +25,13 @@ import {
 import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
 import { ReactNode, useEffect, useState } from "react";
 import handleOnChangeUploadFormik from "../../../../extensions/api/formikOnChangeUpload";
+import PlaylistItem from "./PlaylistItem";
 
 type CardShellSongProps = {
   setCardVisible: () => void;
   iconSend: ReactNode;
   id?: string;
   initialValues: MyFormValues;
-  setValueIsSetAndLoaded?: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
 export const CardShellSong: React.FC<CardShellSongProps> = ({
@@ -41,7 +41,7 @@ export const CardShellSong: React.FC<CardShellSongProps> = ({
   initialValues,
 }) => {
   const [setted, setSetted] = useState(false);
-  const formikUI = useFormikDelete(axios, initialValues);
+  const formikUI = useFormikDelete(axios, initialValues, setCardVisible);
   const { handleSubmit, handleChange, values } = formikUI;
   useEffect(() => {
     if (initialValues !== undefined && !setted) setSetted(true);
@@ -63,17 +63,18 @@ export const CardShellSong: React.FC<CardShellSongProps> = ({
               </STypographyImportant>
               <STypography>
                 It will be removed form the following playlists aswell:
-                <List>
-                {values.playlists?.map((playlist) => {
-                  return (
-                    <ListItem>
-                      <Typography>{playlist?.name}</Typography>
-                    </ListItem>
-                  );
-                })}
-              </List>
               </STypography>
-              
+              <SList>
+                {values.playlists?.map((playlist) => 
+                    <SListItem key={playlist?._id}>
+                      <PlaylistItem
+                        id={playlist?._id ?? ""}
+                        image_path={playlist?.image_path ?? ""}
+                        name={playlist?.name ?? ""}
+                      />
+                    </SListItem>
+                )}
+              </SList>
             </FormGrid>
           </FormikProvider>
         </SCard>
@@ -284,8 +285,8 @@ const STypography = styled(Typography)`
     grid-row-end: 4;
   } ;
 `;
-const SFormControlLabel = styled(FormControlLabel)`
-  grid-column-start: 3;
+const SList = styled(List)`
+  grid-column-start: 2;
   grid-column-end: 5;
   grid-row-start: 7;
   grid-row-end: 8;
@@ -294,9 +295,13 @@ const SFormControlLabel = styled(FormControlLabel)`
     grid-column-end: 7;
   }
   @media only screen and (min-width: 481px) {
-    grid-column-start: 4;
+    grid-column-start: 2;
     grid-column-end: 5;
-    grid-row-start: 3;
-    grid-row-end: 4;
+    grid-row-start: 4;
+    grid-row-end: 9;
   } ;
 `;
+const SListItem = styled(ListItem)`
+  padding: 1px 0px 7px 0px;
+`;
+

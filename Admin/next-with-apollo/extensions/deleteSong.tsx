@@ -5,14 +5,14 @@ type updateSongProps = {
   _id: string;
   axios: AxiosStatic;
   fileName: string;
-  playlists: PlaylistsQuery["playlists"]; 
+  playlists: PlaylistsQuery["playlists"];
 };
 
 export const deleteSong = async ({
   _id,
   axios,
   fileName,
-  playlists
+  playlists,
 }: updateSongProps) => {
 
   playlists?.map(async (playlist) => {
