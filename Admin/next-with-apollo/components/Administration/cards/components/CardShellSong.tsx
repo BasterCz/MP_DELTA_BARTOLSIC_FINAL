@@ -31,6 +31,7 @@ type CardShellSongProps = {
   setValueIsSetAndLoaded?: React.Dispatch<React.SetStateAction<boolean>>;
   setDeleteDataLoaded?: React.Dispatch<React.SetStateAction<boolean>>;
   deleteDataLoaded?: boolean;
+  isAddSong? : boolean;
 };
 
 export const CardShellSong: React.FC<CardShellSongProps> = ({
@@ -41,6 +42,7 @@ export const CardShellSong: React.FC<CardShellSongProps> = ({
   setValueIsSetAndLoaded,
   setDeleteDataLoaded,
   deleteDataLoaded,
+  isAddSong
 }) => {
   const [setted, setSetted] = useState(false);
   const [uploaded, setUpload] = useState(false);
@@ -52,6 +54,7 @@ export const CardShellSong: React.FC<CardShellSongProps> = ({
     setValueIsSetAndLoaded,
     setDeleteDataLoaded,
     deleteDataLoaded
+    
   );
   const { handleSubmit, handleChange, values } = formikUI;
   useEffect(() => {
@@ -59,7 +62,6 @@ export const CardShellSong: React.FC<CardShellSongProps> = ({
   });
   return (
     <ThemeProvider theme={palette}>
-      defaultva
       <Wrap>
         <SCard
           sx={{
@@ -122,7 +124,7 @@ export const CardShellSong: React.FC<CardShellSongProps> = ({
                 control={<Checkbox defaultChecked />}
                 label="Public"
               />
-              {setted || values.playlists === [] ? (
+              {setted || values.playlists === [] || isAddSong ? (
                 <TagArray
                   playlists={playlists}
                   formikInstance={formikUI}
@@ -181,15 +183,17 @@ const SCard = styled(Card)`
 `;
 
 const Wrap = styled.div`
+
   background-color: rgba(0, 0, 0, 0.5);
   backdrop-filter: blur(10px);
   display: grid;
   align-content: center;
   height: 100vh;
   margin: 0;
-  position: absolute;
+  position: sticky;
   top: 0;
   left: 0;
+  z-index: 5;
   width: 100vw;
 `;
 

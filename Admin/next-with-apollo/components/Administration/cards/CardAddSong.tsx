@@ -9,7 +9,7 @@ type CardAddSongProps ={
 export const CardAddSong: React.FC<CardAddSongProps> = ({ setCreateSongVisible}) => {
 
   return (
-    <CardShellSong setCardVisible={setCreateSongVisible} iconSend={<FileUploadOutlinedIcon/>} />
+    <CardShellSong isAddSong={true} setCardVisible={setCreateSongVisible} iconSend={<FileUploadOutlinedIcon/>} />
   );
 };
 
