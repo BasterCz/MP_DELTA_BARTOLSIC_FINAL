@@ -24,7 +24,9 @@ export default function hlsCreate(
           `-start_number 0`,
           `-hls_time ${segmentTime}`,
           `-hls_list_size 0`,
+          `-crf 0`,
           `-f hls`,
+
         ])
         .noVideo()
         .output(resultFileName)

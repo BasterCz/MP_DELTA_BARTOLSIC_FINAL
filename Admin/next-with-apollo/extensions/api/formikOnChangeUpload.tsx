@@ -16,7 +16,9 @@ export const handleOnChangeUploadFormik = async (
     const config = {
       headers: {
         "content-type": "multipart/form-data",
-        destination: destination,
+        destination: destination.replaceAll(" ", "_")
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, ""),
       },
       onUploadProgress: (event: { loaded: number; total: number }) => {
         console.log(

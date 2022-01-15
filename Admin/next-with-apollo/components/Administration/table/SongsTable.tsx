@@ -436,6 +436,7 @@ export const EnhancedTable: React.FC = () => {
           <style jsx global>{`
             body {
               overflow: hidden;
+              background-color: #2E3440
             }
 
           `}</style>
@@ -443,6 +444,7 @@ export const EnhancedTable: React.FC = () => {
           <style jsx global>{`
             body {
               overflow: auto;
+              background-color: #2E3440
             }
           `}</style>
         )}

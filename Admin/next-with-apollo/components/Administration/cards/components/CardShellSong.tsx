@@ -27,8 +27,8 @@ type CardShellSongProps = {
   setCardVisible: () => void;
   iconSend: ReactNode;
   id?: string;
-  initialValues? : MyFormValues;
-  setValueIsSetAndLoaded? : React.Dispatch<React.SetStateAction<boolean>>;
+  initialValues?: MyFormValues;
+  setValueIsSetAndLoaded?: React.Dispatch<React.SetStateAction<boolean>>;
   setDeleteDataLoaded?: React.Dispatch<React.SetStateAction<boolean>>;
   deleteDataLoaded?: boolean;
 };
@@ -45,14 +45,21 @@ export const CardShellSong: React.FC<CardShellSongProps> = ({
   const [setted, setSetted] = useState(false);
   const [uploaded, setUpload] = useState(false);
   const { playlists } = usePlaylistMultiple();
-  const formikUI = useFormikUIHLS(axios, (id !== undefined), initialValues, setValueIsSetAndLoaded, setDeleteDataLoaded, deleteDataLoaded);
+  const formikUI = useFormikUIHLS(
+    axios,
+    id !== undefined,
+    initialValues,
+    setValueIsSetAndLoaded,
+    setDeleteDataLoaded,
+    deleteDataLoaded
+  );
   const { handleSubmit, handleChange, values } = formikUI;
   useEffect(() => {
-    if(initialValues !==undefined && !setted)
-    setSetted(true);
-  })
+    if (initialValues !== undefined && !setted) setSetted(true);
+  });
   return (
-    <ThemeProvider theme={palette}>defaultva
+    <ThemeProvider theme={palette}>
+      defaultva
       <Wrap>
         <SCard
           sx={{
@@ -74,6 +81,7 @@ export const CardShellSong: React.FC<CardShellSongProps> = ({
               <br />
               <ImageUpload
                 uploaded={uploaded}
+                setUpload={setUpload}
                 uploadFileName="theFiles"
                 onChange={(formData, destination, type, fileName) =>
                   handleOnChangeUploadFormik(
@@ -91,7 +99,8 @@ export const CardShellSong: React.FC<CardShellSongProps> = ({
                 editFileName={values.imageName}
               />
               <FileUpload
-              uploaded={uploaded}
+                uploaded={uploaded}
+                setUpload={setUpload}
                 label="Audio file upload"
                 uploadFileName="theFiles"
                 onChange={(formData, destination, type, fileName) =>
@@ -113,11 +122,14 @@ export const CardShellSong: React.FC<CardShellSongProps> = ({
                 control={<Checkbox defaultChecked />}
                 label="Public"
               />
-              {(setted || values.playlists === []) ?
-                <TagArray playlists={playlists} formikInstance={formikUI} initialPlaylists={values.playlists} />
-                : null
-              }
-              
+              {setted || values.playlists === [] ? (
+                <TagArray
+                  playlists={playlists}
+                  formikInstance={formikUI}
+                  initialPlaylists={values.playlists}
+                />
+              ) : null}
+
               <Placeholder />
               <br />
             </FormGrid>
@@ -142,7 +154,10 @@ export const CardShellSong: React.FC<CardShellSongProps> = ({
             top: "3vh",
             left: "3vw",
           }}
-          onClick={setCardVisible}
+          onClick={() => {
+            setUpload(false);
+            setCardVisible();
+          }}
         >
           <CloseRoundedIcon sx={{ fontSize: "2.5rem" }} />
         </Button>

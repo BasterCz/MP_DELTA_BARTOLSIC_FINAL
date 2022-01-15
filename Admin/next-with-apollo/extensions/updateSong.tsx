@@ -52,13 +52,14 @@ export const updateSong = async ({
       imageIsInitial:
         (imageName.startsWith("/img/") || imageName.startsWith("https://")) +
         "",
-      possibleInitialImage: imageName,
+      possibleInitialImage: utf8.encode(imageName),
       fileIsInitial:
         (fileName.startsWith("/audio/") || imageName.startsWith("https://")) +
         "",
-      possibleInitialFile: fileName,
+      possibleInitialFile: utf8.encode(fileName),
     },
   };
+  console.log(config);
   const response = await axios.post("/api/hlsUpdate", {}, config);
   const responseData = response.data as ResponseType;
   console.log(response.data);
