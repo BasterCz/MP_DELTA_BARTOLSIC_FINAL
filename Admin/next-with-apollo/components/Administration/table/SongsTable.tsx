@@ -252,7 +252,7 @@ export const EnhancedTable: React.FC = () => {
   const [selected, setSelected] = React.useState<readonly string[]>([]);
   const [selectedPanel, setSelectedPanel] = React.useState("");
   const [page, setPage] = React.useState(0);
-  const [rowsPerPage, setRowsPerPage] = React.useState(10);
+  const [rowsPerPage, setRowsPerPage] = React.useState(100);
   const [showChild, setShowChild] = useState(false);
   const [playingName, setPlayingName] = useState("");
   const [sorterVisible, setSorterVisible] = useState(false);
@@ -272,7 +272,11 @@ export const EnhancedTable: React.FC = () => {
 
   useEffect(() => {
     if (!showChild) setShowChild(true);
-  }, []);
+  });
+
+  useEffect(()=>{
+    if (window) setRowsPerPage(Math.floor(window.innerHeight/71)-3)
+  })
 
   useEffect(() => {
     const handleChangeSrc = (_src: string) => {
@@ -431,23 +435,22 @@ export const EnhancedTable: React.FC = () => {
 
   return (
     <ThemeProvider theme={palette}>
+      {createSongVisible ? (
+        <CardAddSong setCreateSongVisible={handleCreateSong} />
+      ) : null}
+      {editSongVisible ? (
+        <CardEditSong songID={editSongID} setEditSongVisible={handleEditSong} setDeleteDataLoaded={setDeleteDataLoaded} deleteDataLoaded={deleteDataLoaded} />
+      ) : null}
+      {deleteSongVisible ? (
+        <CardDeleteSong songID={deleteSongID} setDeleteSongVisible={handleDeleteSong}/>
+      ) : null}
       <SBox sx={{ width: "100%", backgroundColor: "#2E3440" }}>
-        {createSongVisible || editSongVisible || deleteSongVisible ? (
           <style jsx global>{`
             body {
-              overflow: hidden;
               background-color: #2E3440
             }
 
           `}</style>
-        ) : (
-          <style jsx global>{`
-            body {
-              overflow: auto;
-              background-color: #2E3440
-            }
-          `}</style>
-        )}
         <EnhancedTableToolbar
           onSelectAllClick={handleSelectAllClick}
           rowCount={rows?.length ?? 0}
@@ -466,11 +469,12 @@ export const EnhancedTable: React.FC = () => {
               rowCount={rows?.length ?? 0}
               isVisible={sorterVisible}
             />
-            <Pagination
-              sx={{ display: sorterVisible ? "table-header-group" : "none" }}
-              count={Math.ceil((rows?.length ?? 0) / 10)}
+            <SPagination
+              sx={{ display: sorterVisible ? "table-header-group" : "none",  height: "50px" }}
+              count={Math.ceil((rows?.length ?? 0) / rowsPerPage)}
               page={page + 1}
               onChange={handleChangePage}
+              
             />
             <TableBody>
               <TableRow
@@ -550,19 +554,15 @@ export const EnhancedTable: React.FC = () => {
             </TableBody>
           </Table>
         </TableContainer>
-        <Placeholder />
+        <SPagination
+              count={Math.ceil((rows?.length ?? 0) / rowsPerPage)}
+              page={page + 1}
+              onChange={handleChangePage}
+            />
+        <SPlaceholder />
       </SBox>
       {showChild ? (
         <PlayerStickyDown name={playingName} audioRef={audioRef} src={src} />
-      ) : null}
-      {createSongVisible ? (
-        <CardAddSong setCreateSongVisible={handleCreateSong} />
-      ) : null}
-      {editSongVisible ? (
-        <CardEditSong songID={editSongID} setEditSongVisible={handleEditSong} setDeleteDataLoaded={setDeleteDataLoaded} deleteDataLoaded={deleteDataLoaded} />
-      ) : null}
-      {deleteSongVisible ? (
-        <CardDeleteSong songID={deleteSongID} setDeleteSongVisible={handleDeleteSong}/>
       ) : null}
     </ThemeProvider>
   );
@@ -581,7 +581,17 @@ const STableCell = styled(TableCell)`
   border: 0px;
   padding: 5px 10px 5px 10px;
 `;
-const Placeholder = styled.div`
+const SPlaceholder = styled.div`
   height: 150px;
   width: 100%;
+`;
+const SPagination = styled(Pagination)`
+  
+  width: 100%;
+  ul {
+    height: 50px;
+    align-items: center;
+  justify-content:center;
+  }
+  
 `;

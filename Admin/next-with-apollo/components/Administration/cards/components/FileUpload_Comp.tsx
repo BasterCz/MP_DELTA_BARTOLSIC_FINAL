@@ -120,7 +120,7 @@ export const FileUpload: React.FC<FileUploadProps> = ({
                     {label}
                   </Button>
                   <input
-                    accept={acceptedFileTypes}
+                    // accept={acceptedFileTypes}
                     multiple={allowMultipleFiles}
                     name={uploadFileName}
                     onChange={onChangeHandler}
@@ -143,7 +143,7 @@ export const FileUpload: React.FC<FileUploadProps> = ({
                     <FileUploadRoundedIcon className="iconDark" />
                   </SButton>
                   <input
-                    accept={acceptedFileTypes}
+                    // accept={acceptedFileTypes}
                     multiple={allowMultipleFiles}
                     name={uploadFileName}
                     onChange={onChangeHandler}
@@ -154,7 +154,6 @@ export const FileUpload: React.FC<FileUploadProps> = ({
                 </form>
                 {uploaded ? (
                   <ReactPlayer
-                    forceAudio
                     controls
                     url={
                       !changed

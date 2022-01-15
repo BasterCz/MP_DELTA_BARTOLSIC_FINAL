@@ -118,18 +118,12 @@ export const PlayerStickyDown: React.FC<PlayerStickyDownProps> = ({
     <Wrapper>
       <ReactPlayer
         ref={audioRef}
-        forceHLS
-        forceAudio
         playing={isPlaying}
         url={src}
         onDuration={handleDuration}
         onProgress={progressHandler}
         height={0}
         width={0}
-      />
-      <ReactPlayer
-        url={"/audio/At_Rozkvete_Poust/At_Rozkvete_Poust.m3u8"}
-        controls
       />
       <PlayerWrapper>
         <TopDiv>

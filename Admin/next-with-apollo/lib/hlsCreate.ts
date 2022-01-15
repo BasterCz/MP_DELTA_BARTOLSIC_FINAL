@@ -24,7 +24,8 @@ export default function hlsCreate(
           `-start_number 0`,
           `-hls_time ${segmentTime}`,
           `-hls_list_size 0`,
-          `-crf 0`,
+          `-ar 44100`,
+          `-aq 10`,
           `-f hls`,
 
         ])
