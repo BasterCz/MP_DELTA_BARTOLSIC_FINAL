@@ -3,19 +3,12 @@ import { FormikProvider } from "formik";
 import axios from "axios";
 import styled from "styled-components";
 //* CUSTOM
-import { TagArray } from "./TagArray";
-import { ImageUpload } from "./ImageUpload_Comp";
-import { FileUpload } from "./FileUpload_Comp";
 import { MyFormValues, useFormikDelete } from "../../../hooks/useFormikDelete";
-import { usePlaylistMultiple } from "../../../hooks/usePlaylist";
 //* MUI
 import { palette } from "../../../../styles/palette";
 import {
   Fab,
   Card,
-  Checkbox,
-  FormControlLabel,
-  TextField,
   ThemeProvider,
   Button,
   Typography,
@@ -24,7 +17,6 @@ import {
 } from "@mui/material";
 import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
 import { ReactNode, useEffect, useState } from "react";
-import handleOnChangeUploadFormik from "../../../../extensions/api/formikOnChangeUpload";
 import PlaylistItem from "./PlaylistItem";
 
 type CardShellSongProps = {
@@ -48,7 +40,6 @@ export const CardShellSong: React.FC<CardShellSongProps> = ({
   });
   return (
     <ThemeProvider theme={palette}>
-      defaultva
       <Wrap>
         <SCard
           sx={{
@@ -127,9 +118,10 @@ const Wrap = styled.div`
   align-content: center;
   height: 100vh;
   margin: 0;
-  position: absolute;
+  position: sticky;
   top: 0;
   left: 0;
+  z-index: 5;
   width: 100vw;
 `;
 

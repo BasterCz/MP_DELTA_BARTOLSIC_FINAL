@@ -32,6 +32,8 @@ import CreateItem from "./components/CreateItem";
 import CardEditSong from "../cards/CardEditSong";
 import CardDeleteSong from "../cards/CardDeleteSong";
 import ReactPlayer from "react-player";
+import CardStatsSong from "../cards/CardStatsSong";
+import { useAddView } from "../../hooks/useViews";
 
 type Data = {
   _id: string;
@@ -249,96 +251,30 @@ const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
 export const EnhancedTable: React.FC = () => {
   const [order, setOrder] = React.useState<Order>("asc");
   const [orderBy, setOrderBy] = React.useState<keyof Data>("name");
+
   const [selected, setSelected] = React.useState<readonly string[]>([]);
   const [selectedPanel, setSelectedPanel] = React.useState("");
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(100);
-  const [showChild, setShowChild] = useState(false);
+  
+  const [smallPlayer, setSmallPlayer] = React.useState(false);
+
   const [playingName, setPlayingName] = useState("");
+  const [songID, setSongID] = useState("");
+  const [src, setSrc] = useState("");
+
   const [sorterVisible, setSorterVisible] = useState(false);
   const [createSongVisible, setCreateSongVisible] = useState(false);
   const [editSongVisible, setEditSongVisible] = useState(false);
-  const [editSongID, setEditSongID] = useState("");
   const [deleteSongVisible, setDeleteSongVisible] = useState(false);
-  const [deleteSongID, setDeleteSongID] = useState("");
+  const [statsSongVisible, setStatsSongVisible] = useState(false);
   const [deleteDataLoaded, setDeleteDataLoaded] = useState(false);
-  const [src, setSrc] = useState("");
 
   const { songs } = useSongMultiple();
   const audioRef = useRef<ReactPlayer>(null);
-  const sendPlayBtnRef = useRef<HTMLButtonElement>(null);
-  const editBtnRef = useRef<HTMLButtonElement>(null);
-  const deleteBtnRef = useRef<HTMLButtonElement>(null);
-
-  useEffect(() => {
-    if (!showChild) setShowChild(true);
-  });
 
   useEffect(()=>{
     if (window) setRowsPerPage(Math.floor(window.innerHeight/71)-3)
-  })
-
-  useEffect(() => {
-    const handleChangeSrc = (_src: string) => {
-        setSrc(_src);
-        console.log(_src)
-    };
-    if (sendPlayBtnRef.current !== null) {
-      sendPlayBtnRef.current.addEventListener("click", () => {
-        handleChangeSrc(sendPlayBtnRef.current!.value);
-        setPlayingName(sendPlayBtnRef.current!.name ?? "");
-      });
-    }
-    return () => {
-      if (sendPlayBtnRef.current !== null) {
-        sendPlayBtnRef.current.removeEventListener("click", () => {
-          handleChangeSrc(sendPlayBtnRef.current!.value);
-          setPlayingName(sendPlayBtnRef.current!.name ?? "");
-        });
-      }
-    };
-  });
-
-  useEffect(() => {
-    const handleChangeID = () => {
-      if (editBtnRef.current !== null) {
-        setEditSongID(editBtnRef.current.value);
-        handleEditSong();
-      }
-    };
-
-    if (editBtnRef.current !== null) {
-      if(!editSongVisible)
-      editBtnRef.current.addEventListener("click", () => handleChangeID());
-      else
-      editBtnRef.current.removeEventListener("click", () => handleChangeID());
-    }
-    return () => {
-      if (editBtnRef.current !== null) {
-        editBtnRef.current.removeEventListener("click", () => handleChangeID());
-      }
-    };
-  });
-
-  useEffect(() => {
-    const handleDeleteID = () => {
-      if (deleteBtnRef.current !== null) {
-        setDeleteSongID(deleteBtnRef.current.value);
-        handleDeleteSong();
-      }
-    };
-
-    if (deleteBtnRef.current !== null) {
-      if(!deleteSongVisible)
-      deleteBtnRef.current.addEventListener("click", () => handleDeleteID());
-      else
-      deleteBtnRef.current.removeEventListener("click", () => handleDeleteID());
-    }
-    return () => {
-      if (deleteBtnRef.current !== null) {
-        deleteBtnRef.current.removeEventListener("click", () => handleDeleteID());
-      }
-    };
   });
 
   const rows = songs?.map((song) => {
@@ -403,29 +339,47 @@ export const EnhancedTable: React.FC = () => {
     setPage(newPage - 1);
   };
 
-  const handleChangeRowsPerPage = (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0);
-  };
-
   const isSelected = (name: string) => selected.indexOf(name) !== -1;
   const isSelectedPanel = (name: string) => selectedPanel === name;
 
   const handleCreateSong = () => {
     setCreateSongVisible(!createSongVisible);
-    setShowChild(!showChild);
+    setSmallPlayer(!smallPlayer);
   };
 
   const handleEditSong = () => {
     setEditSongVisible(!editSongVisible);
-    setShowChild(!showChild);
+    setSmallPlayer(!smallPlayer);
   };
 
   const handleDeleteSong = () => {
     setDeleteSongVisible(!deleteSongVisible);
-    setShowChild(!showChild);
+    setSmallPlayer(!smallPlayer);
+  };
+
+  const handleStatsSong = () => {
+    setStatsSongVisible(!statsSongVisible);
+    setSmallPlayer(!smallPlayer);
+  };
+
+  const onPlayClick = (_src: string, _name: string) => {
+    setSrc(_src);
+    setPlayingName(_name);
+  };
+
+  const onEditClick = (_id: string) => {
+    setSongID(_id);
+    handleEditSong();
+  };
+
+  const onDeleteClick = (_id: string) => {
+    setSongID(_id);
+    handleDeleteSong();
+  }
+
+  const onStatsClick = (_id: string) => {
+    setSongID(_id);
+    handleStatsSong();
   };
 
   const emptyRows =
@@ -439,10 +393,13 @@ export const EnhancedTable: React.FC = () => {
         <CardAddSong setCreateSongVisible={handleCreateSong} />
       ) : null}
       {editSongVisible ? (
-        <CardEditSong songID={editSongID} setEditSongVisible={handleEditSong} setDeleteDataLoaded={setDeleteDataLoaded} deleteDataLoaded={deleteDataLoaded} />
+        <CardEditSong songID={songID} setEditSongVisible={handleEditSong} setDeleteDataLoaded={setDeleteDataLoaded} deleteDataLoaded={deleteDataLoaded} />
       ) : null}
       {deleteSongVisible ? (
-        <CardDeleteSong songID={deleteSongID} setDeleteSongVisible={handleDeleteSong}/>
+        <CardDeleteSong songID={songID} setDeleteSongVisible={handleDeleteSong}/>
+      ) : null}
+      {statsSongVisible ? (
+        <CardStatsSong songID={songID} setCardVisible={handleStatsSong} isVisible={statsSongVisible}/>
       ) : null}
       <SBox sx={{ width: "100%", backgroundColor: "#2E3440" }}>
           <style jsx global>{`
@@ -532,9 +489,10 @@ export const EnhancedTable: React.FC = () => {
                           image_path={row.image_path}
                           file_path={row.file_path}
                           name={row.name}
-                          btnRef={sendPlayBtnRef}
-                          editBtnRef={editBtnRef}
-                          deleteBtnRef={deleteBtnRef}
+                          onPlayClick={onPlayClick}
+                          onStatsClick={onStatsClick}
+                          onEditClick={onEditClick}
+                          onDeleteClick={onDeleteClick}
                           onClickDropDown={() => handlePanelClick(row._id)}
                           onClickMark={() => handleClick(row._id)}
                         />
@@ -561,9 +519,7 @@ export const EnhancedTable: React.FC = () => {
             />
         <SPlaceholder />
       </SBox>
-      {showChild ? (
-        <PlayerStickyDown name={playingName} audioRef={audioRef} src={src} />
-      ) : null}
+        <PlayerStickyDown name={playingName} audioRef={audioRef} src={src} small={smallPlayer} />
     </ThemeProvider>
   );
 };

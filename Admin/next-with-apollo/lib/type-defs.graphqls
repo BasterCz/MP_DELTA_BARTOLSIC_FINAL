@@ -5,6 +5,8 @@ type Query {
   song(_id: ID!): Song
   playlistSongs(_id: ID!): [Song]
   songPlaylists(_id: ID!): [Playlist]
+  objectViewsDate(_id: ID!, groupByMinutes: Int!): [DateView]
+  objectViews(_id: ID!): [CountView]
 }
 
 type Mutation {
@@ -46,6 +48,8 @@ type Mutation {
 
   playlistAddSong(_id: ID!, song: ID!): Boolean!
   playlistRemoveSong(_id: ID!, song: ID!): Boolean!
+
+  addView(_id: ID!): Boolean!
 }
 
 type Song {
@@ -72,4 +76,13 @@ type Playlist {
   modifiedDate: String
   isPublic: Boolean!
   _deleted: Boolean
+}
+
+type DateView {
+  _id: String!
+  count: Int!
+}
+
+type CountView {
+  count: Int!
 }

@@ -9,6 +9,7 @@ import Image from "next/image";
 import React from "react";
 import styled from "styled-components";
 import { Box } from "@mui/system";
+import { useAddView } from "../../../hooks/useViews";
 
 type InputProps = {
   selected: boolean;
@@ -19,25 +20,43 @@ type InputProps = {
   name: string;
   onClickDropDown: () => void;
   onClickMark: () => void;
-  btnRef: React.RefObject<HTMLButtonElement>;
-  editBtnRef: React.RefObject<HTMLButtonElement>;
-  deleteBtnRef: React.RefObject<HTMLButtonElement>;
+  onPlayClick: (_src: string, _name: string) => void;
+  onEditClick: (_id: string) => void;
+  onDeleteClick: (_id: string) => void;
+  onStatsClick: (_id: string) => void;
 };
 
-const SongItem: React.FC<InputProps> = (props: InputProps) => {
+const SongItem: React.FC<InputProps> = ({
+  selected,
+  selectedToArray,
+  id,
+  image_path,
+  file_path,
+  name,
+  onClickDropDown,
+  onClickMark,
+  onPlayClick,
+  onEditClick,
+  onDeleteClick,
+  onStatsClick,
+}) => {
+  const { addView } = useAddView();
   return (
     <Wrapper>
-      {props.selected ? (
-        <Card className={props.selectedToArray ? "selected" : ""}>
+      {selected ? (
+        <Card className={selectedToArray ? "selected" : ""}>
           <TopDiv>
-            <ImagePlace onClick={props.onClickMark}>
-              <SImage src={props.image_path} height={"61px"} width={"61px"} />
+            <ImagePlace onClick={onClickMark}>
+              <SImage src={image_path} height={"61px"} width={"61px"} />
             </ImagePlace>
-            <TextP>{props.name}<div> </div></TextP>
+            <TextP>
+              {name}
+              <div> </div>
+            </TextP>
             <ButtonDivDropdown>
               <StyledRoundButton
                 className="cstmbtn-invis"
-                onClick={props.onClickDropDown}
+                onClick={onClickDropDown}
               >
                 <KeyboardArrowUpRoundedIcon className="dropdown" />
               </StyledRoundButton>
@@ -45,37 +64,50 @@ const SongItem: React.FC<InputProps> = (props: InputProps) => {
           </TopDiv>
           <BottomDiv>
             <StyledRoundButton
-              ref={props.btnRef}
-              name={props.name}
-              value={props.file_path}
+              onClick={() => {
+                addView({ variables: { _id: id } });
+                onPlayClick(file_path, name);
+              }}
               className="cstmbtn-white cstmbtn-play"
             >
               <PlayArrowRoundedIcon className="play" />
             </StyledRoundButton>
             <ButtonGroup>
-              <StyledRoundButton className="cstmbtn-green cstmbtn-stats">
+              <StyledRoundButton
+                onClick={()=>onStatsClick(id)}
+                className="cstmbtn-green cstmbtn-stats"
+              >
                 <AssessmentRoundedIcon className="iconDark" />
               </StyledRoundButton>
-              <StyledRoundButton ref={props.editBtnRef} value={props.id} className="cstmbtn-blue cstmbtn-edit">
+              <StyledRoundButton
+                onClick={()=>onEditClick(id)}
+                className="cstmbtn-blue cstmbtn-edit"
+              >
                 <EditRoundedIcon className="iconDark" />
               </StyledRoundButton>
-              <StyledRoundButton ref={props.deleteBtnRef} value={props.id} className="cstmbtn-red cstmbtn-delete">
+              <StyledRoundButton
+                onClick={()=>onDeleteClick(id)}
+                className="cstmbtn-red cstmbtn-delete"
+              >
                 <DeleteRoundedIcon className="iconDark" />
               </StyledRoundButton>
             </ButtonGroup>
           </BottomDiv>
         </Card>
       ) : (
-        <CardUnselected className={props.selectedToArray ? "selected" : ""}>
+        <CardUnselected className={selectedToArray ? "selected" : ""}>
           <TopDiv>
-            <ImagePlace onClick={props.onClickMark}>
-              <SImage src={props.image_path} height={"61px"} width={"61px"} />
+            <ImagePlace onClick={onClickMark}>
+              <SImage src={image_path} height={"61px"} width={"61px"} />
             </ImagePlace>
-            <TextP>{props.name}<div> </div></TextP>
+            <TextP>
+              {name}
+              <div> </div>
+            </TextP>
             <ButtonDivDropdown>
               <StyledRoundButton
                 className="cstmbtn-invis "
-                onClick={props.onClickDropDown}
+                onClick={onClickDropDown}
               >
                 <KeyboardArrowDownRoundedIcon className="dropdown" />
               </StyledRoundButton>
@@ -190,7 +222,7 @@ const TextP = styled(Box)`
   overflow-x: scroll;
   white-space: nowrap;
   display: flex;
-  mask-image: linear-gradient(90deg, rgba(0, 0, 0, 1.0) 95%, transparent);
+  mask-image: linear-gradient(90deg, rgba(0, 0, 0, 1) 95%, transparent);
   div {
     min-width: 20px;
     height: 27px;
@@ -203,4 +235,5 @@ const TextP = styled(Box)`
 
 const SImage = styled(Image)`
   border-radius: 12px;
+  
 `;

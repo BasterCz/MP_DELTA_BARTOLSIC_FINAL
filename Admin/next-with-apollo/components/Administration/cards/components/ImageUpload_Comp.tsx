@@ -169,7 +169,7 @@ const DropDown = styled.div`
   justify-content: center;
   align-items: center;
   background-color: #009688;
-  border-radius: 4px;
+  border-radius: 15px;
   width: 40vw;
   height: 40vw;
   min-height: 70vw;
