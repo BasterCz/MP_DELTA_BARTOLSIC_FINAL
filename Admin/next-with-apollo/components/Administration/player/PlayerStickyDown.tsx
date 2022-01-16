@@ -18,6 +18,7 @@ type PlayerStickyDownProps = {
   audioRef: React.RefObject<ReactPlayer>;
   name: string;
   src: string;
+  small: boolean;
 };
 
 type ReactPlayerState = {
@@ -31,6 +32,7 @@ export const PlayerStickyDown: React.FC<PlayerStickyDownProps> = ({
   audioRef,
   name = "",
   src,
+  small,
 }) => {
   const [sliderValue, setSliderValue] = useState(0);
   const [commited, setCommited] = useState(-1);
@@ -117,6 +119,7 @@ export const PlayerStickyDown: React.FC<PlayerStickyDownProps> = ({
   return (
     <Wrapper>
       <ReactPlayer
+        config={src.includes(".m3u8") ? { file: { forceHLS: true } } : {}}
         ref={audioRef}
         playing={isPlaying}
         url={src}
@@ -125,9 +128,9 @@ export const PlayerStickyDown: React.FC<PlayerStickyDownProps> = ({
         height={0}
         width={0}
       />
-      <PlayerWrapper>
-        <TopDiv>
-          <ButtonGroupDiv>
+      <PlayerWrapper className={small? "smaller" : ""}>
+        <TopDiv className={"topDiv"}>
+          <ButtonGroupDiv className={small? "smallerTop" : ""}>
             <StyledRoundButton ref={revBtnRef} className="btn-smaller">
               <FastRewindRoundedIcon />
             </StyledRoundButton>
@@ -139,10 +142,13 @@ export const PlayerStickyDown: React.FC<PlayerStickyDownProps> = ({
             </StyledRoundButton>
           </ButtonGroupDiv>
         </TopDiv>
-        <SCard>
-          <MidDiv>
-            <Title>{name}</Title>
-          </MidDiv>
+        <SCard className={small? "smallerCard" : ""}>
+          {!small ? (
+            <MidDiv>
+              <Title>{name}</Title>
+            </MidDiv>
+          ) : null}
+
           <BottomDiv>
             <CustomSliderDiv>
               <LeftTime>
@@ -177,12 +183,45 @@ export default PlayerStickyDown;
 
 const Wrapper = styled.div`
   position: fixed;
+  z-index: 10;
   bottom: 0px;
   left: 0px;
+  .smaller {
+    height:110px;
+  }
+  .smaller .topDiv {
+    height:60px;
+  }
+  .smaller .smallerCard {
+    height:65px;
+  }
+
+  .smaller .smallerTop .btn-smaller {
+    height: inherit;
+  }
+  .smaller .smallerTop .btn-smaller {
+    max-width: 50px;
+    max-height: 50px;
+    min-width: 50px;
+    min-height: 50px;
+  }
+  .smaller .smallerTop .btn-smaller svg {
+    font-size: 1.7rem;
+  }
+  .smaller .smallerTop .btn-bigger {
+    max-width: 60px;
+    max-height: 60px;
+    min-width: 60px;
+    min-height: 60px;
+  }
+  .smaller .smallerTop .btn-bigger svg {
+    font-size: 2.5rem;
+  }
 `;
 const PlayerWrapper = styled.div`
   width: 100vw;
   height: 146px;
+  
 `;
 const SCard = styled(Card)`
   position: fixed;

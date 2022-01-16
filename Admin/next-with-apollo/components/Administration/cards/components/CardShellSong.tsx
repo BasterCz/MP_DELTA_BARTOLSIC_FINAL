@@ -31,7 +31,7 @@ type CardShellSongProps = {
   setValueIsSetAndLoaded?: React.Dispatch<React.SetStateAction<boolean>>;
   setDeleteDataLoaded?: React.Dispatch<React.SetStateAction<boolean>>;
   deleteDataLoaded?: boolean;
-  isAddSong? : boolean;
+  isAddSong?: boolean;
 };
 
 export const CardShellSong: React.FC<CardShellSongProps> = ({
@@ -42,7 +42,7 @@ export const CardShellSong: React.FC<CardShellSongProps> = ({
   setValueIsSetAndLoaded,
   setDeleteDataLoaded,
   deleteDataLoaded,
-  isAddSong
+  isAddSong,
 }) => {
   const [setted, setSetted] = useState(false);
   const [uploaded, setUpload] = useState(false);
@@ -54,7 +54,6 @@ export const CardShellSong: React.FC<CardShellSongProps> = ({
     setValueIsSetAndLoaded,
     setDeleteDataLoaded,
     deleteDataLoaded
-    
   );
   const { handleSubmit, handleChange, values } = formikUI;
   useEffect(() => {
@@ -121,7 +120,9 @@ export const CardShellSong: React.FC<CardShellSongProps> = ({
                 type="file"
               />
               <SFormControlLabel
-                control={<Checkbox defaultChecked />}
+                control={
+                  <Checkbox defaultChecked={values.isPublic} onChange={(event, checked) => formikUI.setFieldValue('isPublic', checked)}  />
+                }
                 label="Public"
               />
               {setted || values.playlists === [] || isAddSong ? (
@@ -183,7 +184,6 @@ const SCard = styled(Card)`
 `;
 
 const Wrap = styled.div`
-
   background-color: rgba(0, 0, 0, 0.5);
   backdrop-filter: blur(10px);
   display: grid;

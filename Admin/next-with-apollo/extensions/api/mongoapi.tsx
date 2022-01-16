@@ -147,7 +147,7 @@ export const playlistAddSong = async (_id: string, song: string) => {
 
   const update = {
     $addToSet: { songs: new ObjectId(song) },
-    $set : { modifiedDate: new Date(Date.now()) }
+    $set: { modifiedDate: new Date(Date.now()) },
   };
   const res = await db.collection("playlists").updateOne(
     {
@@ -205,4 +205,61 @@ export const songPlaylists = async (_id: string) => {
 
   const res = await db.collection("playlists").find(find).toArray();
   return res;
+};
+
+export const objectViewsDate = async (_id: string, groupByMinutes: number) => {
+  const { db } = await connectToDatabase();
+
+  const match = {
+    $match: { parentID: new ObjectId(_id) },
+  };
+
+  const group = {
+    $group: {
+      _id: {
+        $toDate: {
+          $subtract: [
+            { $toLong: "$time" },
+            { $mod: [{ $toLong: "$time" }, groupByMinutes] },
+          ],
+        },
+      },
+      count: { $sum: 1 },
+    },
+  };
+
+  const sort = {
+    $sort: { _id: 1}
+  }
+
+  const aggregate = [match, group, sort];
+
+  const res = await db.collection("viewStats").aggregate(aggregate).toArray();
+  return res;
+};
+
+export const objectViews = async (_id: string) => {
+  const { db } = await connectToDatabase();
+
+  const match = {
+    $match: {parentID: new ObjectId(_id)}
+  };
+
+  const group = {
+    $group: {_id: "$parentID", count: {$sum: 1}}
+  };
+
+  const aggregate = [match, group];
+
+  const res = await db.collection("viewStats").aggregate(aggregate).toArray();
+  return res;
+};
+
+export const addView = async (_id: string) => {
+  const { db } = await connectToDatabase();
+  const res = await db.collection("viewStats").insertOne({
+    parentID: new ObjectId(_id),
+    time: new Date(Date.now()),
+  });
+  return res.acknowledged;
 };

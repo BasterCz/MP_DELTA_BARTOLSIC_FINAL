@@ -154,6 +154,7 @@ export const FileUpload: React.FC<FileUploadProps> = ({
                 </form>
                 {uploaded ? (
                   <ReactPlayer
+                  config={fileName.includes(".m3u8")? {file: {forceHLS: true}}: {}}
                     controls
                     url={
                       !changed

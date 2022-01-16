@@ -66,6 +66,19 @@ query SongPlaylists($_id: ID!){
   }
 }
 
+query ObjectViewsDate($_id: ID!, $groupByMinutes: Int!) {
+  objectViewsDate(_id: $_id, groupByMinutes: $groupByMinutes) {
+    _id
+    count
+  }
+}
+
+query ObjectViews($_id: ID!) {
+  objectViews(_id: $_id) {
+    count
+  }
+}
+
 mutation SongsUpdate(
   $_id: ID!
   $name: String!
@@ -158,4 +171,8 @@ mutation PlaylistRemoveSong(
     _id: $_id
     song: $song
   )
+}
+
+mutation AddView($_id: ID!) {
+  addView (_id: $_id)
 }

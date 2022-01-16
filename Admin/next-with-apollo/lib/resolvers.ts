@@ -1,6 +1,6 @@
 import { QueryResolvers, MutationResolvers } from './type-defs.graphqls'
 import { ResolverContext } from './apollo'
-import { playlistAdd, playlistAddSong, playlistDelete, playlistGet, playlistGetOne, playlistRemoveSong, playlistSongs, playlistUpdate, songPlaylists, songsAdd, songsDelete, songsGet, songsGetOne, songsUpdate, } from '../extensions/api/mongoapi'
+import { addView, objectViews, objectViewsDate, playlistAdd, playlistAddSong, playlistDelete, playlistGet, playlistGetOne, playlistRemoveSong, playlistSongs, playlistUpdate, songPlaylists, songsAdd, songsDelete, songsGet, songsGetOne, songsUpdate, } from '../extensions/api/mongoapi'
 
 const Query: Required<QueryResolvers<ResolverContext>> = {
   async songs(_parent, args, _context, _info) {
@@ -20,6 +20,12 @@ const Query: Required<QueryResolvers<ResolverContext>> = {
   },
   async songPlaylists(_parent, args, _context, _info) {
     return await songPlaylists(args._id);
+  },
+  async objectViewsDate(_parent, args, _context, _info) {
+    return await objectViewsDate(args._id, args.groupByMinutes);
+  },
+  async objectViews(_parent, args, _context, _info) {
+    return await objectViews(args._id);
   },
 }
 
@@ -48,5 +54,8 @@ const Mutation: Required<MutationResolvers<ResolverContext>> = {
   async playlistRemoveSong(_parent, args, _context, _info) {
     return await playlistRemoveSong(args._id, args.song);
   },
+  async addView(_parent, args, _context, _info) {
+    return await addView(args._id);
+  }
 }
 export default { Query, Mutation }
