@@ -6,7 +6,7 @@ import {
   Typography,
 } from "@mui/material";
 import React, { SyntheticEvent } from "react";
-import { useRef, useLayoutEffect, useState } from "react";
+import { useRef, useEffect, useState } from "react";
 import styled from "styled-components";
 import PlayArrowRoundedIcon from "@mui/icons-material/PlayArrowRounded";
 import PauseRoundedIcon from "@mui/icons-material/PauseRounded";
@@ -66,7 +66,7 @@ export const PlayerStickyDown: React.FC<PlayerStickyDownProps> = ({
     setIsSliderMoving(false);
   };
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     const handleAudio = () => {
       if (!isPlaying) {
         setIsPlaying(true);
@@ -94,14 +94,14 @@ export const PlayerStickyDown: React.FC<PlayerStickyDownProps> = ({
     };
   }, [isPlaying]);
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     if (commited !== -1 && audioRef.current !== null) {
       audioRef.current.seekTo(commited);
       setCommited(-1);
     }
   }, [commited]);
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     console.log(src);
     if (audioRef.current !== null) setIsPlaying(true);
   }, [src]);
