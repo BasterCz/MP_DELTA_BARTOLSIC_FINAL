@@ -1,0 +1,178 @@
+
+
+fragment ClientPlaylist on Playlist {
+    _id
+    name
+    description
+    songs
+    image_path
+    createdDate
+    modifiedDate
+    isPublic
+    _deleted @client
+}
+
+query Playlist($_id: ID!) {
+  playlist (_id: $_id) {
+    ...ClientPlaylist 
+  }
+}
+
+query Playlists {
+  playlists {
+    ...ClientPlaylist
+  }
+}
+
+query Song($_id: ID!) {
+  song(_id: $_id) {
+    _id
+    name
+    file_path
+    image_path
+    createdDate
+    modifiedDate
+    isPublic
+  }
+}
+
+query Songs {
+  songs {
+    _id
+    name
+    file_path
+    image_path
+    createdDate
+    modifiedDate
+    isPublic
+  }
+}
+
+query PlaylistSongs($_id: ID!){
+  playlistSongs(_id: $_id) {
+    _id
+    name
+    file_path
+    image_path
+    createdDate
+    modifiedDate
+    isPublic
+  }
+}
+
+query SongPlaylists($_id: ID!){
+  songPlaylists(_id: $_id) {
+    ...ClientPlaylist
+  }
+}
+
+query ObjectViewsDate($_id: ID!, $groupByMinutes: Int!) {
+  objectViewsDate(_id: $_id, groupByMinutes: $groupByMinutes) {
+    _id
+    count
+  }
+}
+
+query ObjectViews($_id: ID!) {
+  objectViews(_id: $_id) {
+    count
+  }
+}
+
+mutation SongsUpdate(
+  $_id: ID!
+  $name: String!
+  $file_path: String!
+  $image_path: String!
+  $isPublic: Boolean!
+) {
+  songsUpdate(
+    _id: $_id
+    name: $name
+    file_path: $file_path
+    image_path: $image_path
+    isPublic: $isPublic
+  ) 
+}
+
+mutation PlaylistUpdate(
+  $_id: ID!
+  $name: String!
+  $description: String!
+  $songs: [ID!]!
+  $image_path: String!
+  $isPublic: Boolean!
+) {
+  playlistUpdate(
+    _id: $_id
+    name: $name
+    description: $description
+    songs: $songs
+    image_path: $image_path
+    isPublic: $isPublic
+  ) 
+}
+
+mutation SongsDelete($_id: ID!) {
+  songsDelete(_id: $_id) {
+    _id
+  }
+}
+
+mutation PlaylistDelete($_id: ID!) {
+  playlistDelete(_id: $_id) {
+    _id
+  }
+}
+
+mutation SongsAdd(
+  $name: String!
+  $file_path: String!
+  $image_path: String!
+  $isPublic: Boolean!
+) {
+  songsAdd(
+    name: $name
+    file_path: $file_path
+    image_path: $image_path
+    isPublic: $isPublic
+  ) 
+}
+mutation PlaylistAdd(
+  $name: String!
+  $description: String!
+  $songs: [ID!]!
+  $image_path: String!
+  $isPublic: Boolean!
+) {
+  playlistAdd(
+    name: $name
+    description: $description
+    songs: $songs
+    image_path: $image_path
+    isPublic: $isPublic
+  ) 
+}
+
+mutation PlaylistAddSong(
+  $_id: ID!
+  $song: ID!
+) {
+  playlistAddSong(
+    _id: $_id
+    song: $song
+  )
+}
+mutation PlaylistRemoveSong(
+  $_id: ID!
+  $song: ID!
+) {
+  playlistRemoveSong(
+    _id: $_id
+    song: $song
+  )
+}
+
+mutation AddView($_id: ID!) {
+  addView (_id: $_id)
+}

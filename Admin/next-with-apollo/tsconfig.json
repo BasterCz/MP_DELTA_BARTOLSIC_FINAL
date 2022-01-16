@@ -23,10 +23,14 @@
   "include": [
     "next-env.d.ts",
     "**/*.ts",
-    "**/*.tsx", 
-    "pages/_document.tsx"  
+    "**/*.tsx",
+    "pages/_document.tsx",
+    "additional.d.ts",
+    "pages/.showcase.tsx",
+    "components/Administration/cards/components/.showcase.tsx"
   ],
   "exclude": [
-    "node_modules"
+    "node_modules",
+    "public"
   ]
 }
