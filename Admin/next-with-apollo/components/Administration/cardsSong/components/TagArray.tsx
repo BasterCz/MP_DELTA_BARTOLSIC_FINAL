@@ -97,7 +97,7 @@ export const TagArray: React.FC<TagArrayProps> = ({
 
     getOptionLabel: (option) => {
       if (option) {
-        return option._id;
+        return option.name;
       } else {
         return "-1";
       }
@@ -255,7 +255,7 @@ const StyledFieldSet = styled.fieldset`
   .unshrunk {
     float: unset;
     display: block;
-    width: auto;
+    width: 100%;
     padding: 0;
     height: 11px;
     font-size: 0.75em;
@@ -368,7 +368,6 @@ const StyledTag = styled(Tag)<TagProps>`
 `;
 
 const Listbox = styled.ul`
-  width: 70vw;
   margin: 2px 0 0;
   padding: 0;
   position: relative;
