@@ -1,12 +1,11 @@
-import { MyFormValues, useFormikUIHLS } from "../../components/hooks/useFormikUI";
+import { MyFormValues, useFormikUIHLS } from "../../components/hooks/useFormikUIPlaylist";
 import { AxiosStatic } from "axios";
 import { FormikProps } from "formik";
 import FormData from "form-data";
 
-export const handleOnChangeUploadFormik = async (
+export const handleOnChangeUploadFormikPlaylist = async (
     formData: FormData,
     destination: string,
-    type: "file" | "image",
     fileName: string,
     axios: AxiosStatic,
     formikInstance: FormikProps<MyFormValues>,
@@ -29,17 +28,10 @@ export const handleOnChangeUploadFormik = async (
     };
     
     const response = await axios.post("/api/upload", formData, config);
-    
-    switch (type) {
-      case "file":
-        formikInstance.setFieldValue("fileName", fileName);
-        break;
-      case "image":
         formikInstance.setFieldValue("imageName", fileName);
-        break;
-    }
+    
     console.log("response", response.data);
     setUploaded(true)
   };
 
-  export default handleOnChangeUploadFormik
+  export default handleOnChangeUploadFormikPlaylist

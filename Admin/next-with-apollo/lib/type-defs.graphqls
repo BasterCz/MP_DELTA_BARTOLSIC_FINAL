@@ -22,7 +22,6 @@ type Mutation {
     _id: ID!
     name: String!
     description: String!
-    songs: [ID!]!
     image_path: String!
     isPublic: Boolean!
   ): Boolean!
@@ -41,7 +40,6 @@ type Mutation {
   playlistAdd(
     name: String!
     description: String!
-    songs: [ID!]!
     image_path: String!
     isPublic: Boolean!
   ): String!

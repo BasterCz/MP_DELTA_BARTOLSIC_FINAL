@@ -3,7 +3,7 @@ import { FormikProvider } from "formik";
 import axios from "axios";
 import styled from "styled-components";
 //* CUSTOM
-import { MyFormValues, useFormikDelete } from "../../../hooks/useFormikDelete";
+import { MyFormValues, useFormikDeleteSong } from "../../../hooks/useFormikDeleteSong";
 //* MUI
 import { palette } from "../../../../styles/palette";
 import {
@@ -33,7 +33,7 @@ export const CardShellSong: React.FC<CardShellSongProps> = ({
   initialValues,
 }) => {
   const [setted, setSetted] = useState(false);
-  const formikUI = useFormikDelete(axios, initialValues, setCardVisible);
+  const formikUI = useFormikDeleteSong(axios, initialValues, setCardVisible);
   const { handleSubmit, handleChange, values } = formikUI;
   useEffect(() => {
     if (initialValues !== undefined && !setted) setSetted(true);

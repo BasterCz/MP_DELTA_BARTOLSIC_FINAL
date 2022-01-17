@@ -12,7 +12,7 @@ export type MyFormValues = {
   
 }
 
-export const useFormikDelete = (axios: AxiosStatic, iniValues : MyFormValues, setCardVisible : ()=> void) => {
+export const useFormikDeleteSong = (axios: AxiosStatic, iniValues : MyFormValues, setCardVisible : ()=> void) => {
   const formikUI = useFormik({
     initialValues: iniValues,
     onSubmit: async (

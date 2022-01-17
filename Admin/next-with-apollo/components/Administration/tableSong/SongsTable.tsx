@@ -27,12 +27,12 @@ import DeleteRounded from "@mui/icons-material/DeleteRounded";
 import { useSongMultiple } from "../../hooks/useSongs";
 import FilterOptions from "./components/FilterOptions";
 import PlayerStickyDown from "../player/PlayerStickyDown";
-import CardAddSong from "../cards/CardAddSong";
+import CardAddSong from "../cardsSong/CardAddSong";
 import CreateItem from "./components/CreateItem";
-import CardEditSong from "../cards/CardEditSong";
-import CardDeleteSong from "../cards/CardDeleteSong";
+import CardEditSong from "../cardsSong/CardEditSong";
+import CardDeleteSong from "../cardsSong/CardDeleteSong";
 import ReactPlayer from "react-player";
-import CardStatsSong from "../cards/CardStatsSong";
+import CardStatsSong from "../cardsSong/CardStatsSong";
 import { useAddView } from "../../hooks/useViews";
 
 type Data = {

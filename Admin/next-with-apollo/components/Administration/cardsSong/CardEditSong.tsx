@@ -1,17 +1,21 @@
 import * as React from "react";
-import DeleteRoundedIcon from "@mui/icons-material/DeleteRounded";
+import CardShellSong from "./components/CardEditShellSong";
+import EditRoundedIcon from "@mui/icons-material/EditRounded";
 import { useState } from "react";
-import { MyFormValues } from "../../hooks/useFormikDelete";
+import { MyFormValues } from "../../hooks/useFormikUISong";
 import { useSongOne, useSongPlaylists } from "../../hooks/useSongs";
-import CardDeleteShell from "./components/CardDeleteShell";
 
-type CardDeleteSongProps = {
-  setDeleteSongVisible: () => void;
+type CardEditSongProps = {
+  setEditSongVisible: () => void;
+  setDeleteDataLoaded: React.Dispatch<React.SetStateAction<boolean>>
+  deleteDataLoaded: boolean;
   songID: string;
 };
 
-export const CardDeleteSong: React.FC<CardDeleteSongProps> = ({
-  setDeleteSongVisible,
+export const CardEditSong: React.FC<CardEditSongProps> = ({
+  setEditSongVisible,
+  setDeleteDataLoaded,
+  deleteDataLoaded,
   songID,
 }) => {
   const [initialValues, setInitialValues] = useState(
@@ -29,21 +33,25 @@ export const CardDeleteSong: React.FC<CardDeleteSongProps> = ({
   if (song && playlists_Song && !valueIsSetAndLoaded) {
     setInitialValues({
       _id: songID,
+      initialPlaylists: playlists_Song,
       playlists: playlists_Song,
+      isPublic: song.isPublic,
       name: song.name,
       fileName: song.file_path,
       imageName: song.image_path,
     });
-    console.log(playlists_Song);
     setValueIsSetAndLoaded(true);
   }
   if (initialValues !== undefined)
     return (
-      <CardDeleteShell
-        setCardVisible={setDeleteSongVisible}
-        iconSend={<DeleteRoundedIcon />}
+      <CardShellSong
+        setCardVisible={setEditSongVisible}
+        iconSend={<EditRoundedIcon />}
         id={songID}
         initialValues={initialValues}
+        setValueIsSetAndLoaded={setValueIsSetAndLoaded}
+        setDeleteDataLoaded={setDeleteDataLoaded}
+        deleteDataLoaded={deleteDataLoaded}
       />
     );
   else return null;
@@ -51,4 +59,4 @@ export const CardDeleteSong: React.FC<CardDeleteSongProps> = ({
 
 
 
-export default CardDeleteSong;
+export default CardEditSong;

@@ -99,7 +99,6 @@ mutation PlaylistUpdate(
   $_id: ID!
   $name: String!
   $description: String!
-  $songs: [ID!]!
   $image_path: String!
   $isPublic: Boolean!
 ) {
@@ -107,7 +106,6 @@ mutation PlaylistUpdate(
     _id: $_id
     name: $name
     description: $description
-    songs: $songs
     image_path: $image_path
     isPublic: $isPublic
   ) 
@@ -141,14 +139,12 @@ mutation SongsAdd(
 mutation PlaylistAdd(
   $name: String!
   $description: String!
-  $songs: [ID!]!
   $image_path: String!
   $isPublic: Boolean!
 ) {
   playlistAdd(
     name: $name
     description: $description
-    songs: $songs
     image_path: $image_path
     isPublic: $isPublic
   ) 

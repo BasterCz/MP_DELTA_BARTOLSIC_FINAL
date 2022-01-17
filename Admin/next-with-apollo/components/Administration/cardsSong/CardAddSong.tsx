@@ -1,6 +1,6 @@
 import * as React from "react";
 import FileUploadOutlinedIcon from "@mui/icons-material/FileUploadOutlined";
-import CardShellSong from "./components/CardShellSong";
+import CardShellSong from "./components/CardEditShellSong";
 
 type CardAddSongProps ={
   setCreateSongVisible: ()=>void

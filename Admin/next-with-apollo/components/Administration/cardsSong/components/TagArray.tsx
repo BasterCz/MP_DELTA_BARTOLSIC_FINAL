@@ -9,7 +9,7 @@ import { Chip } from "@mui/material";
 import { PlaylistsQuery } from "../../../../__generated__/lib/viewer.graphql";
 import { useState, useEffect } from "react";
 import { FormikProps } from "formik";
-import { MyFormValues } from "../../../hooks/useFormikUI";
+import { MyFormValues } from "../../../hooks/useFormikUISong";
 
 type TagArrayProps = {
   playlists?: PlaylistsQuery["playlists"];

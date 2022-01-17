@@ -1,9 +1,9 @@
 import * as React from "react";
 import DeleteRoundedIcon from "@mui/icons-material/DeleteRounded";
 import { useState } from "react";
-import { MyFormValues } from "../../hooks/useFormikDelete";
+import { MyFormValues } from "../../hooks/useFormikDeleteSong";
 import { useSongOne, useSongPlaylists } from "../../hooks/useSongs";
-import CardShellStats from "./components/CardShellStats";
+import CardShellStats from "./components/CardShellStatsSong";
 
 type CardDeleteSongProps = {
   setCardVisible: () => void;

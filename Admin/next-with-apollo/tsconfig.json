@@ -27,7 +27,7 @@
     "pages/_document.tsx",
     "additional.d.ts",
     "pages/.showcase.tsx",
-    "components/Administration/cards/components/.showcase.tsx"
+    "components/Administration/cardsSong/components/.showcase.tsx"
   ],
   "exclude": [
     "node_modules",

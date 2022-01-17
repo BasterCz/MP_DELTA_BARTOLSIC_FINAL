@@ -3,7 +3,7 @@ import axios from "axios";
 import styled from "styled-components";
 import LineGraph from "./LineGraph";
 //* CUSTOM
-import { MyFormValues, useFormikDelete } from "../../../hooks/useFormikDelete";
+import { MyFormValues, useFormikDeletePlaylist } from "../../../hooks/useFormikDeletePlaylist";
 //* MUI
 import { palette } from "../../../../styles/palette";
 import {
@@ -21,13 +21,13 @@ import {
 import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
 import { ReactNode, useEffect, useState } from "react";
 import { useViews, useViewsDate } from "../../../hooks/useViews";
-import { useSongOne } from "../../../hooks/useSongs";
+import { usePlaylistOne } from "../../../hooks/usePlaylist";
 import Image from "next/image";
 import VisibilityRoundedIcon from "@mui/icons-material/VisibilityRounded";
 import VisibilityOffRoundedIcon from "@mui/icons-material/VisibilityOffRounded";
 import BarChartRoundedIcon from "@mui/icons-material/BarChartRounded";
 
-type CardShellSongProps = {
+type CardShellPlaylistProps = {
   setCardVisible: () => void;
   isVisible: boolean;
   iconSend: ReactNode;
@@ -35,7 +35,7 @@ type CardShellSongProps = {
   initialValues: MyFormValues;
 };
 
-export const CardShellStats: React.FC<CardShellSongProps> = ({
+export const CardShellStats: React.FC<CardShellPlaylistProps> = ({
   setCardVisible,
   isVisible,
   iconSend,
@@ -43,10 +43,10 @@ export const CardShellStats: React.FC<CardShellSongProps> = ({
   initialValues,
 }) => {
   const [setted, setSetted] = useState(false);
-  const formikUI = useFormikDelete(axios, initialValues, setCardVisible);
+  const formikUI = useFormikDeletePlaylist(axios, initialValues, setCardVisible);
   const { data, refetch } = useViewsDate(id, 1000);
   const { views } = useViews(id);
-  const { song } = useSongOne(id, true, true);
+  const { playlist } = usePlaylistOne(id, true);
   const { handleSubmit, handleChange, values } = formikUI;
   useEffect(() => {
     if (initialValues !== undefined && !setted) setSetted(true);
@@ -56,7 +56,7 @@ export const CardShellStats: React.FC<CardShellSongProps> = ({
   }, [isVisible]);
   return (
     <ThemeProvider theme={palette}>
-      {song && data ? (
+      {playlist && data ? (
         <Wrap>
           <SCard
             sx={{
@@ -66,7 +66,7 @@ export const CardShellStats: React.FC<CardShellSongProps> = ({
           >
             <ImageWraper>
               <SImage
-                src={song?.image_path
+                src={playlist?.image_path
                   .replaceAll(" ", "_")
                   .normalize("NFD")
                   .replace(/[\u0300-\u036f]/g, "")}
@@ -77,7 +77,7 @@ export const CardShellStats: React.FC<CardShellSongProps> = ({
 
               />
               <VisibilityWraper>
-                {song?.isPublic ? (
+                {playlist?.isPublic ? (
                   <VisibilityRoundedIcon />
                 ) : (
                   <VisibilityOffRoundedIcon />
@@ -85,17 +85,17 @@ export const CardShellStats: React.FC<CardShellSongProps> = ({
               </VisibilityWraper>
             </ImageWraper>
             <TitleWraper>
-              <STypographyTitle>{song?.name}</STypographyTitle>
+              <STypographyTitle>{playlist?.name}</STypographyTitle>
             </TitleWraper>
-            {song ? (
+            {playlist ? (
               <DateWrapper>
                 <STypographyDate>
                   Created on{" "}
-                  {new Date(Number(song.createdDate!)).toLocaleString("cs-CZ")}
+                  {new Date(Number(playlist.createdDate!)).toLocaleString("cs-CZ")}
                 </STypographyDate>
                 <STypographyDate>
                   Modified on{" "}
-                  {new Date(Number(song.modifiedDate!)).toLocaleString("cs-CZ")}
+                  {new Date(Number(playlist.modifiedDate!)).toLocaleString("cs-CZ")}
                 </STypographyDate>
               </DateWrapper>
             ) : null}

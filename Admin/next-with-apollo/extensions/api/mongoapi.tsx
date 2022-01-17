@@ -61,7 +61,6 @@ export const playlistUpdate = async (
   _id: string,
   name: string,
   description: string,
-  songs: string[],
   image_path: string,
   isPublic: Boolean
 ) => {
@@ -71,7 +70,6 @@ export const playlistUpdate = async (
     $set: {
       name: name,
       description: description,
-      songs: songs,
       image_path: image_path,
       isPublic: isPublic,
       modifiedDate: new Date(Date.now()),
@@ -125,15 +123,15 @@ export const songsAdd = async (
 export const playlistAdd = async (
   name: string,
   description: string,
-  songs: string[],
   image_path: string,
-  isPublic: Boolean
+  isPublic: Boolean,
+  songs?: string[],
 ) => {
   const { db } = await connectToDatabase();
   const res = await db.collection("playlists").insertOne({
     name: name,
     description: description,
-    songs: songs,
+    songs: songs = [],
     image_path: image_path,
     isPublic: isPublic,
     createdDate: new Date(Date.now()),
