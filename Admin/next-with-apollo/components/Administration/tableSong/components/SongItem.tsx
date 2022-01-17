@@ -129,7 +129,7 @@ const Wrapper = styled.div`
 
 const Card = styled.div`
   background-color: #3b4252;
-  width: calc(100vw - 20px);
+  width: calc(100vw - 27px);
   height: 126px;
   border-radius: 15px;
   display: block;
@@ -137,7 +137,7 @@ const Card = styled.div`
 `;
 const CardUnselected = styled.div`
   background-color: #3b4252;
-  width: calc(100vw - 20px);
+  width: calc(100vw - 27px);
   height: 61px;
   border-radius: 15px;
   display: block;

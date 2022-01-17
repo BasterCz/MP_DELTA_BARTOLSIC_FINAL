@@ -194,7 +194,7 @@ const Wrap = styled.div`
   top: 0;
   left: 0;
   z-index: 5;
-  width: 100vw;
+  width: 100%;
 `;
 
 const FormGrid = styled.form`
