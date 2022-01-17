@@ -53,4 +53,6 @@ const AdminSongList: NextPage = () => {
 
 export default AdminSongList;
 
-const Wrapper = styled.div``;
+const Wrapper = styled.div`
+width: calc(100vw - 7px);
+`;

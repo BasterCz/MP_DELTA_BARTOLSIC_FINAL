@@ -57,7 +57,7 @@ const PlaylistItem: React.FC<InputProps> = ({
   `;
   const Card = styled.div`
     background-color: #3b4252;
-    width: calc(100vw - 20px);
+    width: calc(100vw - 27px);
     height: ${height}px;
     border-radius: 15px;
     display: block;
@@ -164,7 +164,7 @@ const Wrapper = styled.div`
 `;
 
 const CardUnselected = styled.div`
-  width: calc(100vw - 20px);
+  width: calc(100vw - 27px);
   height: 61px;
   border-radius: 15px;
   display: block;

@@ -19,3 +19,24 @@ a, button, .onClicable {
   -ms-touch-action: manipulation;
 	touch-action: manipulation;	
 }
+::-webkit-scrollbar {
+    width: 7px;
+    height: 7px;
+  }
+
+  /* Track */
+  ::-webkit-scrollbar-track {
+    background: var(--lightestgrey); 
+  }
+  
+  /* Handle */
+  ::-webkit-scrollbar-thumb {
+    background: rgba(255,255,255, 0.2); 
+    border-radius: 5px;
+  }
+
+  /* Handle on hover */
+  ::-webkit-scrollbar-thumb:hover {
+    background: rgba(255,255,255, 0.1); 
+    
+  }
