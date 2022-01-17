@@ -34,13 +34,13 @@ import CardDeletePlaylist from "../cardsPlaylist/CardDeletePlaylist";
 import ReactPlayer from "react-player";
 import CardStatsPlaylist from "../cardsPlaylist/CardStatsPlaylist";
 import { useAddView } from "../../hooks/useViews";
-import { SongQuery } from "../../../__generated__/lib/viewer.graphql";
+import { SongsQuery } from "../../../__generated__/lib/viewer.graphql";
 
 type Data = {
   _id: string;
   name: string;
   description: string;
-  songs: SongQuery["song"];
+  songs: [string];
   image_path: string;
   isPublic: boolean;
   modifiedDate: string;
@@ -53,7 +53,7 @@ const createData = (
   _id: string,
   name: string,
   description: string,
-  songs: SongQuery["song"],
+  songs: [string],
   image_path: string,
   isPublic: boolean,
   modifiedDate: string,
@@ -286,7 +286,7 @@ export const EnhancedTable: React.FC = () => {
       playlist?._id as string,
       playlist?.name as string,
       playlist?.description as string,
-      playlist?.songs as SongQuery["song"],
+      playlist?.songs as [string],
       playlist?.image_path as string,
       playlist?.isPublic as boolean,
       playlist?.modifiedDate as string,
@@ -368,6 +368,7 @@ export const EnhancedTable: React.FC = () => {
   };
 
   const onPlayClick = (_src: string, _name: string) => {
+    console.log(_src, _name);
     setSrc(_src);
     setPlayingName(_name);
   };
@@ -398,7 +399,7 @@ export const EnhancedTable: React.FC = () => {
         <CardAddPlaylist setCreatePlaylistVisible={handleCreatePlaylist} />
       ) : null}
       {editPlaylistVisible ? (
-        <CardEditPlaylist playlistID={playlistID} setEditPlaylistVisible={handleEditPlaylist} setDeleteDataLoaded={setDeleteDataLoaded} deleteDataLoaded={deleteDataLoaded} />
+        <CardEditPlaylist onPlayClick={onPlayClick} playlistID={playlistID} setEditPlaylistVisible={handleEditPlaylist} setDeleteDataLoaded={setDeleteDataLoaded} deleteDataLoaded={deleteDataLoaded} />
       ) : null}
       {deletePlaylistVisible ? (
         <CardDeletePlaylist playlistID={playlistID} setDeletePlaylistVisible={handleDeletePlaylist}/>

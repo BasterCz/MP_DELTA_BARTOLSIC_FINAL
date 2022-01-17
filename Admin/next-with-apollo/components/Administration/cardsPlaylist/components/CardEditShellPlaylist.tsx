@@ -20,10 +20,14 @@ import {
 import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
 import { ReactNode, useEffect, useState } from "react";
 import handleOnChangeUploadFormikPlaylist from "../../../../extensions/api/formikOnChangeUploadPlaylist";
+import PlaylistArray from "./PlaylistArray";
+import { SongsQuery } from "../../../../__generated__/lib/viewer.graphql";
 
 type CardShellPlaylistProps = {
   setCardVisible: () => void;
   iconSend: ReactNode;
+  songs?: SongsQuery["songs"];
+  onPlayClick?: (_src: string, _name: string) => void
   id?: string;
   initialValues?: MyFormValues;
   setValueIsSetAndLoaded?: React.Dispatch<React.SetStateAction<boolean>>;
@@ -35,10 +39,12 @@ export const CardShellPlaylist: React.FC<CardShellPlaylistProps> = ({
   setCardVisible,
   iconSend,
   id,
+  songs,
   initialValues,
   setValueIsSetAndLoaded,
   setDeleteDataLoaded,
   deleteDataLoaded,
+  onPlayClick,
 }) => {
   const [setted, setSetted] = useState(false);
   const [uploaded, setUpload] = useState(false);
@@ -54,6 +60,9 @@ export const CardShellPlaylist: React.FC<CardShellPlaylistProps> = ({
   useEffect(() => {
     if (initialValues !== undefined && !setted) setSetted(true);
   });
+  useEffect(()=>{
+    if(initialValues) formikUI.setFieldValue('songs', initialValues.songs)
+  }, [initialValues]);
   return (
     <ThemeProvider theme={palette}>
       <Wrap>
@@ -65,7 +74,7 @@ export const CardShellPlaylist: React.FC<CardShellPlaylistProps> = ({
         >
           <FormikProvider value={formikUI}>
             <FormGrid onSubmit={handleSubmit} id="addForm">
-              <STextField
+              <STextFieldTitle
                 id="name"
                 name="name"
                 label="Name"
@@ -74,7 +83,7 @@ export const CardShellPlaylist: React.FC<CardShellPlaylistProps> = ({
                 variant="outlined"
                 color="primary"
               />
-              <STextField
+              <STextFieldDescription
                 id="description"
                 name="description"
                 label="Description"
@@ -82,6 +91,8 @@ export const CardShellPlaylist: React.FC<CardShellPlaylistProps> = ({
                 onChange={handleChange}
                 variant="outlined"
                 color="primary"
+                multiline
+                rows={5}
               />
               <br />
               <ImageUpload
@@ -102,6 +113,7 @@ export const CardShellPlaylist: React.FC<CardShellPlaylistProps> = ({
                 type="image"
                 editFileName={values.imageName}
               />
+              {id?<SPlaylistArray initialSongs={songs} formikInstance={formikUI} playlistID={id} onPlayClick={onPlayClick!}/> : null }
               <SFormControlLabel
                 control={
                   <Checkbox defaultChecked={values.isPublic} onChange={(event, checked) => formikUI.setFieldValue('isPublic', checked)}  />
@@ -121,7 +133,7 @@ export const CardShellPlaylist: React.FC<CardShellPlaylistProps> = ({
           type="submit"
           sx={{
             position: "fixed",
-            bottom: "5vh",
+            bottom: "11.5vh",
             right: "10vw",
           }}
         >
@@ -148,11 +160,11 @@ export const CardShellPlaylist: React.FC<CardShellPlaylistProps> = ({
 export default CardShellPlaylist;
 
 const SCard = styled(Card)`
-  height: 80vh;
+  height: 70vh;
   width: 90%;
   max-width: 810px;
   padding: 3;
-  margin: 2.5vh auto auto auto;
+  margin: 0px auto auto auto;
   overflow: auto;
   @media only screen and (min-width: 481px) {
     height: auto;
@@ -186,11 +198,12 @@ const FormGrid = styled.form`
     70vw
     30px
     60px
-    30px
+    10px
+    150px
     60px
-    60px
-    60px
-    90px;
+    10px
+    auto
+    20px;
   @media only screen and (min-width: 376px) {
     grid-template-columns:
       calc((100% - 70vw) / 4) calc((100% - 70vw) / 4) 5vw 15vw 45vw 5vw calc(
@@ -198,15 +211,16 @@ const FormGrid = styled.form`
       )
       calc((100% - 70vw) / 4);
     grid-template-rows:
-      20px
-      60vw
-      30px
-      60px
-      30px
-      60px
-      60px
-      60px
-      90px;
+    20px
+    60vw
+    30px
+    60px
+    10px
+    150px
+    60px
+    10px
+    auto
+    20px;
   }
   @media only screen and (min-width: 425px) {
     grid-template-columns:
@@ -215,15 +229,16 @@ const FormGrid = styled.form`
       )
       calc((100% - 70vw) / 4);
     grid-template-rows:
-      20px
-      56vw
-      30px
-      60px
-      30px
-      60px
-      60px
-      60px
-      90px;
+    20px
+    56vw
+    30px
+    60px
+    10px
+    150px
+    60px
+    10px
+    auto
+    20px;
   }
   @media only screen and (min-width: 481px) {
     margin: auto;
@@ -241,7 +256,7 @@ const FormGrid = styled.form`
       60px
       60px
       30px
-      60px
+      auto
       37px;
   }
   @media only screen and (min-width: 751px) {
@@ -259,7 +274,7 @@ const FormGrid = styled.form`
       60px
       60px
       30px
-      60px
+      auto
       37px;
   }
   @media only screen and (min-width: 900px) {
@@ -287,11 +302,11 @@ const Placeholder = styled.div`
   } ;
 `;
 
-const STextField = styled(TextField)`
+const STextFieldTitle = styled(TextField)`
   grid-column-start: 3;
   grid-column-end: 5;
-  grid-row-start: 6;
-  grid-row-end: 7;
+  grid-row-start: 4;
+  grid-row-end: 5;
   @media only screen and (min-width: 376px) {
     grid-column-start: 3;
     grid-column-end: 7;
@@ -303,6 +318,26 @@ const STextField = styled(TextField)`
     grid-row-end: 3;
   } ;
 `;
+
+const STextFieldDescription = styled(TextField)`
+
+  grid-column-start: 3;
+  grid-column-end: 5;
+  grid-row-start: 6;
+  grid-row-end: 7;
+  @media only screen and (min-width: 376px) {
+    grid-column-start: 3;
+    grid-column-end: 7;
+  }
+  @media only screen and (min-width: 481px) {
+    margin-top: 20px;
+    grid-column-start: 4;
+    grid-column-end: 5;
+    grid-row-start: 3;
+    grid-row-end: 4;
+  } ;
+`;
+
 const SFormControlLabel = styled(FormControlLabel)`
   grid-column-start: 3;
   grid-column-end: 5;
@@ -315,7 +350,11 @@ const SFormControlLabel = styled(FormControlLabel)`
   @media only screen and (min-width: 481px) {
     grid-column-start: 4;
     grid-column-end: 5;
-    grid-row-start: 3;
-    grid-row-end: 4;
+    grid-row-start: 6;
+    grid-row-end: 7;
   } ;
 `;
+
+const SPlaylistArray = styled(PlaylistArray)`
+ 
+`

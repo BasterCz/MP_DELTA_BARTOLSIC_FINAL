@@ -44,7 +44,7 @@ export const usePlaylistMultiple = () => {
 }
 export const usePlaylistOne = (id: string, isReady : boolean) => {
     const { data: dataP, loading: loadingP, error: errorP } = usePlaylistQuery({ variables: { _id: id as string }, skip: Number.isNaN(id) });
-    const { data: dataS, loading: loadingS, error: errorS, startPolling } = usePlaylistSongsQuery({ variables: { _id: id as string }, skip: Number.isNaN(id) });
+    const { data: dataS, loading: loadingS, error: errorS, startPolling } = usePlaylistSongsQuery({ variables: { _id: id as string }, skip: Number.isNaN(id), pollInterval: 500 });
 
     const [songs, setSongs] = useState(dataS?.playlistSongs);
     const [playlist, setPlaylist] = useState(dataP?.playlist);

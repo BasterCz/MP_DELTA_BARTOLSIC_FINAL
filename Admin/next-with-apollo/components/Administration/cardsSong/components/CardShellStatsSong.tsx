@@ -3,7 +3,7 @@ import axios from "axios";
 import styled from "styled-components";
 import LineGraph from "./LineGraph";
 //* CUSTOM
-import { MyFormValues, useFormikDelete } from "../../../hooks/useFormikDeleteSong";
+import { MyFormValues, useFormikDeleteSong } from "../../../hooks/useFormikDeleteSong";
 //* MUI
 import { palette } from "../../../../styles/palette";
 import {
@@ -43,7 +43,7 @@ export const CardShellStats: React.FC<CardShellSongProps> = ({
   initialValues,
 }) => {
   const [setted, setSetted] = useState(false);
-  const formikUI = useFormikDelete(axios, initialValues, setCardVisible);
+  const formikUI = useFormikDeleteSong(axios, initialValues, setCardVisible);
   const { data, refetch } = useViewsDate(id, 1000);
   const { views } = useViews(id);
   const { song } = useSongOne(id, true, true);
