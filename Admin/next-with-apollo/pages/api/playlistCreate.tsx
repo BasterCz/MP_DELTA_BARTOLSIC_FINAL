@@ -12,9 +12,9 @@ const apiRoute = nextConnect({
 apiRoute.post(async (req, res) => {
   console.log(req.headers);
   var response = await playlistUploadMongoDB(
-    utf8.decode(req.headers["name"] as string),
-    utf8.decode(req.headers["description"] as string),
-    req.headers["imagePath"] as string,
+    utf8.decode(req.headers["name"] as string) + "",
+    utf8.decode(req.headers["description"] as string) + "",
+    req.headers["imagePath"]? req.headers["imagePath"] as string + "": "",
     (req.headers["ispublic"] as string) === "true"
   );
   res.status(200).json({ data: "success", _id: response });

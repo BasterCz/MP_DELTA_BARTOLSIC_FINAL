@@ -26,6 +26,7 @@ import Image from "next/image";
 import VisibilityRoundedIcon from "@mui/icons-material/VisibilityRounded";
 import VisibilityOffRoundedIcon from "@mui/icons-material/VisibilityOffRounded";
 import BarChartRoundedIcon from "@mui/icons-material/BarChartRounded";
+import HideImageRoundedIcon from '@mui/icons-material/HideImageRounded';
 
 type CardShellPlaylistProps = {
   setCardVisible: () => void;
@@ -65,8 +66,11 @@ export const CardShellStats: React.FC<CardShellPlaylistProps> = ({
             }}
           >
             <ImageWraper>
+            {playlist?.image_path === "" ? (
+                <HideImageRoundedIcon className="notfound" />
+              ) : (
               <SImage
-                src={playlist?.image_path
+                src={playlist?.image_path!
                   .replaceAll(" ", "_")
                   .normalize("NFD")
                   .replace(/[\u0300-\u036f]/g, "")}
@@ -75,7 +79,7 @@ export const CardShellStats: React.FC<CardShellPlaylistProps> = ({
                 width="500px"
                 quality="100"
 
-              />
+              />)}
               <VisibilityWraper>
                 {playlist?.isPublic ? (
                   <VisibilityRoundedIcon />
@@ -267,6 +271,12 @@ const SImage = styled(Image)`
 `;
 
 const ImageWraper = styled.div`
+  background-color: #001e3c;
+  background-image: linear-gradient(
+    rgba(255, 255, 255, 0.1),
+    rgba(255, 255, 255, 0.1)
+  );
+  border-radius: 15px;
   grid-column-start: 3;
   grid-column-end: 5;
   grid-row-start: 2;
@@ -292,6 +302,10 @@ const ImageWraper = styled.div`
   filter: drop-shadow(3px 5px 4px rgba(0, 0, 0, 0.2));
   display: flex;
   justify-content: center;
+  align-items: center;
+  .notfound {
+    font-size: 6rem;
+  }
 `;
 
 const TitleWraper = styled.div`

@@ -1,5 +1,5 @@
 import { Button, Typography } from "@mui/material";
-import FileUploadRoundedIcon from "@mui/icons-material/FileUploadRounded";
+import PlaylistAddRoundedIcon from '@mui/icons-material/PlaylistAddRounded';
 import AddRoundedIcon from "@mui/icons-material/AddRounded";
 import Image from "next/image";
 import React from "react";
@@ -15,9 +15,9 @@ const CreateItem: React.FC<CreateItemProps> = ({handleClick}) => {
       <CardUnselected>
         <TopDiv>
           <ImagePlace>
-            <FileUploadRoundedIcon />
+            <PlaylistAddRoundedIcon />
           </ImagePlace>
-          <TextP variant="body1">Upload playlist</TextP>
+          <TextP variant="body1">Create playlist</TextP>
           <ButtonDivDropdown>
             <StyledRoundButton onClick={handleClick} className="cstmbtn-invis ">
               <AddRoundedIcon className="dropdown" />

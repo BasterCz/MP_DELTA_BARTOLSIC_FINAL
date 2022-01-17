@@ -76,7 +76,7 @@ export const CardShellPlaylist: React.FC<CardShellPlaylistProps> = ({
           type="submit"
           sx={{
             position: "fixed",
-            bottom: "5vh",
+            bottom: "11.5vh",
             right: "10vw",
           }}
         >
@@ -100,7 +100,7 @@ export const CardShellPlaylist: React.FC<CardShellPlaylistProps> = ({
 export default CardShellPlaylist;
 
 const SCard = styled(Card)`
-  height: 80vh;
+  height: 70vh;
   width: 90%;
   max-width: 810px;
   padding: 3;

@@ -6,10 +6,14 @@ import AssessmentRoundedIcon from "@mui/icons-material/AssessmentRounded";
 import EditRoundedIcon from "@mui/icons-material/EditRounded";
 import DeleteRoundedIcon from "@mui/icons-material/DeleteRounded";
 import Image from "next/image";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import { Box } from "@mui/system";
 import { useAddView } from "../../../hooks/useViews";
+import { PlaylistsQuery, SongsQuery } from "../../../../__generated__/lib/viewer.graphql";
+import HideImageRoundedIcon from '@mui/icons-material/HideImageRounded';
+import SongItem from "./SongItem";
+import { usePlaylistOne } from "../../../hooks/usePlaylist";
 
 type InputProps = {
   selected: boolean;
@@ -38,6 +42,30 @@ const PlaylistItem: React.FC<InputProps> = ({
   onDeleteClick,
   onStatsClick,
 }) => {
+  const [height, setHeight] = useState(126);
+  const [setted, setSetted] = useState(false);
+
+  const { songs } = usePlaylistOne(id, true)
+
+  const MidDiv = styled.div`
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    height: calc(${height}px - 126px);
+  `;
+  const Card = styled.div`
+    background-color: #3b4252;
+    width: calc(100vw - 20px);
+    height: ${height}px;
+    border-radius: 15px;
+    display: block;
+    filter: drop-shadow(1px 3px 4px rgba(0, 0, 0, 0.2));
+  `;
+
+  useEffect(() => {setSetted(false)}, [songs])
+
   const { addView } = useAddView();
   return (
     <Wrapper>
@@ -45,7 +73,7 @@ const PlaylistItem: React.FC<InputProps> = ({
         <Card className={selectedToArray ? "selected" : ""}>
           <TopDiv>
             <ImagePlace onClick={onClickMark}>
-              <SImage src={image_path} height={"61px"} width={"61px"} />
+              {image_path && image_path !== ""?<SImage src={image_path} height={"61px"} width={"61px"} />:<HideImageRoundedIcon/>}
             </ImagePlace>
             <TextP>
               {name}
@@ -60,31 +88,41 @@ const PlaylistItem: React.FC<InputProps> = ({
               </StyledRoundButton>
             </ButtonDivDropdown>
           </TopDiv>
+          <MidDiv>
+            {songs?.map((song) => {
+              if (!setted) {
+                setHeight(126 + 69 * songs?.length + 6);
+                setSetted(true);
+              }
+              return (
+                <SongItem
+                  key={song?._id + id}
+                  id={song?._id!}
+                  playlistID={id}
+                  onPlayClick={onPlayClick}
+                />
+              );
+            })}
+          </MidDiv>
           <BottomDiv>
-            {/* <StyledRoundButton
-              onClick={() => {
-                addView({ variables: { _id: id } });
-                onPlayClick(file_path, name);
-              }}
-              className="cstmbtn-white cstmbtn-play"
-            >
+            <StyledRoundButton className="cstmbtn-white cstmbtn-play">
               <PlayArrowRoundedIcon className="play" />
-            </StyledRoundButton> */}
+            </StyledRoundButton>
             <ButtonGroup>
               <StyledRoundButton
-                onClick={()=>onStatsClick(id)}
+                onClick={() => onStatsClick(id)}
                 className="cstmbtn-green cstmbtn-stats"
               >
                 <AssessmentRoundedIcon className="iconDark" />
               </StyledRoundButton>
               <StyledRoundButton
-                onClick={()=>onEditClick(id)}
+                onClick={() => onEditClick(id)}
                 className="cstmbtn-blue cstmbtn-edit"
               >
                 <EditRoundedIcon className="iconDark" />
               </StyledRoundButton>
               <StyledRoundButton
-                onClick={()=>onDeleteClick(id)}
+                onClick={() => onDeleteClick(id)}
                 className="cstmbtn-red cstmbtn-delete"
               >
                 <DeleteRoundedIcon className="iconDark" />
@@ -96,7 +134,7 @@ const PlaylistItem: React.FC<InputProps> = ({
         <CardUnselected className={selectedToArray ? "selected" : ""}>
           <TopDiv>
             <ImagePlace onClick={onClickMark}>
-              <SImage src={image_path} height={"61px"} width={"61px"} />
+            {image_path && image_path !== ""?<SImage src={image_path} height={"61px"} width={"61px"} />:<HideImageRoundedIcon/>}
             </ImagePlace>
             <TextP>
               {name}
@@ -125,25 +163,17 @@ const Wrapper = styled.div`
   }
 `;
 
-const Card = styled.div`
-  background-color: #3b4252;
-  width: calc(100vw - 20px);
-  height: 126px;
-  border-radius: 15px;
-  display: block;
-  filter: drop-shadow(1px 3px 4px rgba(0, 0, 0, 0.2));
-`;
 const CardUnselected = styled.div`
-  background-color: #3b4252;
   width: calc(100vw - 20px);
   height: 61px;
   border-radius: 15px;
   display: block;
   filter: drop-shadow(1px 3px 4px rgba(0, 0, 0, 0.2));
+  background-color: #3b4252;
 `;
 const TopDiv = styled.div`
   width: 100%;
-  height: 50%;
+  height: 63px;
   .cstmbtn-invis {
     background-color: initial;
     transform: translate(0px, 6px);
@@ -175,6 +205,12 @@ const ImagePlace = styled.div`
   border-radius: 12px;
   transform: translate(5px, 5px);
   filter: drop-shadow(1px 3px 4px rgba(0, 0, 0, 0.2));
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  svg {
+    fill: #4c566a;
+  }
 `;
 const ButtonGroup = styled.div`
   transform: translate(calc(100% - 173px), -48px);
@@ -233,5 +269,4 @@ const TextP = styled(Box)`
 
 const SImage = styled(Image)`
   border-radius: 12px;
-  
 `;

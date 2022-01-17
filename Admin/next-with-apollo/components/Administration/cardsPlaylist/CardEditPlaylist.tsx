@@ -8,6 +8,7 @@ import { usePlaylistOne } from "../../hooks/usePlaylist";
 type CardEditPlaylistProps = {
   setEditPlaylistVisible: () => void;
   setDeleteDataLoaded: React.Dispatch<React.SetStateAction<boolean>>
+  onPlayClick: (_src: string, _name: string) => void
   deleteDataLoaded: boolean;
   playlistID: string;
 };
@@ -16,6 +17,7 @@ export const CardEditPlaylist: React.FC<CardEditPlaylistProps> = ({
   setEditPlaylistVisible,
   setDeleteDataLoaded,
   deleteDataLoaded,
+  onPlayClick,
   playlistID,
 }) => {
   const [initialValues, setInitialValues] = useState(
@@ -40,8 +42,10 @@ export const CardEditPlaylist: React.FC<CardEditPlaylistProps> = ({
   if (initialValues !== undefined)
     return (
       <CardShellPlaylist
+        onPlayClick={onPlayClick}
         setCardVisible={setEditPlaylistVisible}
         iconSend={<EditRoundedIcon />}
+        songs={songs}
         id={playlistID}
         initialValues={initialValues}
         setValueIsSetAndLoaded={setValueIsSetAndLoaded}

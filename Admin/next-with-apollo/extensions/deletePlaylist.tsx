@@ -25,4 +25,14 @@ export const deletePlaylist = async ({
       }
     );
   });
+
+  await axios.post(
+    "/api/playlistDelete",
+    {},
+    {
+      headers: {
+        id: _id as string,
+      },
+    }
+  );
 };

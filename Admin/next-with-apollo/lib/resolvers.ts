@@ -34,13 +34,13 @@ const Mutation: Required<MutationResolvers<ResolverContext>> = {
     return await songsUpdate(args._id, args.name, args.file_path, args.image_path, args.isPublic);
   },
   async playlistUpdate(_parent, args, _context, _info) {
-    return await playlistUpdate(args._id, args.name, args.description, args.songs, args.image_path, args.isPublic);
+    return await playlistUpdate(args._id, args.name, args.description, args.image_path, args.isPublic);
   },
   async songsAdd(_parent, args, _context, _info) {
     return await songsAdd(args.name, args.file_path, args.image_path, args.isPublic);
   },
   async playlistAdd(_parent, args, _context, _info) {
-    return await playlistAdd(args.name, args.description, args.songs, args.image_path, args.isPublic);
+    return await playlistAdd(args.name, args.description, args.image_path, args.isPublic);
   },
   async songsDelete(_parent, args, _context, _info) {
     return await songsDelete(args._id)

@@ -67,12 +67,12 @@ type MyID {
 type Playlist {
   _id: ID!
   name: String!
-  description: String!
+  description: String
   songs: [ID]
-  image_path: String!
+  image_path: String
+  isPublic: Boolean!
   createdDate: String
   modifiedDate: String
-  isPublic: Boolean!
   _deleted: Boolean
 }
 

@@ -6,9 +6,9 @@ fragment ClientPlaylist on Playlist {
     description
     songs
     image_path
+    isPublic
     createdDate
     modifiedDate
-    isPublic
     _deleted @client
 }
 

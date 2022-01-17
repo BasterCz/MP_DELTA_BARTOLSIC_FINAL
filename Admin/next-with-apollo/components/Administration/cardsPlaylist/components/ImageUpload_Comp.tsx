@@ -107,9 +107,10 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({
               onClick={onClickHandler}
               sx={{
                 bgcolor: "background.default",
+                borderRadius: "15px"
               }}
             >
-              {!uploaded || imageName.length === 0 ? (
+              {!uploaded || imageName === "" ? (
                 <SAddPhotoAlternateOutlinedIcon />
               ) : (
                 <Image

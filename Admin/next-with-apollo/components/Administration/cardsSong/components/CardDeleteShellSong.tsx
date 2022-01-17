@@ -76,7 +76,7 @@ export const CardShellSong: React.FC<CardShellSongProps> = ({
           type="submit"
           sx={{
             position: "fixed",
-            bottom: "5vh",
+            bottom: "10vh",
             right: "10vw",
           }}
         >

@@ -18,6 +18,8 @@ import {
   Tooltip,
   Typography,
   Pagination,
+  MenuItem,
+  Menu,
 } from "@mui/material";
 import { visuallyHidden } from "@mui/utils";
 import { palette } from "../../../styles/palette";
@@ -26,21 +28,17 @@ import ArrowCircleUpRoundedIcon from "@mui/icons-material/ArrowCircleUpRounded";
 import DeleteRounded from "@mui/icons-material/DeleteRounded";
 import { usePlaylistMultiple } from "../../hooks/usePlaylist";
 import FilterOptions, { DataFilter } from "./components/FilterOptions";
-import PlayerStickyDown from "../player/PlayerStickyDown";
 import CardAddPlaylist from "../cardsPlaylist/CardAddPlaylist";
 import CreateItem from "./components/CreateItem";
 import CardEditPlaylist from "../cardsPlaylist/CardEditPlaylist";
 import CardDeletePlaylist from "../cardsPlaylist/CardDeletePlaylist";
-import ReactPlayer from "react-player";
 import CardStatsPlaylist from "../cardsPlaylist/CardStatsPlaylist";
-import { useAddView } from "../../hooks/useViews";
-import { SongQuery } from "../../../__generated__/lib/viewer.graphql";
 
 type Data = {
   _id: string;
   name: string;
   description: string;
-  songs: SongQuery["song"];
+  songs: [string];
   image_path: string;
   isPublic: boolean;
   modifiedDate: string;
@@ -53,7 +51,7 @@ const createData = (
   _id: string,
   name: string,
   description: string,
-  songs: SongQuery["song"],
+  songs: [string],
   image_path: string,
   isPublic: boolean,
   modifiedDate: string,
@@ -179,12 +177,22 @@ type EnhancedTableToolbarProps = {
   setIsVisible: React.Dispatch<React.SetStateAction<boolean>>;
   rowCount: number;
   onSelectAllClick: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  setShowSongTable: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
 const handleSortBy = () => {};
 
 const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
-  const { numSelected, rowCount, onSelectAllClick } = props;
+  const { numSelected, rowCount, onSelectAllClick, setShowSongTable } = props;
+  
+  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const open = Boolean(anchorEl);
+  const handleClick = (event : React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
 
   return (
     <Toolbar
@@ -198,6 +206,7 @@ const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
               theme.palette.action.activatedOpacity
             ),
         }),
+        justifyContent: "space-between"
       }}
     >
       {numSelected > 0 ? (
@@ -219,15 +228,31 @@ const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
           {numSelected} selected
         </Typography>
       ) : (
-        <Typography
-          sx={{ flex: "1 1 100%" }}
+        
+        <div>
+          <Typography
+          sx={{ flex: "1 1 100%", backgroundColor: "rgba(0, 0, 0, 0.001)", outline: "0", border: "none"}}
           variant="h6"
           color="white"
           id="tableTitle"
-          component="div"
+          component="button"
+          onClick={handleClick}
         >
           Playlists
         </Typography>
+          <Menu
+        id="basic-menu"
+        anchorEl={anchorEl}
+        open={open}
+        onClose={handleClose}
+        MenuListProps={{
+          'aria-labelledby': 'basic-button',
+        }}
+      >
+        <MenuItem onClick={() => {handleClose(); setShowSongTable(false)}}>Playlists</MenuItem>
+        <MenuItem onClick={() => {handleClose(); setShowSongTable(true)}}>Songs</MenuItem>
+      </Menu>
+        </div>
       )}
       {numSelected > 0 ? (
         <Tooltip title="Delete">
@@ -252,7 +277,20 @@ const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
   );
 };
 
-export const EnhancedTable: React.FC = () => {
+type SettersType = {
+  setShowSongTable: React.Dispatch<React.SetStateAction<boolean>>;
+  setPlayingName: React.Dispatch<React.SetStateAction<string>>;
+  setSrc: React.Dispatch<React.SetStateAction<string>>;
+  setSmallPlayer: React.Dispatch<React.SetStateAction<boolean>>;
+  smallPlayer: boolean;
+}
+
+type EnhancedTableInputProps = {
+  setters: SettersType;
+}
+
+export const EnhancedTable: React.FC<EnhancedTableInputProps> = ({setters}) => {
+  const { setShowSongTable, setPlayingName, setSrc, setSmallPlayer, smallPlayer} = setters
   const [order, setOrder] = React.useState<Order>("asc");
   const [orderBy, setOrderBy] = React.useState<keyof Data>("name");
 
@@ -261,11 +299,7 @@ export const EnhancedTable: React.FC = () => {
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(100);
   
-  const [smallPlayer, setSmallPlayer] = React.useState(false);
-
-  const [playingName, setPlayingName] = useState("");
   const [playlistID, setPlaylistID] = useState("");
-  const [src, setSrc] = useState("");
 
   const [sorterVisible, setSorterVisible] = useState(false);
   const [createPlaylistVisible, setCreatePlaylistVisible] = useState(false);
@@ -275,8 +309,6 @@ export const EnhancedTable: React.FC = () => {
   const [deleteDataLoaded, setDeleteDataLoaded] = useState(false);
 
   const { playlists } = usePlaylistMultiple();
-  const audioRef = useRef<ReactPlayer>(null);
-
   useEffect(()=>{
     if (window) setRowsPerPage(Math.floor(window.innerHeight/71)-3)
   });
@@ -286,13 +318,15 @@ export const EnhancedTable: React.FC = () => {
       playlist?._id as string,
       playlist?.name as string,
       playlist?.description as string,
-      playlist?.songs as SongQuery["song"],
+      playlist?.songs as [string],
       playlist?.image_path as string,
       playlist?.isPublic as boolean,
       playlist?.modifiedDate as string,
       playlist?.createdDate as string
     );
   });
+
+  console.log(playlists);
 
   const handleRequestSort = (_orderBy: keyof Data, _order: Order = order) => {
     setOrder(_order);
@@ -368,6 +402,7 @@ export const EnhancedTable: React.FC = () => {
   };
 
   const onPlayClick = (_src: string, _name: string) => {
+    console.log(_src, _name);
     setSrc(_src);
     setPlayingName(_name);
   };
@@ -398,7 +433,7 @@ export const EnhancedTable: React.FC = () => {
         <CardAddPlaylist setCreatePlaylistVisible={handleCreatePlaylist} />
       ) : null}
       {editPlaylistVisible ? (
-        <CardEditPlaylist playlistID={playlistID} setEditPlaylistVisible={handleEditPlaylist} setDeleteDataLoaded={setDeleteDataLoaded} deleteDataLoaded={deleteDataLoaded} />
+        <CardEditPlaylist onPlayClick={onPlayClick} playlistID={playlistID} setEditPlaylistVisible={handleEditPlaylist} setDeleteDataLoaded={setDeleteDataLoaded} deleteDataLoaded={deleteDataLoaded} />
       ) : null}
       {deletePlaylistVisible ? (
         <CardDeletePlaylist playlistID={playlistID} setDeletePlaylistVisible={handleDeletePlaylist}/>
@@ -419,6 +454,7 @@ export const EnhancedTable: React.FC = () => {
           isVisible={sorterVisible}
           setIsVisible={setSorterVisible}
           numSelected={selected.length}
+          setShowSongTable={setShowSongTable}
         />
         <TableContainer sx={{ width: "100vw", display: "contents" }}>
           <Table aria-labelledby="tableTitle" size={"small"}>
@@ -430,6 +466,7 @@ export const EnhancedTable: React.FC = () => {
               onRequestSort={handleRequestSort}
               rowCount={rows?.length ?? 0}
               isVisible={sorterVisible}
+              
             />
             <SPagination
               sx={{ display: sorterVisible ? "table-header-group" : "none",  height: "50px" }}
@@ -523,7 +560,6 @@ export const EnhancedTable: React.FC = () => {
             />
         <SPlaceholder />
       </SBox>
-        <PlayerStickyDown name={playingName} audioRef={audioRef} src={src} small={smallPlayer} />
     </ThemeProvider>
   );
 };
