@@ -294,6 +294,8 @@ export const EnhancedTable: React.FC = () => {
     );
   });
 
+  console.log(playlists);
+
   const handleRequestSort = (_orderBy: keyof Data, _order: Order = order) => {
     setOrder(_order);
     setOrderBy(_orderBy);

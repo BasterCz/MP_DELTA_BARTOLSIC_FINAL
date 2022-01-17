@@ -11,6 +11,7 @@ import styled from "styled-components";
 import { Box } from "@mui/system";
 import { useAddView } from "../../../hooks/useViews";
 import { PlaylistsQuery, SongsQuery } from "../../../../__generated__/lib/viewer.graphql";
+import HideImageRoundedIcon from '@mui/icons-material/HideImageRounded';
 import SongItem from "./SongItem";
 import { usePlaylistOne } from "../../../hooks/usePlaylist";
 
@@ -72,7 +73,7 @@ const PlaylistItem: React.FC<InputProps> = ({
         <Card className={selectedToArray ? "selected" : ""}>
           <TopDiv>
             <ImagePlace onClick={onClickMark}>
-              <SImage src={image_path} height={"61px"} width={"61px"} />
+              {image_path && image_path !== ""?<SImage src={image_path} height={"61px"} width={"61px"} />:<HideImageRoundedIcon/>}
             </ImagePlace>
             <TextP>
               {name}
@@ -133,7 +134,7 @@ const PlaylistItem: React.FC<InputProps> = ({
         <CardUnselected className={selectedToArray ? "selected" : ""}>
           <TopDiv>
             <ImagePlace onClick={onClickMark}>
-              <SImage src={image_path} height={"61px"} width={"61px"} />
+            {image_path && image_path !== ""?<SImage src={image_path} height={"61px"} width={"61px"} />:<HideImageRoundedIcon/>}
             </ImagePlace>
             <TextP>
               {name}
@@ -204,6 +205,12 @@ const ImagePlace = styled.div`
   border-radius: 12px;
   transform: translate(5px, 5px);
   filter: drop-shadow(1px 3px 4px rgba(0, 0, 0, 0.2));
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  svg {
+    fill: #4c566a;
+  }
 `;
 const ButtonGroup = styled.div`
   transform: translate(calc(100% - 173px), -48px);

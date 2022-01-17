@@ -110,7 +110,7 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({
                 borderRadius: "15px"
               }}
             >
-              {!uploaded || imageName.length === 0 ? (
+              {!uploaded || imageName === "" ? (
                 <SAddPhotoAlternateOutlinedIcon />
               ) : (
                 <Image
