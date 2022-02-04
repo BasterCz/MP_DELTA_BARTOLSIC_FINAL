@@ -31,11 +31,11 @@ export const CardEditPlaylist: React.FC<CardEditPlaylistProps> = ({
     setInitialValues({
       _id: playlistID,
       name: playlist.name,
-      description: playlist.description,
+      description: playlist.description!,
       initialSongs: songs,
       songs: songs,
       isPublic: playlist.isPublic,
-      imageName: playlist.image_path,
+      imageName: playlist.image_path!,
     });
     setValueIsSetAndLoaded(true);
   }

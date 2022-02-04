@@ -20,6 +20,7 @@ import {
   Pagination,
   Menu,
   MenuItem,
+  TextField,
 } from "@mui/material";
 import { visuallyHidden } from "@mui/utils";
 import { palette } from "../../../styles/palette";
@@ -43,7 +44,6 @@ type Data = {
   modifiedDate: string;
   createdDate: string;
 };
-
 
 type Order = "asc" | "desc";
 
@@ -100,7 +100,6 @@ type EnhancedTableProps = {
 };
 
 const EnhancedTableHead = (props: EnhancedTableProps) => {
-  
   const {
     onSelectAllClick,
     order,
@@ -176,6 +175,7 @@ type EnhancedTableToolbarProps = {
   rowCount: number;
   onSelectAllClick: (event: React.ChangeEvent<HTMLInputElement>) => void;
   setShowSongTable: React.Dispatch<React.SetStateAction<boolean>>;
+  onSearchChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
 };
 
 const handleSortBy = () => {};
@@ -185,13 +185,12 @@ const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
 
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
-  const handleClick = (event : React.MouseEvent<HTMLButtonElement>) => {
+  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
   };
   const handleClose = () => {
     setAnchorEl(null);
   };
-
 
   return (
     <Toolbar
@@ -205,7 +204,8 @@ const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
               theme.palette.action.activatedOpacity
             ),
         }),
-        justifyContent: "space-between"
+        justifyContent: "space-between",
+        height: "80px",
       }}
     >
       {numSelected > 0 ? (
@@ -229,30 +229,47 @@ const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
       ) : (
         <div>
           <Typography
-          sx={{ flex: "1 1 100%", backgroundColor: "rgba(0, 0, 0, 0.001)", outline: "0", border: "none"}}
-          variant="h6"
-          color="white"
-          id="tableTitle"
-          component="button"
-          onClick={handleClick}
-        >
-          Songs
-        </Typography>
+            sx={{
+              flex: "1 1 100%",
+              backgroundColor: "rgba(0, 0, 0, 0.001)",
+              outline: "0",
+              border: "none",
+            }}
+            variant="h6"
+            color="white"
+            id="tableTitle"
+            component="button"
+            onClick={handleClick}
+          >
+            Songs
+          </Typography>
           <Menu
-        id="basic-menu"
-        anchorEl={anchorEl}
-        open={open}
-        onClose={handleClose}
-        MenuListProps={{
-          'aria-labelledby': 'basic-button',
-        }}
-      >
-        <MenuItem onClick={() => {handleClose(); setShowSongTable(false)}}>Playlists</MenuItem>
-        <MenuItem onClick={() => {handleClose(); setShowSongTable(true)}}>Songs</MenuItem>
-      </Menu>
+            id="basic-menu"
+            anchorEl={anchorEl}
+            open={open}
+            onClose={handleClose}
+            MenuListProps={{
+              "aria-labelledby": "basic-button",
+            }}
+          >
+            <MenuItem
+              onClick={() => {
+                handleClose();
+                setShowSongTable(false);
+              }}
+            >
+              Playlists
+            </MenuItem>
+            <MenuItem
+              onClick={() => {
+                handleClose();
+                setShowSongTable(true);
+              }}
+            >
+              Songs
+            </MenuItem>
+          </Menu>
         </div>
-        
-        
       )}
       {numSelected > 0 ? (
         <Tooltip title="Delete">
@@ -261,22 +278,30 @@ const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
           </IconButton>
         </Tooltip>
       ) : (
-        <div>
-          <Tooltip title="Filter list">
-            <IconButton onClick={() => props.setIsVisible(!props.isVisible)}>
-              {props.isVisible ? (
-                <ArrowCircleUpRoundedIcon />
-              ) : (
-                <ArrowCircleDownRoundedIcon />
-              )}
-            </IconButton>
-          </Tooltip>
-        </div>
+        [
+          <TextField
+            label="Search"
+            variant="outlined"
+            color="success"
+            sx={{ width: "70%" }}
+            onChange={props.onSearchChange}
+          />,
+          <div>
+            <Tooltip title="Filter list">
+              <IconButton onClick={() => props.setIsVisible(!props.isVisible)}>
+                {props.isVisible ? (
+                  <ArrowCircleUpRoundedIcon />
+                ) : (
+                  <ArrowCircleDownRoundedIcon />
+                )}
+              </IconButton>
+            </Tooltip>
+          </div>,
+        ]
       )}
     </Toolbar>
   );
 };
-
 
 type SettersType = {
   setShowSongTable: React.Dispatch<React.SetStateAction<boolean>>;
@@ -284,24 +309,32 @@ type SettersType = {
   setSrc: React.Dispatch<React.SetStateAction<string>>;
   setSmallPlayer: React.Dispatch<React.SetStateAction<boolean>>;
   smallPlayer: boolean;
-}
+};
 
 type EnhancedTableInputProps = {
   setters: SettersType;
-}
+};
 
-export const EnhancedTable: React.FC<EnhancedTableInputProps> = ({setters}) => {
-  const { setShowSongTable, setPlayingName, setSrc, setSmallPlayer, smallPlayer} = setters
+export const EnhancedTable: React.FC<EnhancedTableInputProps> = ({
+  setters,
+}) => {
+  const {
+    setShowSongTable,
+    setPlayingName,
+    setSrc,
+    setSmallPlayer,
+    smallPlayer,
+  } = setters;
   const [order, setOrder] = React.useState<Order>("asc");
   const [orderBy, setOrderBy] = React.useState<keyof Data>("name");
+  const [searchFor, setSearchFor] = React.useState("");
 
   const [selected, setSelected] = React.useState<readonly string[]>([]);
   const [selectedPanel, setSelectedPanel] = React.useState("");
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(100);
- 
+
   const [songID, setSongID] = useState("");
-  
 
   const [sorterVisible, setSorterVisible] = useState(false);
   const [createSongVisible, setCreateSongVisible] = useState(false);
@@ -311,10 +344,9 @@ export const EnhancedTable: React.FC<EnhancedTableInputProps> = ({setters}) => {
   const [deleteDataLoaded, setDeleteDataLoaded] = useState(false);
 
   const { songs } = useSongMultiple();
-  
 
-  useEffect(()=>{
-    if (window) setRowsPerPage(Math.floor(window.innerHeight/71)-3)
+  useEffect(() => {
+    if (window) setRowsPerPage(Math.floor(window.innerHeight / 71) - 3);
   });
 
   const rows = songs?.map((song) => {
@@ -415,11 +447,15 @@ export const EnhancedTable: React.FC<EnhancedTableInputProps> = ({setters}) => {
   const onDeleteClick = (_id: string) => {
     setSongID(_id);
     handleDeleteSong();
-  }
+  };
 
   const onStatsClick = (_id: string) => {
     setSongID(_id);
     handleStatsSong();
+  };
+
+  const onSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchFor(event.target.value);
   };
 
   const emptyRows =
@@ -433,21 +469,32 @@ export const EnhancedTable: React.FC<EnhancedTableInputProps> = ({setters}) => {
         <CardAddSong setCreateSongVisible={handleCreateSong} />
       ) : null}
       {editSongVisible ? (
-        <CardEditSong songID={songID} setEditSongVisible={handleEditSong} setDeleteDataLoaded={setDeleteDataLoaded} deleteDataLoaded={deleteDataLoaded} />
+        <CardEditSong
+          songID={songID}
+          setEditSongVisible={handleEditSong}
+          setDeleteDataLoaded={setDeleteDataLoaded}
+          deleteDataLoaded={deleteDataLoaded}
+        />
       ) : null}
       {deleteSongVisible ? (
-        <CardDeleteSong songID={songID} setDeleteSongVisible={handleDeleteSong}/>
+        <CardDeleteSong
+          songID={songID}
+          setDeleteSongVisible={handleDeleteSong}
+        />
       ) : null}
       {statsSongVisible ? (
-        <CardStatsSong songID={songID} setCardVisible={handleStatsSong} isVisible={statsSongVisible}/>
+        <CardStatsSong
+          songID={songID}
+          setCardVisible={handleStatsSong}
+          isVisible={statsSongVisible}
+        />
       ) : null}
       <SBox sx={{ width: "100%", backgroundColor: "#2E3440" }}>
-          <style jsx global>{`
-            body {
-              background-color: #2E3440
-            }
-
-          `}</style>
+        <style jsx global>{`
+          body {
+            background-color: #2e3440;
+          }
+        `}</style>
         <EnhancedTableToolbar
           onSelectAllClick={handleSelectAllClick}
           rowCount={rows?.length ?? 0}
@@ -455,6 +502,7 @@ export const EnhancedTable: React.FC<EnhancedTableInputProps> = ({setters}) => {
           setIsVisible={setSorterVisible}
           numSelected={selected.length}
           setShowSongTable={setShowSongTable}
+          onSearchChange={onSearchChange}
         />
         <TableContainer sx={{ width: "100vw", display: "contents" }}>
           <Table aria-labelledby="tableTitle" size={"small"}>
@@ -468,11 +516,26 @@ export const EnhancedTable: React.FC<EnhancedTableInputProps> = ({setters}) => {
               isVisible={sorterVisible}
             />
             <SPagination
-              sx={{ display: sorterVisible ? "table-header-group" : "none",  height: "50px" }}
-              count={Math.ceil((rows?.length ?? 0) / rowsPerPage)}
+              sx={{
+                display: sorterVisible ? "table-header-group" : "none",
+                height: "50px",
+              }}
+              count={Math.ceil(
+                (rows?.filter((item) =>
+                  item.name
+                    .normalize("NFD")
+                    .replace(/[\u0300-\u036f]/g, "")
+                    .toLowerCase()
+                    .includes(
+                      searchFor
+                        .normalize("NFD")
+                        .replace(/[\u0300-\u036f]/g, "")
+                        .toLowerCase()
+                    )
+                ).length ?? 0) / rowsPerPage
+              )}
               page={page + 1}
               onChange={handleChangePage}
-              
             />
             <TableBody>
               <TableRow
@@ -505,6 +568,18 @@ export const EnhancedTable: React.FC<EnhancedTableInputProps> = ({setters}) => {
                         undefined,
                         { numeric: true, sensitivity: "base" }
                       )
+                )
+                .filter((item) =>
+                  item.name
+                    .normalize("NFD")
+                    .replace(/[\u0300-\u036f]/g, "")
+                    .toLowerCase()
+                    .includes(
+                      searchFor
+                        .normalize("NFD")
+                        .replace(/[\u0300-\u036f]/g, "")
+                        .toLowerCase()
+                    )
                 )
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((row, index) => {
@@ -554,10 +629,23 @@ export const EnhancedTable: React.FC<EnhancedTableInputProps> = ({setters}) => {
           </Table>
         </TableContainer>
         <SPagination
-              count={Math.ceil((rows?.length ?? 0) / rowsPerPage)}
-              page={page + 1}
-              onChange={handleChangePage}
-            />
+          count={Math.ceil(
+            (rows?.filter((item) =>
+              item.name
+                .normalize("NFD")
+                .replace(/[\u0300-\u036f]/g, "")
+                .toLowerCase()
+                .includes(
+                  searchFor
+                    .normalize("NFD")
+                    .replace(/[\u0300-\u036f]/g, "")
+                    .toLowerCase()
+                )
+            ).length ?? 0) / rowsPerPage
+          )}
+          page={page + 1}
+          onChange={handleChangePage}
+        />
         <SPlaceholder />
       </SBox>
     </ThemeProvider>
@@ -582,12 +670,10 @@ const SPlaceholder = styled.div`
   width: 100%;
 `;
 const SPagination = styled(Pagination)`
-  
   width: 100%;
   ul {
     height: 50px;
     align-items: center;
-  justify-content:center;
+    justify-content: center;
   }
-  
 `;
