@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "codegen": "graphql-let",
-    "dev": "yarn codegen && next dev",
+    "dev": "yarn codegen && next dev -p 3000",
     "build": "yarn codegen && next build",
     "start": "yarn codegen && next start",
     "lint": "yarn codegen && next lint"

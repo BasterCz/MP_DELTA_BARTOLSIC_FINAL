@@ -1,6 +1,6 @@
 module.exports = {
   apps : [{
-    name: 'Admin',
+    name: 'Client',
     script: 'yarn',
     arg: 'dev'
   }],

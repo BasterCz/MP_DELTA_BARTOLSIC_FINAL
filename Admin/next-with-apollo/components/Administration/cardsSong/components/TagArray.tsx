@@ -401,7 +401,7 @@ const Listbox = styled.ul`
   }
 
   & li[data-focus="true"] {
-    background-color: #003b57;
+    background-color: #263A53;
     cursor: pointer;
     & svg {
       color: currentColor;

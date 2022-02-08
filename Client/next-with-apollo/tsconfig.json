@@ -22,9 +22,12 @@
   "include": [
     "next-env.d.ts",
     "**/*.ts",
-    "**/*.tsx"
+    "**/*.tsx",
+    "pages/_document.tsx",
+    "additional.d.ts",
   ],
   "exclude": [
-    "node_modules"
+    "node_modules",
+    "public"
   ]
 }

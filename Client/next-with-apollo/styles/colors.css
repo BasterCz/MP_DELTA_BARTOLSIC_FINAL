@@ -1,0 +1,12 @@
+.color-palette {
+    /* absolute background */
+    color: #14171C;
+    /* container background */
+    color: #1E222A;
+    /* nav background */
+    color: #2E3440;
+    /* button non active background */
+    color: #D8DEE9;
+    /* button active background */
+    color: #88C0D0;
+}

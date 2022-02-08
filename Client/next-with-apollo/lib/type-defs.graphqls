@@ -1,0 +1,86 @@
+type Query {
+  playlists: [Playlist]
+  playlist(_id: ID!): Playlist
+  songs: [Song]
+  song(_id: ID!): Song
+  playlistSongs(_id: ID!): [Song]
+  songPlaylists(_id: ID!): [Playlist]
+  objectViewsDate(_id: ID!, groupByMinutes: Int!): [DateView]
+  objectViews(_id: ID!): [CountView]
+}
+
+type Mutation {
+  songsUpdate(
+    _id: ID!
+    name: String!
+    file_path: String!
+    image_path: String!
+    isPublic: Boolean!
+  ): Boolean!
+
+  playlistUpdate(
+    _id: ID!
+    name: String!
+    description: String!
+    image_path: String!
+    isPublic: Boolean!
+  ): Boolean!
+
+  songsDelete(_id: ID!): MyID
+
+  playlistDelete(_id: ID!): MyID
+
+  songsAdd(
+    name: String!
+    file_path: String!
+    image_path: String!
+    isPublic: Boolean!
+  ): String!
+
+  playlistAdd(
+    name: String!
+    description: String!
+    image_path: String!
+    isPublic: Boolean!
+  ): String!
+
+  playlistAddSong(_id: ID!, song: ID!): Boolean!
+  playlistRemoveSong(_id: ID!, song: ID!): Boolean!
+
+  addView(_id: ID!): Boolean!
+}
+
+type Song {
+  _id: ID!
+  name: String!
+  file_path: String!
+  image_path: String!
+  createdDate: String
+  modifiedDate: String
+  isPublic: Boolean!
+}
+
+type MyID {
+  _id: ID!
+}
+
+type Playlist {
+  _id: ID!
+  name: String!
+  description: String
+  songs: [ID]
+  image_path: String
+  isPublic: Boolean!
+  createdDate: String
+  modifiedDate: String
+  _deleted: Boolean
+}
+
+type DateView {
+  _id: String!
+  count: Int!
+}
+
+type CountView {
+  count: Int!
+}
