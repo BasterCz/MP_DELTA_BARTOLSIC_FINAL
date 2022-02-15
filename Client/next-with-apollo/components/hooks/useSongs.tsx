@@ -4,39 +4,32 @@ import {
   useSongQuery,
   useSongsDeleteMutation,
   useSongsQuery,
+  useSongsSearchQuery,
 } from "../../__generated__/lib/viewer.graphql";
-import fuzzy from "fuzzy";
-import Fuse from "fuse.js";
 
 export const useSongMultiple = () => {
   const { data, loading, error } = useSongsQuery({ pollInterval: 500 });
+  const { data: dataFuzzy, loading: loadingFuzzy, error: errorFuzzy, refetch: refetchFuzzy } = useSongsSearchQuery({ variables: {query: ""}});
   const [songs, setSongs] = useState(data?.songs);
+  const [fsongs, setFSongs] = useState(dataFuzzy?.songsSearch);
 
-  const [deleteSong] = useSongsDeleteMutation();
-
-  const onDelete = async (id: string) => {
-    await deleteSong({ variables: { _id: id } });
+  const fuzzySearch = async (search: string) => {
+    await refetchFuzzy({ query: search})
+    return;
   };
-
-  const fuzzySearch = (search: string) => {
-    const options = {
-      findAllMatches: true,
-      keys: ["name"],
-    };
-    if (songs) {
-      const fuse = new Fuse(songs, options);
-
-      return search.length > 0 ? fuse.search(search).map(out=>out.item) : null;
-    }
-  };
-
+  
   useEffect(() => {
     setSongs(data?.songs);
-  });
+  }, [data]);
+
+  useEffect(() => {
+    setFSongs(dataFuzzy?.songsSearch);
+  }, [dataFuzzy]);
+
   return {
     songs: songs,
-    onDeleteSong: onDelete,
-    fuzzySearch: fuzzySearch,
+    songsFound: fsongs,
+    fuzzySearchSong: fuzzySearch,
   };
 };
 export const useSongOne = (
@@ -49,6 +42,7 @@ export const useSongOne = (
     loading: loadingS,
     error: errorS,
     startPolling,
+    refetch
   } = useSongQuery({
     variables: { _id: id as string },
     skip: Number.isNaN(id),
@@ -69,6 +63,7 @@ export const useSongOne = (
   });
   return {
     song: song,
+    refetchSong: refetch,
     onDeleteSong: onDelete,
   };
 };

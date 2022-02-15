@@ -2,7 +2,7 @@ import type { NextPage } from 'next'
 import { useState } from 'react'
 import styled from 'styled-components'
 
-const Home: NextPage = () => {
+const Feed: NextPage = () => {
   const [maximized, setMaximized] = useState(true)
 
   const handlerMenuClick = () => {
@@ -15,7 +15,7 @@ const Home: NextPage = () => {
   )
 }
 
-export default Home
+export default Feed
 
 const Wrapper = styled.div`
 

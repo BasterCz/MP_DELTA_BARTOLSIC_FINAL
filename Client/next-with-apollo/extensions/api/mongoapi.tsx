@@ -1,9 +1,26 @@
 import { ObjectId } from "mongodb";
 import { connectToDatabase } from "../../utils/mongodb";
+import { elasticSearchPlaylists, elasticSearchSongs } from "./elasticapi";
 
 export const songsGet = async () => {
   const { db } = await connectToDatabase();
   const songs = await db.collection("songs").find({}).toArray();
+
+  return songs;
+};
+
+export const searchSongsGet = async (_query: string) => {
+  const result = await elasticSearchSongs(_query);
+  const idArray = result.map((id) => new ObjectId(id));
+  const { db } = await connectToDatabase();
+  const songs = await db
+    .collection("songs")
+    .aggregate([
+      { $match: { _id: { $in: idArray } } },
+      { $addFields: { __order: { $indexOfArray: [idArray, "$_id"] } } },
+      { $sort: { __order: 1 } },
+    ])
+    .toArray();
   return songs;
 };
 
@@ -11,6 +28,21 @@ export const playlistGet = async () => {
   const { db } = await connectToDatabase();
   const playlist = await db.collection("playlists").find({}).toArray();
   return playlist;
+};
+
+export const searchPlaylistsGet = async (_query: string) => {
+  const result = await elasticSearchPlaylists(_query);
+  const idArray = result.map((id) => new ObjectId(id));
+  const { db } = await connectToDatabase();
+  const playlists = await db
+    .collection("playlists")
+    .aggregate([
+      { $match: { _id: { $in: idArray } } },
+      { $addFields: { __order: { $indexOfArray: [idArray, "$_id"] } } },
+      { $sort: { __order: 1 } },
+    ])
+    .toArray();
+  return playlists;
 };
 
 export const songsGetOne = async (_id: string) => {
@@ -125,13 +157,13 @@ export const playlistAdd = async (
   description: string,
   image_path: string,
   isPublic: Boolean,
-  songs?: string[],
+  songs?: string[]
 ) => {
   const { db } = await connectToDatabase();
   const res = await db.collection("playlists").insertOne({
     name: name,
     description: description,
-    songs: songs = [],
+    songs: (songs = []),
     image_path: image_path,
     isPublic: isPublic,
     createdDate: new Date(Date.now()),
@@ -227,8 +259,8 @@ export const objectViewsDate = async (_id: string, groupByMinutes: number) => {
   };
 
   const sort = {
-    $sort: { _id: 1}
-  }
+    $sort: { _id: 1 },
+  };
 
   const aggregate = [match, group, sort];
 
@@ -240,11 +272,11 @@ export const objectViews = async (_id: string) => {
   const { db } = await connectToDatabase();
 
   const match = {
-    $match: {parentID: new ObjectId(_id)}
+    $match: { parentID: new ObjectId(_id) },
   };
 
   const group = {
-    $group: {_id: "$parentID", count: {$sum: 1}}
+    $group: { _id: "$parentID", count: { $sum: 1 } },
   };
 
   const aggregate = [match, group];

@@ -24,6 +24,12 @@ query Playlists {
   }
 }
 
+query PlaylistsSearch($query: String!) {
+  playlistsSearch (query: $query) {
+    ...ClientPlaylist
+  }
+}
+
 query Song($_id: ID!) {
   song(_id: $_id) {
     _id
@@ -38,6 +44,19 @@ query Song($_id: ID!) {
 
 query Songs {
   songs {
+    _id
+    name
+    file_path
+    image_path
+    createdDate
+    modifiedDate
+    isPublic
+  }
+}
+
+
+query SongsSearch($query: String!) {
+  songsSearch (query: $query) {
     _id
     name
     file_path

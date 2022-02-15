@@ -1,8 +1,10 @@
 type Query {
   playlists: [Playlist]
   playlist(_id: ID!): Playlist
+  playlistsSearch(query: String!): [Playlist]
   songs: [Song]
   song(_id: ID!): Song
+  songsSearch(query: String!): [Song]
   playlistSongs(_id: ID!): [Song]
   songPlaylists(_id: ID!): [Playlist]
   objectViewsDate(_id: ID!, groupByMinutes: Int!): [DateView]

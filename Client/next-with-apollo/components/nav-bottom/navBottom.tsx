@@ -35,6 +35,7 @@ import QueueMusicRoundedIcon from '@mui/icons-material/QueueMusicRounded';
     bottom: 0;
     height: 70px;
     width: 100%;
+    z-index: 1;
     border-radius: 15px 15px 0px 0px;
     background-color: #2E3440;
     display: flex;

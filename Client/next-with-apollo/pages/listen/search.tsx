@@ -1,5 +1,5 @@
 import type { NextPage } from "next";
-import { useState } from "react";
+import { useContext, useEffect, useState } from "react";
 
 import styled from "styled-components";
 import { usePlaylistMultiple } from "../../components/hooks/usePlaylist";
@@ -9,23 +9,37 @@ import ResultCardSong from "../../components/search/resultCardSong";
 import SearchBar from "../../components/search/searchBar";
 import HeadTitleSmaller from "../../components/typography/headTitleSmaller";
 import SubTitle from "../../components/typography/subTitle";
+import { Context } from "../../lib/context";
 import {
   PlaylistsQuery,
   SongsQuery,
 } from "../../__generated__/lib/viewer.graphql";
 
-const Home: NextPage = () => {
-  const { fuzzySearch: songFuzzySearch } = useSongMultiple();
-  const { fuzzySearch: playlistFuzzySearch } = usePlaylistMultiple();
+
+
+const Search: NextPage = () => {
+  const { songsFound, fuzzySearchSong } = useSongMultiple();
+  const { playlistsFound, fuzzySearchPlaylist } = usePlaylistMultiple();
   const [foundSongs, setFoundSongs] = useState<SongsQuery["songs"]>(null);
   const [foundPlaylists, setFoundPlaylists] =
     useState<PlaylistsQuery["playlists"]>(null);
+  const {handlerResultClick} = useContext(Context);
 
-  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    console.log(songFuzzySearch(event.target.value));
-    setFoundSongs(songFuzzySearch(event.target.value) as SongsQuery["songs"]);
-    setFoundPlaylists(playlistFuzzySearch(event.target.value) as PlaylistsQuery["playlists"]);
+  const handleSearchChange = async (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    let edQuerry = event.target.value.replace(
+      /^[^a-z0-9].*?(?=[a-z0-9])|^[^a-z0-9]*/gi,
+      ""
+    );
+    await fuzzySearchSong(edQuerry);
+    await fuzzySearchPlaylist(edQuerry);
   };
+
+  useEffect(() => {
+    setFoundSongs(songsFound);
+    setFoundPlaylists(playlistsFound);
+  }, [songsFound, playlistsFound]);
 
   return (
     <Wrapper>
@@ -52,8 +66,9 @@ const Home: NextPage = () => {
           <ResultListWrapper>
             <MarginerStart />
             {foundSongs?.map((song) => {
-              return <ResultCardSong song={song} />;
+              return <ResultCardSong song={song} handlerResultClick={handlerResultClick}/>;
             })}
+
             <MarginerEnd />
           </ResultListWrapper>
           <HeadTitleSmaller>
@@ -72,7 +87,7 @@ const Home: NextPage = () => {
   );
 };
 
-export default Home;
+export default Search;
 
 const Wrapper = styled.div``;
 const ResultWrapper = styled.div`
@@ -100,7 +115,7 @@ const ResultListWrapper = styled.div`
     black calc(100% - 10px),
     transparent
   );
-  mask-size: 100% ;
+  mask-size: 100%;
   ::-webkit-scrollbar {
     visibility: hidden;
   }

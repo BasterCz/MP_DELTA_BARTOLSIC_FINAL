@@ -5,10 +5,15 @@ import IconButton from "@mui/material/IconButton";
 import MenuRoundedIcon from "@mui/icons-material/MenuRounded";
 import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
 import HeadTitle from "./typography/headTitle";
+import PlayerSmall from "./player/playerSite";
 
 type MainContainerProps = {
   max: boolean;
   onClickMenu: () => void;
+  handlerMinifyPlayer: () => void;
+  handlerVisibilityPlayer: () => void; 
+  playerMiniVisible: boolean;
+  playerControlMini: boolean;
   title: string;
 };
 
@@ -18,7 +23,11 @@ export const MainContainer: React.FC<MainContainerProps> = ({
   children,
   max,
   title,
+  playerMiniVisible,
+  playerControlMini,
   onClickMenu,
+  handlerMinifyPlayer,
+  handlerVisibilityPlayer
 }) => {
   return (
     <Wrapper
@@ -41,6 +50,7 @@ export const MainContainer: React.FC<MainContainerProps> = ({
         <HeadTitle>
           {title}
         </HeadTitle>
+        {playerMiniVisible?<PlayerSmall playerControlMini={playerControlMini} handlerMinifyPlayer={handlerMinifyPlayer} handlerVisibilityPlayer={handlerVisibilityPlayer}/>:null}
       </MenuBtnSpacer>
       {children}
     </Wrapper>

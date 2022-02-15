@@ -1,59 +1,29 @@
-import Fuse from "fuse.js";
+
 import { useEffect, useState } from "react";
-import {  ClientPlaylistFragmentDoc, PlaylistDocument, usePlaylistDeleteMutation, usePlaylistQuery, usePlaylistSongsQuery, usePlaylistsQuery } from "../../__generated__/lib/viewer.graphql";
+import {  usePlaylistDeleteMutation, usePlaylistQuery, usePlaylistSongsQuery, usePlaylistsQuery, usePlaylistsSearchQuery } from "../../__generated__/lib/viewer.graphql";
 export const usePlaylistMultiple = () => {
     const { data: dataP, loading: loadingP, error: errorP, refetch, client } = usePlaylistsQuery({ pollInterval: 500 });
-    const [playlists, setPlaylists] = useState(dataP?.playlists);
-    console.log(errorP?.message)
-    const [deletePlaylist] = usePlaylistDeleteMutation();
-    const onDelete = async (id: string) => {
-        await deletePlaylist(
-            { 
-                variables: { _id: id }, 
-                optimisticResponse: {
-                    playlistDelete:{
-                        _id: id
-                    }
-                },
-                update(cache) {
-                    const playlistToDelte = client.readFragment({
-                        id: "Playlist:"+id, 
-                        fragment: ClientPlaylistFragmentDoc
-                    });
-                    if ( playlistToDelte ) {
-                        client.writeFragment({
-                            id: "Playlist:"+id,
-                            fragment: ClientPlaylistFragmentDoc,
-                            data: {
-                                ...PlaylistDocument,
-                                _deleted: true
-                            }
-                        });
-                    }
-                }
-            }
-            );
-        
-    }
+    const { data: dataFuzzy, loading: loadingFuzzy, error: errorFuzzy, refetch: refetchFuzzy } = usePlaylistsSearchQuery({ variables: {query: ""}});
+    const [playlists, setPlaylists] = useState(dataP?.playlists); 
+    const [fplaylists, setFPlaylists] = useState(dataFuzzy?.playlistsSearch);
+
     useEffect(() => {
         setPlaylists(dataP?.playlists?.filter(item => !item?._deleted));
     }, [dataP])
 
-    const fuzzySearch = (search: string) => {
-        const options = {
-          findAllMatches: true,
-          keys: ["name", "description"],
-        };
-        if (playlists) {
-          const fuse = new Fuse(playlists, options);
-    
-          return search.length > 0 ? fuse.search(search).map(out=>out.item) : null;
-        }
-      };
+    useEffect(() => {
+        setFPlaylists(dataFuzzy?.playlistsSearch?.filter(item => !item?._deleted));
+    }, [dataFuzzy])
+
+    const fuzzySearch = async (search: string) => {
+        await refetchFuzzy({ query: search})
+        return;
+    };
+
     return {
         playlists: playlists,
-        onDeletePlaylist: onDelete,
-        fuzzySearch: fuzzySearch
+        playlistsFound: fplaylists,
+        fuzzySearchPlaylist: fuzzySearch
     }
 }
 export const usePlaylistOne = (id: string, isReady : boolean) => {

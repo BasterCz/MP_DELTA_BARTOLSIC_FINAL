@@ -4,7 +4,7 @@ import { useState } from 'react'
 import styled from 'styled-components'
 
 
-const Home: NextPage = () => {
+const Library: NextPage = () => {
   const [maximized, setMaximized] = useState(true)
 
   const handlerMenuClick = () => {
@@ -18,7 +18,7 @@ const Home: NextPage = () => {
   )
 }
 
-export default Home
+export default Library
 
 const Wrapper = styled.div`
 
