@@ -2,6 +2,8 @@ import { Button, IconButton } from "@mui/material";
 import React from "react";
 import styled from "styled-components";
 
+
+
 export const DetailTitle: React.FC = ({children}) => {
   return (
     <OwnTypography>

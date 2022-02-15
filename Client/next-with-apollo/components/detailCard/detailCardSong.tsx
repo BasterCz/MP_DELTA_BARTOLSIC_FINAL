@@ -1,11 +1,12 @@
 import Image from "next/image";
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import styled from "styled-components";
 import DetailCardWrapper from "./detailCardWrapper";
 import { useSongOne } from "../hooks/useSongs";
 import DetailTitle from "../typography/detailTitle";
 import ControlsDetailSong from "./controlsSong";
 import OptionsDetailSong from "./optionListSong";
+import { Context } from "../../lib/context";
 
 const imageSize = "250px";
 
@@ -23,6 +24,8 @@ export const DetailCardSong: React.FC<DetailCardWrapperProps> = ({
   const [isReady, setIsReady] = useState(false);
   const { song, refetchSong } = useSongOne(_id, isReady, false);
   const [srcPath, setSrcPath] = useState<string>("");
+
+  const {handlerStartPlayer} = useContext(Context);
 
   useEffect(() => {
     setIsReady(detailVisible);
@@ -45,8 +48,8 @@ export const DetailCardSong: React.FC<DetailCardWrapperProps> = ({
             <SImage src={srcPath} height={imageSize} width={imageSize} />
           ) : null}
         </ImagePlace>
-        <ControlsDetailSong />
-        <DetailTitle>{song?.name}</DetailTitle>
+        <ControlsDetailSong startPlayer={()=>handlerStartPlayer(song?.name!, srcPath, song?.file_path!)}/>
+        <DetailTitle >{song?.name}</DetailTitle>
         <OptionsDetailSong />
       </DetailCardWrapper>
     </Wrapper>

@@ -6,14 +6,16 @@ import FavoriteRoundedIcon from "@mui/icons-material/FavoriteRounded";
 
 import React from "react";
 import styled from "styled-components";
-
-export const ControlsDetailSong: React.FC = ({ children }) => {
+type Props = {
+  startPlayer: () => void;
+}
+export const ControlsDetailSong: React.FC<Props> = ({ children, startPlayer  }) => {
   return (
     <Wrapper>
       <StyledRoundButton className="likeBtn">
         <FavoriteBorderRoundedIcon className="like"></FavoriteBorderRoundedIcon>
       </StyledRoundButton>
-      <StyledRoundButton className="playBtn">
+      <StyledRoundButton onClick={startPlayer} className="playBtn">
         <PlayArrowRoundedIcon className="play"></PlayArrowRoundedIcon>
       </StyledRoundButton>
       <StyledRoundButton className="queueBtn">
