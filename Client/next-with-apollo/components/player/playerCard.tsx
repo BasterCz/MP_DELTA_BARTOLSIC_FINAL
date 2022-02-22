@@ -1,9 +1,12 @@
 import { Button, Card, IconButton } from "@mui/material";
 import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
-import React from "react";
+import React, { useContext } from "react";
 import styled from "styled-components";
 import DetailTitle from "../typography/detailTitle";
 import Image from "next/image";
+import PlayerControls from "./playerControl";
+import Waveform from "./waveform";
+import { PlayerContext } from "../../lib/contextPlayer";
 
 const imageSize = "300px";
 
@@ -19,6 +22,7 @@ export const PlayerCard: React.FC<DetailCardWrapperProps> = ({
   playImage,
   handlerVisibilityPlayer
 }) => {
+  const {waveform, audioTime} = useContext(PlayerContext);
   return (
     <Wrapper>
       <CardWrapper>
@@ -31,6 +35,8 @@ export const PlayerCard: React.FC<DetailCardWrapperProps> = ({
           ) : null}
         </ImagePlace>
         <DetailTitle>{playTitle}</DetailTitle>
+        <Waveform trackDuration={audioTime} waveformData={waveform}/>
+        <PlayerControls></PlayerControls>
       </CardWrapper>
     </Wrapper>
   );

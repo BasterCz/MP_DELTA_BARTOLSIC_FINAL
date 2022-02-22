@@ -1,6 +1,7 @@
 import { AxiosStatic } from "axios";
 import utf8 from "utf8";
 import { PlaylistsQuery } from "../__generated__/lib/viewer.graphql";
+import { getAudioLevels } from "./audioLevelArray";
 
 type updateSongProps = {
   _id: string;
@@ -39,7 +40,7 @@ export const updateSong = async ({
     fileName.replaceAll(" ", "_").normalize("NFD").replace(/[\u0300-\u036f]/g, "").substr(0, fileName.lastIndexOf(".")) ||
     fileName.replaceAll(" ", "_").normalize("NFD").replace(/[\u0300-\u036f]/g, "");
 
-  const config = {
+  const config = await {
     headers: {
       _id: _id,
       source: "./public/temp/" + fileName.replaceAll(" ", "_").normalize("NFD").replace(/[\u0300-\u036f]/g, ""),
@@ -57,9 +58,10 @@ export const updateSong = async ({
         (fileName.startsWith("/audio/") || imageName.startsWith("https://")) +
         "",
       possibleInitialFile: utf8.encode(fileName),
+      audioLevels: await (await getAudioLevels("/temp/"+name.replaceAll(" ", "_").normalize("NFD").replace(/[\u0300-\u036f]/g, "")+".mp3")).join('|')
     },
   };
-  console.log(config);
+  console.log(config.headers.audioLevels);
   const response = await axios.post("/api/hlsUpdate", {}, config);
   const responseData = response.data as ResponseType;
   console.log(response.data);

@@ -8,7 +8,9 @@ type Query {
   playlistSongs(_id: ID!): [Song]
   songPlaylists(_id: ID!): [Playlist]
   objectViewsDate(_id: ID!, groupByMinutes: Int!): [DateView]
+  waveformFind(_id: ID!): Waveform
   objectViews(_id: ID!): [CountView]
+  
 }
 
 type Mutation {
@@ -85,4 +87,10 @@ type DateView {
 
 type CountView {
   count: Int!
+}
+
+type Waveform {
+  _id: ID!
+  songID: String!
+  waveform: [Float!]
 }

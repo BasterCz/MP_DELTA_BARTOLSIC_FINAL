@@ -5,7 +5,7 @@ type DetailOfType = "song" | "playlist";
 type PageContextProps = {
     detailID : string;
     handlerResultClick : (_id: string, _detailOf: DetailOfType) => void
-    handlerStartPlayer : (title: string, imageSrc: string, fileSrc: string) => void;
+    handlerStartPlayer : (waveform: number[], title: string, imageSrc: string, fileSrc: string) => void;
 }
 
-export const Context = React.createContext<PageContextProps>({} as PageContextProps);
+export const Context = React.createContext<PageContextProps>(({} as PageContextProps));

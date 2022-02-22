@@ -125,13 +125,13 @@ export const playlistAdd = async (
   description: string,
   image_path: string,
   isPublic: Boolean,
-  songs?: string[],
+  songs?: string[]
 ) => {
   const { db } = await connectToDatabase();
   const res = await db.collection("playlists").insertOne({
     name: name,
     description: description,
-    songs: songs = [],
+    songs: (songs = []),
     image_path: image_path,
     isPublic: isPublic,
     createdDate: new Date(Date.now()),
@@ -227,8 +227,8 @@ export const objectViewsDate = async (_id: string, groupByMinutes: number) => {
   };
 
   const sort = {
-    $sort: { _id: 1}
-  }
+    $sort: { _id: 1 },
+  };
 
   const aggregate = [match, group, sort];
 
@@ -240,11 +240,11 @@ export const objectViews = async (_id: string) => {
   const { db } = await connectToDatabase();
 
   const match = {
-    $match: {parentID: new ObjectId(_id)}
+    $match: { parentID: new ObjectId(_id) },
   };
 
   const group = {
-    $group: {_id: "$parentID", count: {$sum: 1}}
+    $group: { _id: "$parentID", count: { $sum: 1 } },
   };
 
   const aggregate = [match, group];
@@ -260,4 +260,29 @@ export const addView = async (_id: string) => {
     time: new Date(Date.now()),
   });
   return res.acknowledged;
+};
+
+export const waveformAdd = async (id: string, waveform: number[]) => {
+  const { db } = await connectToDatabase();
+  const res = await db.collection("waveforms").insertOne({
+    songID: id,
+    waveform: waveform,
+  });
+  return res.insertedId;
+};
+
+export const waveformUpdate = async (id: string, waveform: number[]) => {
+  const { db } = await connectToDatabase();
+  const update = {
+    $set: {
+      waveform: waveform,
+    },
+  };
+  const res = await db.collection("waveforms").updateOne(
+    {
+      songID: id,
+    },
+    update
+  );
+  return res.matchedCount > 0;
 };

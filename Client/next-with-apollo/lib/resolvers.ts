@@ -1,6 +1,27 @@
-import { QueryResolvers, MutationResolvers } from './type-defs.graphqls'
-import { ResolverContext } from './apollo'
-import { addView, objectViews, objectViewsDate, playlistAdd, playlistAddSong, playlistDelete, playlistGet, playlistGetOne, playlistRemoveSong, playlistSongs, playlistUpdate, searchPlaylistsGet, searchSongsGet, songPlaylists, songsAdd, songsDelete, songsGet, songsGetOne, songsUpdate, } from '../extensions/api/mongoapi'
+import { QueryResolvers, MutationResolvers } from "./type-defs.graphqls";
+import { ResolverContext } from "./apollo";
+import {
+  addView,
+  objectViews,
+  objectViewsDate,
+  playlistAdd,
+  playlistAddSong,
+  playlistDelete,
+  playlistGet,
+  playlistGetOne,
+  playlistRemoveSong,
+  playlistSongs,
+  playlistUpdate,
+  searchPlaylistsGet,
+  searchSongsGet,
+  songPlaylists,
+  songsAdd,
+  songsDelete,
+  songsGet,
+  songsGetOne,
+  songsUpdate,
+  waveformFind as getWavefromFind,
+} from "../extensions/api/mongoapi";
 
 const Query: Required<QueryResolvers<ResolverContext>> = {
   async songs(_parent, args, _context, _info) {
@@ -33,23 +54,48 @@ const Query: Required<QueryResolvers<ResolverContext>> = {
   async objectViews(_parent, args, _context, _info) {
     return await objectViews(args._id);
   },
-}
+  async waveformFind(_parent, args, _context, _info) {
+    return await getWavefromFind(args._id);
+  },
+};
 
 const Mutation: Required<MutationResolvers<ResolverContext>> = {
   async songsUpdate(_parent, args, _context, _info) {
-    return await songsUpdate(args._id, args.name, args.file_path, args.image_path, args.isPublic);
+    return await songsUpdate(
+      args._id,
+      args.name,
+      args.file_path,
+      args.image_path,
+      args.isPublic
+    );
   },
   async playlistUpdate(_parent, args, _context, _info) {
-    return await playlistUpdate(args._id, args.name, args.description, args.image_path, args.isPublic);
+    return await playlistUpdate(
+      args._id,
+      args.name,
+      args.description,
+      args.image_path,
+      args.isPublic
+    );
   },
   async songsAdd(_parent, args, _context, _info) {
-    return await songsAdd(args.name, args.file_path, args.image_path, args.isPublic);
+    return await songsAdd(
+      args.name,
+      args.file_path,
+      args.image_path,
+      args.isPublic
+    );
   },
   async playlistAdd(_parent, args, _context, _info) {
-    return await playlistAdd(args.name, args.description, args.image_path, args.isPublic);
+    return await playlistAdd(
+      args.name,
+      args.description,
+      args.image_path,
+      args.isPublic
+    );
   },
   async songsDelete(_parent, args, _context, _info) {
-    return await songsDelete(args._id)
+    return await songsDelete(args._id);
   },
   async playlistDelete(_parent, args, _context, _info) {
     return await playlistDelete(args._id);
@@ -62,6 +108,6 @@ const Mutation: Required<MutationResolvers<ResolverContext>> = {
   },
   async addView(_parent, args, _context, _info) {
     return await addView(args._id);
-  }
-}
-export default { Query, Mutation }
+  },
+};
+export default { Query, Mutation };

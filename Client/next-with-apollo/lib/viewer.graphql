@@ -98,6 +98,14 @@ query ObjectViews($_id: ID!) {
   }
 }
 
+query WaveformFind($_id: ID!) {
+  waveformFind(_id: $_id) {
+    _id
+    waveform
+    songID
+  }
+}
+
 mutation SongsUpdate(
   $_id: ID!
   $name: String!

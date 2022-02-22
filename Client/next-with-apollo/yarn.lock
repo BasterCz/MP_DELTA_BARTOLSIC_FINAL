@@ -2787,6 +2787,11 @@
     "@types/keygrip" "*"
     "@types/node" "*"
 
+"@types/debounce@*":
+  version "1.2.1"
+  resolved "https://registry.yarnpkg.com/@types/debounce/-/debounce-1.2.1.tgz#79b65710bc8b6d44094d286aecf38e44f9627852"
+  integrity sha512-epMsEE85fi4lfmJUH/89/iV/LI+F5CvNIvmgs5g5jYFPfhO2S/ae8WSsLOKWdwtoaZw9Q2IhJ4tQ5tFCcS/4HA==
+
 "@types/debug@^4.0.0":
   version "4.1.7"
   resolved "https://registry.yarnpkg.com/@types/debug/-/debug-4.1.7.tgz#7cc0ea761509124709b8b2d1090d8f6c17aadb82"
@@ -3082,6 +3087,13 @@
   version "3.0.1"
   resolved "https://registry.yarnpkg.com/@types/utf8/-/utf8-3.0.1.tgz#bf081663d4fff05ee63b41f377a35f8b189f7e5b"
   integrity sha512-1EkWuw7rT3BMz2HpmcEOr/HL61mWNA6Ulr/KdbXR9AI0A55wD4Qfv8hizd8Q1DnknSIzzDvQmvvY/guvX7jjZA==
+
+"@types/wavesurfer.js@^6.0.0":
+  version "6.0.0"
+  resolved "https://registry.yarnpkg.com/@types/wavesurfer.js/-/wavesurfer.js-6.0.0.tgz#aa7813402b4cda3abe80a257ae8d0470ece37af4"
+  integrity sha512-w5yP3KLMhbBC4JvjWD5Yf9pUNLqZvuT4o/RIFJc0XQ8flbxdg+VOZ558PBQpczBsDAqUlfPkPfkBAUE4uItU3Q==
+  dependencies:
+    "@types/debounce" "*"
 
 "@types/webidl-conversions@*":
   version "6.1.1"
@@ -10248,6 +10260,11 @@ rc@^1.2.8:
     minimist "^1.2.0"
     strip-json-comments "~2.0.1"
 
+react-audio-waveform@^0.0.5:
+  version "0.0.5"
+  resolved "https://registry.yarnpkg.com/react-audio-waveform/-/react-audio-waveform-0.0.5.tgz#32376a27ca2271e7e9f4ecb62c3319bd8a5b1e8a"
+  integrity sha512-4dJwhl+LQRuywzmmjuhWT5GueT3Ai2ZhB+loVxg0sRdhplyDp96xAu10/V/+J25Cl7YqNtl2DWSxvSoI/i6l6w==
+
 react-chartjs-2@^4.0.0:
   version "4.0.0"
   resolved "https://registry.yarnpkg.com/react-chartjs-2/-/react-chartjs-2-4.0.0.tgz#a79919c9efe5381b8cb5abfd0ac7a56c9736cdb8"
@@ -10395,6 +10412,11 @@ react-transition-group@^4.4.0, react-transition-group@^4.4.2:
     dom-helpers "^5.0.1"
     loose-envify "^1.4.0"
     prop-types "^15.6.2"
+
+react-wavesurfer.js@^0.0.5:
+  version "0.0.5"
+  resolved "https://registry.yarnpkg.com/react-wavesurfer.js/-/react-wavesurfer.js-0.0.5.tgz#e2f4e1195f9b01c084ced1aa3e4ddda89de394ab"
+  integrity sha512-KLjNTKS25xfsTWrJd+knXF5wFH8CRu7repXSeDSjh4zhj27QbNL5jtcK8pNl82/kcoTeB0fZvtCcxPreEE8dQw==
 
 react@17.0.2:
   version "17.0.2"
@@ -12227,6 +12249,11 @@ watchpack@2.1.1:
   dependencies:
     glob-to-regexp "^0.4.1"
     graceful-fs "^4.1.2"
+
+wavesurfer.js@^6.0.1:
+  version "6.0.1"
+  resolved "https://registry.yarnpkg.com/wavesurfer.js/-/wavesurfer.js-6.0.1.tgz#a511611b2f4d04d098da8166f1fd2a818db20a82"
+  integrity sha512-igFjn9Zuo/vqcKdNKP90GZnKMGgder3Xz1cCR1UBw6ifdXTrfQDHpIte7GuddupQIEGoLajhvIgv1OJRXeU0XQ==
 
 wcwidth@^1.0.0, wcwidth@^1.0.1:
   version "1.0.1"

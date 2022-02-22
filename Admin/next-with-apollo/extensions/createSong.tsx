@@ -1,6 +1,7 @@
 import { AxiosStatic } from "axios";
 import utf8 from "utf8";
 import { PlaylistsQuery } from "../__generated__/lib/viewer.graphql";
+import { getAudioLevels } from "./audioLevelArray";
 
 type createSongProps = {
   playlists?: PlaylistsQuery["playlists"];
@@ -56,6 +57,7 @@ export const createSong = async ({
       destination: "./public/audio/" + outputFN + "/" + outputFN + ".m3u8",
       name: utf8.encode(name) + "",
       isPublic: isPublic + "",
+      audioLevels: await (await getAudioLevels("/temp/"+name.replaceAll(" ", "_").normalize("NFD").replace(/[\u0300-\u036f]/g, "")+".mp3")).join('|')
     },
   };
 

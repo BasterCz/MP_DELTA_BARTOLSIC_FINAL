@@ -293,3 +293,9 @@ export const addView = async (_id: string) => {
   });
   return res.acknowledged;
 };
+
+export const waveformFind = async (id: string) => {
+  const { db } = await connectToDatabase();
+  const waveform = await db.collection("waveform").findOne({songID: id});
+  return waveform;
+};

@@ -2,12 +2,14 @@ import { Button, ButtonGroup, Card, IconButton } from "@mui/material";
 import PlayArrowRoundedIcon from "@mui/icons-material/PlayArrowRounded";
 import ArrowBackIosNewRoundedIcon from "@mui/icons-material/ArrowBackIosNewRounded";
 import ArrowForwardIosRoundedIcon from '@mui/icons-material/ArrowForwardIosRounded';
-import MoreVertRoundedIcon from '@mui/icons-material/MoreVertRounded';
+import LaunchRoundedIcon from '@mui/icons-material/LaunchRounded';
 import FastForwardRoundedIcon from '@mui/icons-material/FastForwardRounded';
 import FastRewindRoundedIcon from '@mui/icons-material/FastRewindRounded';
 import VolumeOffRoundedIcon from '@mui/icons-material/VolumeOffRounded';
-import React from "react";
+import PauseRoundedIcon from '@mui/icons-material/PauseRounded';
+import React, { useContext } from "react";
 import styled from "styled-components";
+import { PlayerContext } from "../../lib/contextPlayer";
 
 type PlayerSmallProps = {
     handlerMinifyPlayer: () => void;
@@ -16,6 +18,7 @@ type PlayerSmallProps = {
 }
 
 export const PlayerSmall: React.FC<PlayerSmallProps> = ({handlerMinifyPlayer,handlerVisibilityPlayer, playerControlMini}) => {
+  const { handlerPlay, isPlaying } = useContext(PlayerContext);
   return (
     <Wrapper style={{width: (playerControlMini? "85px" :"270px")}}>
       {playerControlMini ? (
@@ -24,8 +27,8 @@ export const PlayerSmall: React.FC<PlayerSmallProps> = ({handlerMinifyPlayer,han
             <SButton onClick={handlerMinifyPlayer}>
               <ArrowBackIosNewRoundedIcon className="show" />
             </SButton>
-            <SButton>
-              <PlayArrowRoundedIcon className="play" />
+            <SButton onClick={handlerPlay}>
+              {isPlaying?<PauseRoundedIcon className="play"/>:<PlayArrowRoundedIcon className="play" />}
             </SButton>
           </SButtonGroup>
         </MinWrapper>
@@ -38,8 +41,8 @@ export const PlayerSmall: React.FC<PlayerSmallProps> = ({handlerMinifyPlayer,han
             <SButton>
               <FastRewindRoundedIcon className="fastb" />
             </SButton>
-            <SButton>
-              <PlayArrowRoundedIcon className="play" />
+            <SButton onClick={handlerPlay}>
+            {isPlaying?<PauseRoundedIcon className="play"/>:<PlayArrowRoundedIcon className="play" />}
             </SButton>
             <SButton>
               <FastForwardRoundedIcon className="fastf" />
@@ -48,7 +51,7 @@ export const PlayerSmall: React.FC<PlayerSmallProps> = ({handlerMinifyPlayer,han
               <VolumeOffRoundedIcon className="mute" />
             </SButton>
             <SButton onClick={handlerVisibilityPlayer}>
-              <MoreVertRoundedIcon className="more" />
+              <LaunchRoundedIcon className="more" />
             </SButton>
           </SButtonGroup>
         </MaxWrapper>

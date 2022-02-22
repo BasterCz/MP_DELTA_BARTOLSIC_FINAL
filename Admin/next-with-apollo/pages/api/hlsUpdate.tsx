@@ -3,6 +3,7 @@ import nextConnect from "next-connect";
 import utf8 from "utf8";
 import hlsCreate from "../../lib/hlsCreate";
 import songEditMongoDB from "../../lib/songEditMongoDB";
+import waveformEditMongoDB from "../../lib/waveformEditMongoDB";
 
 const apiRoute = nextConnect({
   onNoMatch(req: NextApiRequest, res: NextApiResponse) {
@@ -27,7 +28,11 @@ apiRoute.post(async (req, res) => {
     req.headers["imageisinitial"] === "true" ? req.headers["possibleinitialimage"] as string :req.headers["destinationimage"] as string,
     (req.headers["ispublic"] as string) === "true"
   );
-
+  var responseWaveform = await waveformEditMongoDB(
+    req.headers["_id"] as string, 
+    (req.headers["audiolevels"] as string).split('|').map(Number) as number[],
+  );
+  console.log("Upload" + responseWaveform)
   res.status(200).json({ data: "success", _id: req.headers["_id"] as string });
 });
 
