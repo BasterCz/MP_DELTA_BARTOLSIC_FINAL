@@ -1,10 +1,11 @@
-import React from "react";
+import React, { useEffect, useContext } from "react";
 import { useInput } from "@mui/base";
 import styled from "styled-components";
 import SearchIcon from "@mui/icons-material/Search";
 import { Song } from "../../__generated__/lib/type-defs.graphqls";
 import Image from "next/image";
 import SmallTitle from "../typography/smallTitle";
+import { Context } from "../../lib/context";
 
 type DetailOfType = "song" | "playlist";
 
@@ -24,13 +25,23 @@ type SearchBarProps = {
       >)
     | null
     | undefined;
-    handlerResultClick : (_id: string, _detailOf: DetailOfType) => void;
+  handlerResultClick: (_id: string, _detailOf: DetailOfType) => void;
 };
 
-export const ResultCardSong: React.FC<SearchBarProps> = ({ song, handlerResultClick }) => {
+export const ResultCardSong: React.FC<SearchBarProps> = ({
+  song,
+  handlerResultClick,
+}) => {
   const srcPath = "http://localhost:3000" + song?.image_path!;
+  const { handlerPreload } = useContext(Context);
+  
   return (
-    <Wrapper onClick={() => handlerResultClick(song!._id, "song")}>
+    <Wrapper
+      onClick={() => {
+        handlerPreload(song?.file_path!);
+        handlerResultClick(song!._id, "song");
+      }}
+    >
       <ImagePlace>
         {song?.image_path ? (
           <SImage src={srcPath} height={"120px"} width={"120px"} />

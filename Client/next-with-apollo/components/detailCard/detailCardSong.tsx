@@ -39,7 +39,7 @@ export const DetailCardSong: React.FC<DetailCardWrapperProps> = ({
 
   useEffect(() => {
     if (song?.image_path! !== undefined)
-      setSrcPath("http://localhost:3000" + song?.image_path!);
+      setSrcPath("http://192.168.2.19:3000" + song?.image_path!);
   }, [song]);
 
   return (
@@ -50,7 +50,7 @@ export const DetailCardSong: React.FC<DetailCardWrapperProps> = ({
             <SImage src={srcPath} height={imageSize} width={imageSize} />
           ) : null}
         </ImagePlace>
-        <ControlsDetailSong startPlayer={()=>handlerStartPlayer(waveform!, song?.name!, srcPath , song?.file_path!)}/>
+        <ControlsDetailSong startPlayer={()=>handlerStartPlayer(waveform!, song?.name!, srcPath)}/>
         <DetailTitle >{song?.name}</DetailTitle>
         <OptionsDetailSong />
       </DetailCardWrapper>
@@ -79,4 +79,5 @@ const ImagePlace = styled.div`
 
 const SImage = styled(Image)`
   border-radius: 10px;
+  
 `;

@@ -1,12 +1,12 @@
-const withNextCircularDeps = require('next-circular-dependency');
-const withCSS = require('@zeit/next-css');
-const optimizedImages = require('next-optimized-images');
+// const withNextCircularDeps = require('next-circular-dependency');
+// const withCSS = require('@zeit/next-css');
+//const optimizedImages = require('next-optimized-images');
 
-const circularDep = withNextCircularDeps(optimizedImages(withCSS({
-  exclude: /node_modules/,
-  exclude: /public/,
-  failOnError: false,
-})))
+// const circularDep = withNextCircularDeps(optimizedImages(withCSS({
+//   exclude: /node_modules/,
+//   exclude: /public/,
+//   failOnError: false,
+// })))
 
 /** @type {import('next').NextConfig} */
 module.exports = {
@@ -34,12 +34,14 @@ module.exports = {
 
     return config
   },
-  circularDep,
+  //circularDep,
   images: {
     domains: [
       'cloud-object-storage-s5-cos-standard-4m2.s3.eu-de.cloud-object-storage.appdomain.cloud', 
       'koinonia-music-images.s3.eu-de.cloud-object-storage.appdomain.cloud',
-      'localhost'
+      'localhost',
+      '192.168.2.19',
+      'upload.wikimedia.org'
   ]
   }
 };

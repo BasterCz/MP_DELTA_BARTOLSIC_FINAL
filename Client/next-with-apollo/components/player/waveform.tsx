@@ -1,132 +1,109 @@
-import React, { useRef, useEffect, useState, useCallback, useContext } from 'react';
+import React, {
+  useRef,
+  useEffect,
+  useCallback,
+  useContext,
+  useState,
+} from "react";
+import styled from "styled-components";
+import { PlayerContext } from "../../lib/contextPlayer";
 import waveformAvgChunker from "./waveformAvgChunker";
-import useSetTrackProgress from "./useSetTrackProgress";
-import styled from 'styled-components';
-import { PlayerContext } from '../../lib/contextPlayer';
 
-
-
-
-type pointCoordinatesProps = {
-  index: number;
-  pointWidth: number;
-  pointMargin: number;
-  canvasHeight: number;
-  amplitude: number;
-};
-const pointCoordinates = ({
-  index,
-  pointWidth,
-  pointMargin,
-  canvasHeight,
-  amplitude,
-}: pointCoordinatesProps) => {
-  const pointHeight = Math.round(amplitude * canvasHeight);
-  const verticalCenter = Math.round((canvasHeight - pointHeight) / 2);
-  return [
-    index * (pointWidth + pointMargin), // x starting point
-    canvasHeight - pointHeight - verticalCenter, // y starting point
-    pointWidth, // width
-    pointHeight, // height
-  ];
-};
 type paintCanvasProps = {
-  canvasRef : React.RefObject<HTMLCanvasElement>;
+  canvasRef: React.RefObject<HTMLCanvasElement>;
   waveformData: number[];
-  canvasHeight : number;
-  pointWidth : number;
-  pointMargin : number;
-  playingPoint : number;
-  hoverXCoord : number;
+  canvasHeight: number;
 };
 
 const paintCanvas = ({
   canvasRef,
   waveformData,
   canvasHeight,
-  pointWidth,
-  pointMargin,
-  playingPoint,
-  hoverXCoord,
 }: paintCanvasProps) => {
   const ref = canvasRef.current!;
   const ctx = ref.getContext("2d")!;
   const radius = 1;
-  // On every canvas update, erase the canvas before painting
-  // If you don't do this, you'll end up stacking waveforms and waveform
-  // colors on top of each other
   ctx.clearRect(0, 0, ref.width, ref.height);
   waveformData.forEach((p, i) => {
     ctx.beginPath();
-    const coordinates = pointCoordinates({
-      index: i*(69/waveformData.length),
-      pointWidth,
-      pointMargin,
-      canvasHeight,
-      amplitude: p,
-    });
-    ctx.moveTo(i*(350/waveformData.length), canvasHeight/2);
-    ctx.lineTo(i*(350/waveformData.length), (canvasHeight/2)+(p/2)-radius);
-    ctx.quadraticCurveTo(i*(350/waveformData.length), (canvasHeight/2)+(p/2)-radius, i*(350/waveformData.length)+radius, (canvasHeight/2)+(p/2));
-    ctx.lineTo(i*(350/waveformData.length)+radius+1, (canvasHeight/2)+(p/2));
-    ctx.quadraticCurveTo(i*(350/waveformData.length)+radius+1, (canvasHeight/2)+(p/2), i*(350/waveformData.length)+2*radius+1, (canvasHeight/2)+(p/2)-radius);
-    ctx.lineTo(i*(350/waveformData.length)+2*radius+1, (canvasHeight/2)-(p/2)+radius);
-    ctx.quadraticCurveTo(i*(350/waveformData.length)+2*radius+1, (canvasHeight/2)-(p/2)+radius, i*(350/waveformData.length)+radius+1, (canvasHeight/2)-(p/2));
-    ctx.lineTo(i*(350/waveformData.length)+radius, (canvasHeight/2)-(p/2));
-    ctx.quadraticCurveTo(i*(350/waveformData.length)+radius, (canvasHeight/2)-(p/2), i*(350/waveformData.length), (canvasHeight/2)-(p/2)+radius);
-    ctx.lineTo(i*(350/waveformData.length), canvasHeight/2);
-    const withinHover = hoverXCoord >= coordinates[0];
-    const alreadyPlayed = i < playingPoint;
-    if (withinHover) {
-      ctx.fillStyle = alreadyPlayed ? "#a70909" : "#ffffff";
-    } else if (alreadyPlayed) {
-      ctx.fillStyle = "#00b8fa";
-    } else {
-      ctx.fillStyle = "#88bf99";
-    }
+    ctx.moveTo(i * (350 / waveformData.length), canvasHeight / 2);
+    ctx.lineTo(
+      i * (350 / waveformData.length),
+      canvasHeight / 2 + p / 2 - radius
+    );
+    ctx.quadraticCurveTo(
+      i * (350 / waveformData.length),
+      canvasHeight / 2 + p / 2 - radius,
+      i * (350 / waveformData.length) + radius,
+      canvasHeight / 2 + p / 2
+    );
+    ctx.lineTo(
+      i * (350 / waveformData.length) + radius + 1,
+      canvasHeight / 2 + p / 2
+    );
+    ctx.quadraticCurveTo(
+      i * (350 / waveformData.length) + radius + 1,
+      canvasHeight / 2 + p / 2,
+      i * (350 / waveformData.length) + 2 * radius + 1,
+      canvasHeight / 2 + p / 2 - radius
+    );
+    ctx.lineTo(
+      i * (350 / waveformData.length) + 2 * radius + 1,
+      canvasHeight / 2 - p / 2 + radius
+    );
+    ctx.quadraticCurveTo(
+      i * (350 / waveformData.length) + 2 * radius + 1,
+      canvasHeight / 2 - p / 2 + radius,
+      i * (350 / waveformData.length) + radius + 1,
+      canvasHeight / 2 - p / 2
+    );
+    ctx.lineTo(
+      i * (350 / waveformData.length) + radius,
+      canvasHeight / 2 - p / 2
+    );
+    ctx.quadraticCurveTo(
+      i * (350 / waveformData.length) + radius,
+      canvasHeight / 2 - p / 2,
+      i * (350 / waveformData.length),
+      canvasHeight / 2 - p / 2 + radius
+    );
+    ctx.lineTo(i * (350 / waveformData.length), canvasHeight / 2);
+    ctx.fillStyle = "#00b8fa";
     ctx.fill();
-    ctx.closePath();
+    //ctx.strokeStyle = "#00b8fa";
+    //ctx.stroke();
   });
 };
 type WavefromProps = {
-  waveformData : number[];
-  trackDuration: number;
+  waveformData: number[];
 };
-const Waveform : React.FC<WavefromProps> = ({ waveformData, trackDuration }) => {
-  const {audioCurrentTime, audioTime} = useContext(PlayerContext);
+const Waveform: React.FC<WavefromProps> = ({ waveformData }) => {
+  const {
+    audioTimeOne,
+    audioTimeTwo,
+    activePlayer,
+    audioCurrentTime,
+    audioBufferTime,
+    isSliderMoving,
+    setIsSliderMoving,
+  } = useContext(PlayerContext);
 
+  const [lastCoordinate, setLastCoordinate] = useState(0);
+  const [maskPosition, setMaskPosition] = useState(0);
+  const [maskBufferPosition, setMaskBufferPosition] = useState(0);
+  const [audioTime, setAudioTime] = useState(audioTimeTwo);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const chunkedData = waveformAvgChunker(waveformData);
-  const waveformWidth = 350;
+  const waveformWidth = 346;
   const canvasHeight = 100;
-  const pointWidth = 2;
-  const pointMargin = ((waveformWidth/50)-7)+3;
-  const [trackProgress, setTrackProgress] = useState(0);
-  const [startTime, setStartTime] = useState(Date.now());
-  const [trackPlaying, setTrackPlaying] = useState(true);
-  const [hoverXCoord, setHoverXCoord] = useState(0);
 
-  const playingPoint =
-    ((audioCurrentTime/audioTime)*(50));
   const paintWaveform = useCallback(() => {
     paintCanvas({
       canvasRef,
       waveformData: chunkedData,
       canvasHeight,
-      pointWidth,
-      pointMargin,
-      playingPoint,
-      hoverXCoord,
     });
-  }, [playingPoint]);
-
-  useSetTrackProgress({
-    trackProgress,
-    setTrackProgress,
-    trackDuration,
-    startTime,
-    trackPlaying,
-  });
+  }, [chunkedData]);
 
   useEffect(() => {
     if (canvasRef.current) {
@@ -135,43 +112,80 @@ const Waveform : React.FC<WavefromProps> = ({ waveformData, trackDuration }) => 
   }, [canvasRef]);
 
   useEffect(() => {
-    paintWaveform();
-  }, [playingPoint]);
-
-  const setDefaultX = useCallback(() => {
-    setHoverXCoord(0);
-  }, []);
+    setAudioTime(activePlayer === 0? audioTimeOne: audioTimeTwo)
+  }, [activePlayer]);
 
   const handleMouseMove = useCallback((e) => {
-    if (canvasRef.current)
-      setHoverXCoord(
-        e.clientX - canvasRef.current.getBoundingClientRect().left
-      );
+    // if (canvasRef.current)
+    //   console.log(e.clientX - canvasRef.current.getBoundingClientRect().left);
   }, []);
 
   const seekTrack = (e: React.MouseEvent<HTMLCanvasElement, MouseEvent>) => {
     if (canvasRef.current) {
-      const xCoord = e.clientX - canvasRef.current.getBoundingClientRect().left;
-      const seekPerc = (xCoord * 100) / waveformWidth;
-      const seekMs = (trackDuration * seekPerc) / 100;
-      setStartTime(Date.now() - seekMs);
+      // const xCoord = e.clientX - canvasRef.current.getBoundingClientRect().left;
+      // const seekPerc = (xCoord * 100) / waveformWidth;
+      // const seekMs = (trackDuration * seekPerc) / 100;
+      //setStartTime(Date.now() - seekMs);
+      setLastCoordinate(
+        e.clientX - canvasRef.current.getBoundingClientRect().left
+      );
+    }
+  };
+  const touchMoveSeek = (e: React.TouchEvent<HTMLCanvasElement>) => {
+    if (canvasRef.current) {
+      setLastCoordinate(
+        e.touches[0].clientX - canvasRef.current.getBoundingClientRect().left
+      );
+    }
+  };
+  const touchMoveSeekStart = (e: React.TouchEvent<HTMLCanvasElement>) => {
+    if (canvasRef.current) {
+      setIsSliderMoving(true);
+    }
+  };
+  const touchMoveSeekEnd = (e: React.TouchEvent<HTMLCanvasElement>) => {
+    if (canvasRef.current) {
+      console.log("commited ", lastCoordinate);
+      setIsSliderMoving(false);
     }
   };
 
+  useEffect(() => {
+    if (isSliderMoving) {
+      setMaskPosition(2 * Math.round((lastCoordinate / waveformWidth) * 50));
+      setMaskBufferPosition(2 * Math.round((audioBufferTime / audioTime) * 50))
+    } else {
+      setMaskPosition(2 * Math.round((audioCurrentTime / audioTime) * 50));
+      setMaskBufferPosition(2 * Math.round((audioBufferTime / audioTime) * 50))
+    }
+  }, [lastCoordinate, audioCurrentTime]);
+
   return (
     <div style={{ padding: 16 }}>
-      <canvas
-        style={{ height: canvasHeight, display: 'block' }}
+      <SCanvas
         ref={canvasRef}
         height={canvasHeight}
         width={waveformWidth}
-        onBlur={setDefaultX}
-        onMouseOut={setDefaultX}
         onMouseMove={handleMouseMove}
+        onTouchStart={touchMoveSeekStart}
+        onTouchMove={touchMoveSeek}
+        onTouchEnd={touchMoveSeekEnd}
         onClick={seekTrack}
+        style={{
+          height: canvasHeight,
+          display: "block",
+          WebkitMaskImage: `linear-gradient(to right,#fff 0%,#fff ${maskPosition}%,rgba(255, 255, 255, 0.3) ${maskPosition}%,rgba(255, 255, 255, 0.3) ${maskBufferPosition}%,rgba(255, 255, 255, 0.1) ${maskBufferPosition}%,rgba(255, 255, 255, 0.1) 100%)`,
+
+          maskImage: `linear-gradient(to right,#fff 0%,#fff ${maskPosition}%,rgba(255, 255, 255, 0.3) ${maskPosition}%,rgba(255, 255, 255, 0.3) ${maskBufferPosition}%,rgba(255, 255, 255, 0.1) ${maskBufferPosition}%,rgba(255, 255, 255, 0.1) 100%)`,
+        }}
       />
     </div>
   );
 };
 
 export default Waveform;
+
+const SCanvas = styled.canvas`
+  mask-type: luminance;
+  mask-size: 100% 100%;
+`;

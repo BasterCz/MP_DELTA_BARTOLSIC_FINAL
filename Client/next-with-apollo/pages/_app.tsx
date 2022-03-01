@@ -39,17 +39,21 @@ function MyApp({ Component, pageProps }: AppProps) {
 
   const [waveform, setWavefrom] = useState<number[]>([]);
   const [playTitle, setPlayTitle] = useState("");
-  const [playFile, setPlayFile] = useState("");
+  const [playFileOne, setPlayFileOne] = useState("http://192.168.2.19:3000");
+  const [playFileTwo, setPlayFileTwo] = useState("http://192.168.2.19:3000");
   const [playImage, setPlayImage] = useState("");
   const [sliderValue, setSliderValue] = useState(0);
   const [commited, setCommited] = useState(-1);
   const [isSliderMoving, setIsSliderMoving] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
-  const [audioTime, setAudioTime] = useState(1);
+  const [audioTimeOne, setAudioTimeOne] = useState(1);
+  const [audioTimeTwo, setAudioTimeTwo] = useState(1);
   const [audioBufferTime, setAudioBufferTime] = useState(1);
   const [audioCurrentTime, setAudioCurrentTime] = useState(0);
+  const [activePlayer, setActivePlayer] = useState(1);
 
-  const audioRef = useRef<ReactPlayer>(null);
+  const audioRefOne = useRef<ReactPlayer>(null);
+  const audioRefTwo = useRef<ReactPlayer>(null);
   const playBtnRef = useRef<HTMLButtonElement>(null);
   const sliderRef = useRef<HTMLInputElement>(null);
   const fwdBtnRef = useRef<HTMLButtonElement>(null);
@@ -89,24 +93,37 @@ function MyApp({ Component, pageProps }: AppProps) {
     setDetailVisible(!detailVisible);
   };
 
-  
+  const handlerPreload = (fileSrc: string) => {
+    if(activePlayer === 0) {
+      setPlayFileTwo("http://192.168.2.19:3000" + fileSrc);
+    }
+    else {
+      setPlayFileOne("http://192.168.2.19:3000" + fileSrc);
+    }
+    console.log(playFileOne, playFileTwo);
+  }
 
   const handlerStartPlayer = (
     waveform: number[],
     title: string,
     imageSrc: string,
-    fileSrc: string
   ) => {
+    if(activePlayer === 0 ) setActivePlayer(1);
+    else setActivePlayer(0);
     setWavefrom(waveform);
     setPlayTitle(title);
-    setPlayFile("http://192.168.2.19:3000" + fileSrc);
     setPlayImage(imageSrc);
+    setPlayerMiniVisible(false);
+    setPlayerVisible(true);
+    setDetailVisible(false);
+    setIsPlaying(true);
+    console.log(activePlayer)
   };
 
   return (
     <ApolloProvider client={apolloClient}>
       <Context.Provider
-        value={{ detailID, handlerResultClick, handlerStartPlayer }}
+        value={{ detailID, handlerResultClick, handlerStartPlayer, handlerPreload }}
       >
         <PlayerContext.Provider
           value={{
@@ -114,25 +131,31 @@ function MyApp({ Component, pageProps }: AppProps) {
             setSliderValue,
             setCommited,
             setIsPlaying,
-            setAudioTime,
+            setAudioTimeOne,
+            setAudioTimeTwo,
             setAudioCurrentTime,
             setAudioBufferTime,
             setWavefrom,
+            setActivePlayer,
             sliderValue,
-            audioRef,
+            audioRefOne,
+            audioRefTwo,
             playBtnRef,
             sliderRef,
             fwdBtnRef,
             revBtnRef,
             isPlaying,
-            playFile,
+            playFileOne,
+            playFileTwo,
             isSliderMoving,
             commited,
-            audioTime,
+            audioTimeOne,
+            audioTimeTwo,
             audioCurrentTime,
             audioBufferTime,
             waveform,
-            handlerPlay
+            activePlayer,
+            handlerPlay,
           }}
         >
           <Head>

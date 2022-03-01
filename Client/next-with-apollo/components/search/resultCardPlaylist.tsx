@@ -32,7 +32,7 @@ export const ResultCardPlaylist: React.FC<SearchBarProps> = ({ playlist }) => {
     <Wrapper>
       <ImagePlace>
         {playlist?.image_path ? (
-          <SImage src={srcPath} height={"120px"} width={"120px"} />
+          <SImage src={srcPath} height={"120px"} width={"120px"}/>
         ) : null}
       </ImagePlace>
       <SmallTitleContainer>

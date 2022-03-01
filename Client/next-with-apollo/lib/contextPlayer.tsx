@@ -8,24 +8,30 @@ type PlayerContextProps = {
     setSliderValue : React.Dispatch<React.SetStateAction<number>>;
     setCommited : React.Dispatch<React.SetStateAction<number>>;
     setIsPlaying : React.Dispatch<React.SetStateAction<boolean>>;
-    setAudioTime : React.Dispatch<React.SetStateAction<number>>;
+    setAudioTimeOne : React.Dispatch<React.SetStateAction<number>>;
+    setAudioTimeTwo : React.Dispatch<React.SetStateAction<number>>;
     setAudioBufferTime : React.Dispatch<React.SetStateAction<number>>;
     setAudioCurrentTime : React.Dispatch<React.SetStateAction<number>>;
     setWavefrom: React.Dispatch<React.SetStateAction<number[]>>;
+    setActivePlayer : React.Dispatch<React.SetStateAction<number>>;
     isSliderMoving: boolean;
     sliderValue : number;
     isPlaying : boolean;
-    audioRef : React.RefObject<ReactPlayer>;
+    audioRefOne : React.RefObject<ReactPlayer>;
+    audioRefTwo : React.RefObject<ReactPlayer>;
     playBtnRef: React.RefObject<HTMLButtonElement>;
     sliderRef: React.RefObject<HTMLInputElement>;
     fwdBtnRef: React.RefObject<HTMLButtonElement>;
     revBtnRef: React.RefObject<HTMLButtonElement>;
-    playFile: string;
+    playFileOne: string;
+    playFileTwo: string;
     commited: number;
-    audioTime: number;
+    audioTimeOne: number;
+    audioTimeTwo: number;
     audioBufferTime: number;
     audioCurrentTime: number;
     waveform: number[];
+    activePlayer: number;
     handlerPlay: () => void;
 }
 

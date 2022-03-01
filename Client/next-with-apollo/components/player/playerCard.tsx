@@ -22,21 +22,25 @@ export const PlayerCard: React.FC<DetailCardWrapperProps> = ({
   playImage,
   handlerVisibilityPlayer
 }) => {
-  const {waveform, audioTime} = useContext(PlayerContext);
+  const {waveform} = useContext(PlayerContext);
   return (
     <Wrapper>
       <CardWrapper>
-        <CloseButton onClick={handlerVisibilityPlayer}>
-          <CloseRoundedIcon />
-        </CloseButton>
-        <ImagePlace>
-          {playImage !== "" ? (
-            <SImage src={playImage} height={imageSize} width={imageSize} />
-          ) : null}
-        </ImagePlace>
-        <DetailTitle>{playTitle}</DetailTitle>
-        <Waveform trackDuration={audioTime} waveformData={waveform}/>
-        <PlayerControls></PlayerControls>
+        <TopDiv>
+          <CloseButton onClick={handlerVisibilityPlayer}>
+            <CloseRoundedIcon />
+          </CloseButton>
+          <ImagePlace>
+            {playImage !== "" ? (
+              <SImage src={playImage} height={imageSize} width={imageSize} />
+            ) : null}
+          </ImagePlace>
+          <DetailTitle>{playTitle}</DetailTitle>
+        </TopDiv>
+        <BottomDiv>
+          <Waveform waveformData={waveform} />
+          <PlayerControls></PlayerControls>
+        </BottomDiv>
       </CardWrapper>
     </Wrapper>
   );
@@ -58,6 +62,7 @@ const CardWrapper = styled(Card)`
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: space-between;
   background-color: rgba(20, 23, 28, 0.9);
   backdrop-filter: blur(7px);
   filter: drop-shadow(1px -4px 4px rgba(0, 0, 0, 0.1));
@@ -89,4 +94,17 @@ const ImagePlace = styled.div`
 
 const SImage = styled(Image)`
   border-radius: 10px;
+`;
+
+const TopDiv = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+`;
+
+const BottomDiv = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 30px;
 `;

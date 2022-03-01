@@ -32,7 +32,6 @@ const chunkFill = (chunkNumber: number, chunkSize: number, arr: number[]) => {
     result.push(ampVal % 2 ? ampVal : ampVal + 1)
     idx += 1
   }
-  console.log(result)
   return result
 }
 
