@@ -130,13 +130,10 @@ function MyApp({ Component, pageProps }: AppProps) {
       var removed = false
       setSongQueue(() => {
         var helperArray = [...songQueue];
-        helperArray = helperArray.filter((a) => {
-          if(a.name === title)removed= true;
-          return a.name !== title;
-        });
+        
 
         helperArray.splice(songIndex + 1, 0, {
-          id: id,
+          id: id + Date.now(),
           name: title,
           singer: "Admin",
           cover: imageSrc,
@@ -146,9 +143,6 @@ function MyApp({ Component, pageProps }: AppProps) {
       });
       setWaveformQueue(() => {
         var helperArray = [...waveformQueue];
-        helperArray = helperArray.filter((a) => {
-          return a !== waveform;
-        });
         helperArray.splice(songIndex + 1, 0, waveform);
         return helperArray;
       });
@@ -163,7 +157,7 @@ function MyApp({ Component, pageProps }: AppProps) {
     } else {
       setSongQueue([
         ...songQueue,
-        { id: id, name: title, singer: "Admin", cover: imageSrc, musicSrc: audioSrc },
+        { id: id  + Date.now(), name: title, singer: "Admin", cover: imageSrc, musicSrc: audioSrc },
       ]);
       setWaveformQueue([...waveformQueue, waveform]);
       setPlayerMiniVisible(false);
@@ -182,23 +176,17 @@ function MyApp({ Component, pageProps }: AppProps) {
       setSongQueue(() => {
         var removed = false;
         var helperArray = [...songQueue];
-        helperArray = helperArray.filter((a) => {
-          if(a.name === title)removed= true;
-          return a.name !== title;
-        });
         helperArray.push({
-          id:id,
+          id:id+ Date.now(),
           name: title,
           singer: "Admin",
           cover: imageSrc,
           musicSrc: audioSrc,})
+          if(removed) setSongIndex(songIndex-1);
         return helperArray;
       })
       setWaveformQueue(()=>{
         var helperArray = [...waveformQueue];
-        helperArray = helperArray.filter((a) => {
-          return a !== waveform;
-        });
         helperArray.push(waveform)
         return helperArray;
 
@@ -209,7 +197,7 @@ function MyApp({ Component, pageProps }: AppProps) {
   return (
     <ApolloProvider client={apolloClient}>
       <Context.Provider
-        value={{ detailID, queueVisible, playerVisible, setQueueVisible, handlerResultClick, handlerStartPlayer,handlerAddSongToQueue }}
+        value={{ detailID, queueVisible, playerVisible, setQueueVisible, handlerResultClick, handlerStartPlayer, handlerAddSongToQueue }}
       >
         <PlayerContext.Provider
           value={{

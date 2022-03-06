@@ -7,6 +7,8 @@ import FastForwardRoundedIcon from '@mui/icons-material/FastForwardRounded';
 import FastRewindRoundedIcon from '@mui/icons-material/FastRewindRounded';
 import VolumeOffRoundedIcon from '@mui/icons-material/VolumeOffRounded';
 import PauseRoundedIcon from '@mui/icons-material/PauseRounded';
+import SkipNextRoundedIcon from '@mui/icons-material/SkipNextRounded';
+import SkipPreviousRoundedIcon from '@mui/icons-material/SkipPreviousRounded';
 import React, { useContext } from "react";
 import styled from "styled-components";
 import { PlayerContext } from "../../lib/contextPlayer";
@@ -18,7 +20,17 @@ type PlayerSmallProps = {
 }
 
 export const PlayerSmall: React.FC<PlayerSmallProps> = ({handlerMinifyPlayer,handlerVisibilityPlayer, playerControlMini}) => {
-  const { handlerPlay, isPlaying } = useContext(PlayerContext);
+  const { handlerPlay, isPlaying, audioInstance } = useContext(PlayerContext);
+const next = () => {
+  if(audioInstance.current && audioInstance.current.playNext) audioInstance.current.playNext();
+}
+const previous = () => {
+  if(audioInstance.current && audioInstance.current.playPrev) audioInstance.current.playPrev();
+}
+const mute = () => {
+  console.log(audioInstance.current!.volume)
+  if(audioInstance.current) audioInstance.current.volume = (audioInstance.current.volume === 0? 1 : 0);
+}
   return (
     <Wrapper style={{width: (playerControlMini? "85px" :"270px")}}>
       {playerControlMini ? (
@@ -38,16 +50,16 @@ export const PlayerSmall: React.FC<PlayerSmallProps> = ({handlerMinifyPlayer,han
               <ArrowForwardIosRoundedIcon className="show" />
             </SButton>
             <SButtonGroup>
-            <SButton>
-              <FastRewindRoundedIcon className="fastb" />
+            <SButton onClick={previous}>
+              <SkipPreviousRoundedIcon className="fastb" />
             </SButton>
             <SButton onClick={handlerPlay}>
             {isPlaying?<PauseRoundedIcon className="play"/>:<PlayArrowRoundedIcon className="play" />}
             </SButton>
-            <SButton>
-              <FastForwardRoundedIcon className="fastf" />
+            <SButton onClick={next}>
+              <SkipNextRoundedIcon className="fastf" />
             </SButton>
-            <SButton>
+            <SButton className={audioInstance.current && audioInstance.current.volume === 0? "muted" : ""} onClick={mute}>
               <VolumeOffRoundedIcon className="mute" />
             </SButton>
             <SButton onClick={handlerVisibilityPlayer}>
@@ -93,6 +105,12 @@ const MaxWrapper = styled.div`
 const SButtonGroup = styled(ButtonGroup)`
   display: flex;
   height: 50px;
+  .muted {
+    background-color: #1976d2;
+    svg {
+      fill: #c7cdda
+    }
+  }
 `;
 
 const SButton = styled(Button)`
@@ -110,4 +128,5 @@ const SButton = styled(Button)`
   .more {
     font-size: 1.5rem;
   }
+  
 `;

@@ -83,8 +83,8 @@ export const CustomPlayer: React.FC = () => {
   return (
     <Wrapper>
       <SPlayer 
-      preload="none"
-      loadAudioErrorPlayNext={false}
+        preload="none"
+        loadAudioErrorPlayNext={false}
         audioLists={songQueue}
         quietUpdate
         onAudioError={(e)=> {
@@ -98,7 +98,7 @@ export const CustomPlayer: React.FC = () => {
         onAudioProgress={progressHandler}
         getAudioInstance={(instance) => audioInstance.current = instance}
         onPlayIndexChange={(index)=> setSongIndex(index)}
-        onAudioListsChange={(a, b,c)=> console.log(a, b.map((a)=>a), c.__PLAYER_KEY__)}
+        onAudioListsChange={(a, b, c)=> console.log(a, b, c.__PLAYER_KEY__, songIndex)}
         
       />
     </Wrapper>

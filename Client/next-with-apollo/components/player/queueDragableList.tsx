@@ -19,25 +19,24 @@ interface ItemType {
 
 export const SongQueueList: React.FC = () => {
 
-    const [state, setState] = useState<ItemType[]>([
-        { id: 1, name: "shrek" },
-        { id: 2, name: "fiona" },
-      ]);
 
   const { waveformQueue, songIndex, songQueue, setSongQueue } =
     useContext(PlayerContext);
   return (
     <Wrapper>
-      <ReactSortable list={songQueue} setList={setSongQueue}>
+      <ReactSortable list={songQueue} setList={setSongQueue} animation={200} easing="cubic-bezier(1, 0, 0, 1)">
       {songQueue.map((item, indexQ) => (
-        <div key={item.id} style={{display: `${songIndex >= indexQ? "none": "block"}`}}>
+        <div key={item.id} style={{display: `${songIndex >= indexQ? "none" : "block"}`}}>
+          <ItemWrapper >
             <ImagePlace >
               <SImage src={item.cover} height={"61px"} width={"61px"} />
             </ImagePlace>
             <TextP>
               {item.name}
             </TextP>
+        </ItemWrapper>
         </div>
+        
       ))}
     </ReactSortable>
     </Wrapper>
@@ -45,21 +44,19 @@ export const SongQueueList: React.FC = () => {
 };
 export default SongQueueList;
 
-const CustomComponent = forwardRef<HTMLDivElement, any>((props, ref) => {
-    return <div ref={ref}>{props.children}</div>;
-  });
 
 const Wrapper = styled.div`
   z-index: 1;
   width: 100vw;
   height: 100vh;
+  padding: 20px;
+  padding-top: 0px;
 `;
 const TextP = styled(Box)`
   color: #d8dee9;
+  margin-left: 10px;
   font-size: 1.1rem;
-  transform: translate(69px, -34px);
-  width: calc(100% - 120px);
-  height: 27px;
+  width: calc(100% - 70px);
   overflow-x: scroll;
   white-space: nowrap;
   display: flex;
@@ -83,6 +80,15 @@ const ImagePlace = styled.div`
   width: 52px;
   height: 52px;
   border-radius: 5px;
-  transform: translate(5px, 5px);
   filter: drop-shadow(1px 3px 4px rgba(0, 0, 0, 0.2));
 `;
+
+const ItemWrapper = styled.div`
+  background-color: rgba(0, 0, 0, 0.2);
+  margin-top: 7px;  
+  padding: 5px;
+  border-radius: 10px;
+  display: flex;
+  align-content: center;
+  align-items: center;
+`

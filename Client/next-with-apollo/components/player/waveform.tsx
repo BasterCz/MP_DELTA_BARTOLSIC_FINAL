@@ -9,6 +9,9 @@ import styled from "styled-components";
 import { PlayerContext } from "../../lib/contextPlayer";
 import useStateCallback from "../hooks/useStateCallback";
 import waveformAvgChunker from "./waveformAvgChunker";
+import FastRewindRoundedIcon from "@mui/icons-material/FastRewindRounded";
+import FastForwardRoundedIcon from "@mui/icons-material/FastForwardRounded";
+import { Button } from "@mui/material";
 
 type paintCanvasProps = {
   canvasRef: React.RefObject<HTMLCanvasElement>;
@@ -144,6 +147,14 @@ const Waveform: React.FC = () => {
     }
   };
 
+  const fastForward = () => {
+    if (audioInstance.current !== null) audioInstance.current.currentTime += 5;
+  };
+
+  const revert = () => {
+    if (audioInstance.current !== null) audioInstance.current.currentTime -= 5;
+  };
+
   useEffect(() => {
     if (isSliderMoving) {
       setMaskPosition(2 * Math.round((lastCoordinate / waveformWidth) * 50));
@@ -155,7 +166,10 @@ const Waveform: React.FC = () => {
   }, [lastCoordinate, audioCurrentTime]);
 
   return (
+    
     <div style={{ padding: 16 }}>
+      
+      
       <SCanvas
         ref={canvasRef}
         height={canvasHeight}
@@ -182,6 +196,7 @@ const Waveform: React.FC = () => {
 };
 
 export default Waveform;
+
 
 const SCanvas = styled.canvas`
   mask-type: luminance;

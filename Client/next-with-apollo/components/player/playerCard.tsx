@@ -9,46 +9,58 @@ import Waveform from "./waveform";
 import { PlayerContext } from "../../lib/contextPlayer";
 import SongQueueList from "./queueDragableList";
 import Context from "../../lib/context";
+import ArrowBackIosNewRoundedIcon from "@mui/icons-material/ArrowBackIosNewRounded";
+import HeadTitleSmaller from "../typography/headTitleSmaller";
 
 const imageSize = "300px";
 
 type DetailCardWrapperProps = {
-  handlerVisibilityPlayer: () => void; 
+  handlerVisibilityPlayer: () => void;
 };
 
 export const PlayerCard: React.FC<DetailCardWrapperProps> = ({
   children,
-  handlerVisibilityPlayer
+  handlerVisibilityPlayer,
 }) => {
-  const {waveformQueue, songIndex, songQueue} = useContext(PlayerContext);
-  const {queueVisible, setQueueVisible} = useContext(Context)
-  useEffect(()=> {
-  },[songIndex])
+  const { waveformQueue, songIndex, songQueue } = useContext(PlayerContext);
+  const { queueVisible, setQueueVisible } = useContext(Context);
+  useEffect(() => {}, [songIndex]);
   return (
     <Wrapper>
       <CardWrapper>
-        {!queueVisible?
-        <>
-        <TopDiv>
-          <CloseButton onClick={handlerVisibilityPlayer}>
-            <CloseRoundedIcon />
-          </CloseButton>
-          <ImagePlace>
-            {songQueue[songIndex].cover !== "" ? (
-              <SImage src={songQueue[songIndex].cover} height={imageSize} width={imageSize} />
-            ) : null}
-          </ImagePlace>
-          <DetailTitle>{songQueue[songIndex].name}</DetailTitle>
-        </TopDiv>
-        <BottomDiv>
-          <Waveform/>
-          <PlayerControls/>
-        </BottomDiv>
-        
-        </>
-      :<>
-      <SongQueueList/>
-      </>}
+        {!queueVisible ? (
+          <>
+            <TopDiv>
+              <CloseButton onClick={handlerVisibilityPlayer}>
+                <CloseRoundedIcon />
+              </CloseButton>
+              <ImagePlace>
+                {songQueue[songIndex].cover !== "" ? (
+                  <SImage
+                    src={songQueue[songIndex].cover}
+                    height={imageSize}
+                    width={imageSize}
+                  />
+                ) : null}
+              </ImagePlace>
+              <DetailTitle>{songQueue[songIndex].name}</DetailTitle>
+            </TopDiv>
+            <BottomDiv>
+              <Waveform />
+              <PlayerControls />
+            </BottomDiv>
+          </>
+        ) : (
+          <>
+            <MenuBtnSpacer>
+              <BackButton onClick={() => setQueueVisible(false)}>
+                <ArrowBackIosNewRoundedIcon />
+              </BackButton>
+              <TitleWrapper><SHeadTitleSmaller>{"Queue"}</SHeadTitleSmaller></TitleWrapper>
+            </MenuBtnSpacer>
+            <SongQueueList />
+          </>
+        )}
       </CardWrapper>
     </Wrapper>
   );
@@ -64,7 +76,7 @@ const Wrapper = styled.div`
 const CardWrapper = styled(Card)`
   position: fixed;
   top: 0px;
-  left:0px;
+  left: 0px;
   height: 100%;
   width: 100%;
   display: flex;
@@ -77,6 +89,14 @@ const CardWrapper = styled(Card)`
   z-index: 3;
 `;
 
+const TitleWrapper = styled.div`
+  transform: translateY(-3px);
+`;
+
+const SHeadTitleSmaller = styled(HeadTitleSmaller)`
+  
+`;
+
 const CloseButton = styled(Button)`
   z-index: 3;
   align-self: flex-end;
@@ -85,6 +105,19 @@ const CloseButton = styled(Button)`
     min-width: 38px;
     min-height: 38px;
     color: #d8dee9;
+  }
+`;
+
+const BackButton = styled(Button)`
+  z-index: 3;
+  align-self: flex-start;
+  min-width: 50px;
+  min-height: 50px;
+  border-radius: 100%;
+  margin: 5px;
+  svg {
+    color: #d8dee9;
+    font-size: 1.8rem;
   }
 `;
 
@@ -115,4 +148,11 @@ const BottomDiv = styled.div`
   flex-direction: column;
   align-items: center;
   margin-bottom: 27px;
+`;
+
+const MenuBtnSpacer = styled.div`
+  width: 100vw;
+  height: 66px;
+  display: flex;
+  align-items: center;
 `;
