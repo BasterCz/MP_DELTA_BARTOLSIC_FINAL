@@ -24,10 +24,13 @@ export const DetailCardSong: React.FC<DetailCardWrapperProps> = ({
 }) => {
   const [isReady, setIsReady] = useState(false);
   const { song, refetchSong } = useSongOne(_id, isReady, false);
-  const { waveform } = useWaveform(_id);
-  const [srcPath, setSrcPath] = useState<string>("");
+  const { waveform, refetchWaveform } = useWaveform(_id);
+  const [imagePath, setImagePath] = useState<string>("");
+  const [audioPath, setAudioPath] = useState<string>("");
+  const [ID, setID] = useState<string>("");
+  const [title, setTitle] = useState<string>("");
 
-  const {handlerStartPlayer} = useContext(Context);
+  const { handlerStartPlayer, handlerAddSongToQueue } = useContext(Context);
 
   useEffect(() => {
     setIsReady(detailVisible);
@@ -35,23 +38,37 @@ export const DetailCardSong: React.FC<DetailCardWrapperProps> = ({
 
   useEffect(() => {
     refetchSong({ _id });
+    refetchWaveform({ _id });
   }, [_id]);
 
   useEffect(() => {
-    if (song?.image_path! !== undefined)
-      setSrcPath("http://192.168.2.19:3000" + song?.image_path!);
+    if (song) {
+      if (song.image_path !== undefined)
+        setImagePath("http://192.168.2.19:3000" + song.image_path);
+      if (song.file_path !== undefined)
+        setAudioPath("http://192.168.2.19:3000" + song.file_path);
+      if (song.name !== undefined) setTitle(song.name);
+      if (song.name !== undefined) setID(song._id);
+    }
   }, [song]);
 
   return (
     <Wrapper>
       <DetailCardWrapper handlerDetailClose={handlerDetailClose}>
         <ImagePlace>
-          {srcPath !== "" ? (
-            <SImage src={srcPath} height={imageSize} width={imageSize} />
+          {imagePath !== "" ? (
+            <SImage src={imagePath} height={imageSize} width={imageSize} />
           ) : null}
         </ImagePlace>
-        <ControlsDetailSong startPlayer={()=>handlerStartPlayer(waveform!, song?.name!, srcPath)}/>
-        <DetailTitle >{song?.name}</DetailTitle>
+        <ControlsDetailSong
+          startPlayer={() => {
+            handlerStartPlayer(ID, waveform!, title, imagePath, audioPath);
+          }}
+          addToQueue={() =>
+            handlerAddSongToQueue(ID, waveform!, title, imagePath, audioPath)
+          }
+        />
+        <DetailTitle>{song?.name}</DetailTitle>
         <OptionsDetailSong />
       </DetailCardWrapper>
     </Wrapper>
@@ -79,5 +96,4 @@ const ImagePlace = styled.div`
 
 const SImage = styled(Image)`
   border-radius: 10px;
-  
 `;

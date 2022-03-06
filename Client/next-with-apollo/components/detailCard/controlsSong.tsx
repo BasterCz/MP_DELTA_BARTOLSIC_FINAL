@@ -8,8 +8,9 @@ import React from "react";
 import styled from "styled-components";
 type Props = {
   startPlayer: () => void;
+  addToQueue: ()=> void;
 }
-export const ControlsDetailSong: React.FC<Props> = ({ children, startPlayer  }) => {
+export const ControlsDetailSong: React.FC<Props> = ({ children, startPlayer, addToQueue  }) => {
   return (
     <Wrapper>
       <StyledRoundButton className="likeBtn">
@@ -18,7 +19,7 @@ export const ControlsDetailSong: React.FC<Props> = ({ children, startPlayer  }) 
       <StyledRoundButton onClick={startPlayer} className="playBtn">
         <PlayArrowRoundedIcon className="play"></PlayArrowRoundedIcon>
       </StyledRoundButton>
-      <StyledRoundButton className="queueBtn">
+      <StyledRoundButton onClick={addToQueue} className="queueBtn">
         <QueueMusicRoundedIcon className="queue"></QueueMusicRoundedIcon>
       </StyledRoundButton>
     </Wrapper>

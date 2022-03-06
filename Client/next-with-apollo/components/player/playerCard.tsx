@@ -1,46 +1,54 @@
 import { Button, Card, IconButton } from "@mui/material";
 import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
 import styled from "styled-components";
 import DetailTitle from "../typography/detailTitle";
 import Image from "next/image";
 import PlayerControls from "./playerControl";
 import Waveform from "./waveform";
 import { PlayerContext } from "../../lib/contextPlayer";
+import SongQueueList from "./queueDragableList";
+import Context from "../../lib/context";
 
 const imageSize = "300px";
 
 type DetailCardWrapperProps = {
   handlerVisibilityPlayer: () => void; 
-  playTitle: string;
-  playImage: string;
 };
 
 export const PlayerCard: React.FC<DetailCardWrapperProps> = ({
   children,
-  playTitle,
-  playImage,
   handlerVisibilityPlayer
 }) => {
-  const {waveform} = useContext(PlayerContext);
+  const {waveformQueue, songIndex, songQueue} = useContext(PlayerContext);
+  const {queueVisible, setQueueVisible} = useContext(Context)
+  useEffect(()=> {
+  },[songIndex])
   return (
     <Wrapper>
       <CardWrapper>
+        {!queueVisible?
+        <>
         <TopDiv>
           <CloseButton onClick={handlerVisibilityPlayer}>
             <CloseRoundedIcon />
           </CloseButton>
           <ImagePlace>
-            {playImage !== "" ? (
-              <SImage src={playImage} height={imageSize} width={imageSize} />
+            {songQueue[songIndex].cover !== "" ? (
+              <SImage src={songQueue[songIndex].cover} height={imageSize} width={imageSize} />
             ) : null}
           </ImagePlace>
-          <DetailTitle>{playTitle}</DetailTitle>
+          <DetailTitle>{songQueue[songIndex].name}</DetailTitle>
         </TopDiv>
         <BottomDiv>
-          <Waveform waveformData={waveform} />
-          <PlayerControls></PlayerControls>
+          <Waveform/>
+          <PlayerControls/>
         </BottomDiv>
+        
+        </>
+      :<>
+      <SongQueueList/>
+      </>}
       </CardWrapper>
     </Wrapper>
   );
@@ -106,5 +114,5 @@ const BottomDiv = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-bottom: 30px;
+  margin-bottom: 27px;
 `;

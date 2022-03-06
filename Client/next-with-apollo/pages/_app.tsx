@@ -1,16 +1,17 @@
 import "../styles/globals.css";
 import type { AppProps } from "next/app";
-import { initializeApollo, useApollo } from "../lib/apollo";
-import React, { SyntheticEvent, useEffect, useRef, useState } from "react";
-import { ApolloProvider, NormalizedCacheObject } from "@apollo/client";
+import { useApollo } from "../lib/apollo";
+import React, { useEffect, useRef, useState } from "react";
+import { ApolloProvider } from "@apollo/client";
 import { useRouter } from "next/dist/client/router";
 import { Context } from "../lib/context";
 import Head from "next/head";
 import NavLayout from "../components/layouts/navLayout";
 import PlayerCard from "../components/player/playerCard";
-import ReactPlayer from "react-player";
 import { PlayerContext } from "../lib/contextPlayer";
 import CustomPlayer from "../components/player/CustomPlayer";
+import { ReactJkMusicPlayerInstance } from "react-jinke-music-player";
+import useStateCallback from "../components/hooks/useStateCallback";
 
 type SelectedType = "feed" | "search" | "library";
 type DetailOfType = "song" | "playlist";
@@ -19,6 +20,13 @@ type ReactPlayerState = {
   playedSeconds: number;
   loaded: number;
   loadedSeconds: number;
+};
+type SongInfo = {
+  id: string;
+  name: string;
+  singer: string;
+  cover: string;
+  musicSrc: string;
 };
 
 function MyApp({ Component, pageProps }: AppProps) {
@@ -36,24 +44,24 @@ function MyApp({ Component, pageProps }: AppProps) {
   const [detailVisible, setDetailVisible] = useState(false);
   const [playerMiniVisible, setPlayerMiniVisible] = useState(true);
   const [playerVisible, setPlayerVisible] = useState(false);
+  const [queueVisible, setQueueVisible] = useState(false);
 
-  const [waveform, setWavefrom] = useState<number[]>([]);
-  const [playTitle, setPlayTitle] = useState("");
-  const [playFileOne, setPlayFileOne] = useState("http://192.168.2.19:3000");
-  const [playFileTwo, setPlayFileTwo] = useState("http://192.168.2.19:3000");
-  const [playImage, setPlayImage] = useState("");
   const [sliderValue, setSliderValue] = useState(0);
   const [commited, setCommited] = useState(-1);
   const [isSliderMoving, setIsSliderMoving] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
-  const [audioTimeOne, setAudioTimeOne] = useState(1);
-  const [audioTimeTwo, setAudioTimeTwo] = useState(1);
+  const [audioTime, setAudioTime] = useState(1);
   const [audioBufferTime, setAudioBufferTime] = useState(1);
   const [audioCurrentTime, setAudioCurrentTime] = useState(0);
-  const [activePlayer, setActivePlayer] = useState(1);
 
-  const audioRefOne = useRef<ReactPlayer>(null);
-  const audioRefTwo = useRef<ReactPlayer>(null);
+  const [songQueue, setSongQueue] = useState<SongInfo[]>([]);
+  const [waveformQueue, setWaveformQueue] = useStateCallback<number[][]>([]);
+  const [songIndex, setSongIndex] = useState(0);
+  const [indexToPlay, setIndexToPlay] = useState(0);
+  const [removed, setRemoved] = useStateCallback(false);
+  const [removedNo, setRemovedNo] = useStateCallback(0);
+
+  const audioInstance = useRef<ReactJkMusicPlayerInstance | null>(null);
   const playBtnRef = useRef<HTMLButtonElement>(null);
   const sliderRef = useRef<HTMLInputElement>(null);
   const fwdBtnRef = useRef<HTMLButtonElement>(null);
@@ -78,7 +86,7 @@ function MyApp({ Component, pageProps }: AppProps) {
   };
   const handlerPlay = () => {
     setIsPlaying(!isPlaying);
-  }
+  };
   const handlerVisibilityPlayer = () => {
     setPlayerMiniVisible(!playerMiniVisible);
     setPlayerVisible(!playerVisible);
@@ -93,37 +101,115 @@ function MyApp({ Component, pageProps }: AppProps) {
     setDetailVisible(!detailVisible);
   };
 
-  const handlerPreload = (fileSrc: string) => {
-    if(activePlayer === 0) {
-      setPlayFileTwo("http://192.168.2.19:3000" + fileSrc);
+  useEffect(() => {
+    if (audioInstance.current !== null) {
+      isPlaying ? audioInstance.current.play() : audioInstance.current.pause();
     }
-    else {
-      setPlayFileOne("http://192.168.2.19:3000" + fileSrc);
+  }, [isPlaying]);
+
+
+  useEffect(() => {
+    if(removed) {
+      if (audioInstance.current && audioInstance.current.play)
+      audioInstance.current.load();
     }
-    console.log(playFileOne, playFileTwo);
-  }
+    else{
+      if (audioInstance.current && audioInstance.current.playNext)
+      audioInstance.current.playNext();
+    }
+  }, [indexToPlay ,removed, removedNo]);
 
   const handlerStartPlayer = (
+    id:string,
     waveform: number[],
     title: string,
     imageSrc: string,
+    audioSrc: string
   ) => {
-    if(activePlayer === 0 ) setActivePlayer(1);
-    else setActivePlayer(0);
-    setWavefrom(waveform);
-    setPlayTitle(title);
-    setPlayImage(imageSrc);
-    setPlayerMiniVisible(false);
-    setPlayerVisible(true);
-    setDetailVisible(false);
-    setIsPlaying(true);
-    console.log(activePlayer)
+    if (songQueue.length > 0) {
+      var removed = false
+      setSongQueue(() => {
+        var helperArray = [...songQueue];
+        helperArray = helperArray.filter((a) => {
+          if(a.name === title)removed= true;
+          return a.name !== title;
+        });
+
+        helperArray.splice(songIndex + 1, 0, {
+          id: id,
+          name: title,
+          singer: "Admin",
+          cover: imageSrc,
+          musicSrc: audioSrc,
+        });
+        return helperArray;
+      });
+      setWaveformQueue(() => {
+        var helperArray = [...waveformQueue];
+        helperArray = helperArray.filter((a) => {
+          return a !== waveform;
+        });
+        helperArray.splice(songIndex + 1, 0, waveform);
+        return helperArray;
+      });
+
+      setPlayerMiniVisible(false);
+      setPlayerVisible(true);
+      setDetailVisible(false);
+      setIsPlaying(true);
+      setIndexToPlay(removed ? songIndex : songIndex + 1);
+      setRemoved(removed);
+      setRemovedNo(removed? removedNo + 1: removedNo);
+    } else {
+      setSongQueue([
+        ...songQueue,
+        { id: id, name: title, singer: "Admin", cover: imageSrc, musicSrc: audioSrc },
+      ]);
+      setWaveformQueue([...waveformQueue, waveform]);
+      setPlayerMiniVisible(false);
+      setPlayerVisible(true);
+      setDetailVisible(false);
+      setIsPlaying(true);
+    }
   };
+
+  const handlerAddSongToQueue= (
+    id: string,
+    waveform: number[],
+    title: string,
+    imageSrc: string,
+    audioSrc: string) => {
+      setSongQueue(() => {
+        var removed = false;
+        var helperArray = [...songQueue];
+        helperArray = helperArray.filter((a) => {
+          if(a.name === title)removed= true;
+          return a.name !== title;
+        });
+        helperArray.push({
+          id:id,
+          name: title,
+          singer: "Admin",
+          cover: imageSrc,
+          musicSrc: audioSrc,})
+        return helperArray;
+      })
+      setWaveformQueue(()=>{
+        var helperArray = [...waveformQueue];
+        helperArray = helperArray.filter((a) => {
+          return a !== waveform;
+        });
+        helperArray.push(waveform)
+        return helperArray;
+
+      });
+    
+  }
 
   return (
     <ApolloProvider client={apolloClient}>
       <Context.Provider
-        value={{ detailID, handlerResultClick, handlerStartPlayer, handlerPreload }}
+        value={{ detailID, queueVisible, playerVisible, setQueueVisible, handlerResultClick, handlerStartPlayer,handlerAddSongToQueue }}
       >
         <PlayerContext.Provider
           value={{
@@ -131,30 +217,26 @@ function MyApp({ Component, pageProps }: AppProps) {
             setSliderValue,
             setCommited,
             setIsPlaying,
-            setAudioTimeOne,
-            setAudioTimeTwo,
+            setAudioTime,
             setAudioCurrentTime,
             setAudioBufferTime,
-            setWavefrom,
-            setActivePlayer,
+            setSongQueue,
+            setSongIndex,
             sliderValue,
-            audioRefOne,
-            audioRefTwo,
             playBtnRef,
             sliderRef,
             fwdBtnRef,
             revBtnRef,
             isPlaying,
-            playFileOne,
-            playFileTwo,
             isSliderMoving,
             commited,
-            audioTimeOne,
-            audioTimeTwo,
+            audioTime,
             audioCurrentTime,
             audioBufferTime,
-            waveform,
-            activePlayer,
+            waveformQueue,
+            songQueue,
+            audioInstance,
+            songIndex,
             handlerPlay,
           }}
         >
@@ -170,13 +252,9 @@ function MyApp({ Component, pageProps }: AppProps) {
               rel="stylesheet"
             />
           </Head>
-          <CustomPlayer/>
+          <CustomPlayer />
           {playerVisible ? (
-            <PlayerCard
-              handlerVisibilityPlayer={handlerVisibilityPlayer}
-              playImage={playImage}
-              playTitle={playTitle}
-            />
+            <PlayerCard handlerVisibilityPlayer={handlerVisibilityPlayer} />
           ) : null}
           <NavLayout
             maximized={maximized}

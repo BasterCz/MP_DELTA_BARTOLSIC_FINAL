@@ -264,7 +264,7 @@ export const addView = async (_id: string) => {
 
 export const waveformAdd = async (id: string, waveform: number[]) => {
   const { db } = await connectToDatabase();
-  const res = await db.collection("waveforms").insertOne({
+  const res = await db.collection("waveform").insertOne({
     songID: id,
     waveform: waveform,
   });
@@ -278,7 +278,7 @@ export const waveformUpdate = async (id: string, waveform: number[]) => {
       waveform: waveform,
     },
   };
-  const res = await db.collection("waveforms").updateOne(
+  const res = await db.collection("waveform").updateOne(
     {
       songID: id,
     },

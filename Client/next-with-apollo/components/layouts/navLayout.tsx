@@ -1,3 +1,6 @@
+import { useContext } from "react";
+import Context from "../../lib/context";
+import { PlayerContext } from "../../lib/contextPlayer";
 import DetailCardSong from "../detailCard/detailCardSong";
 import DetailCardWrapper from "../detailCard/detailCardWrapper";
 import MainContainer from "../mainContainer";
@@ -23,7 +26,7 @@ type LayoutProps = {
   handlerDetailClose: () => void;
   handlerMinifyPlayer: () => void;
   handlerChangeSelected: (input: SelectedType) => void;
-  handlerVisibilityPlayer: () => void;    
+  handlerVisibilityPlayer: () => void;
 };
 
 export const NavLayout: React.FC<LayoutProps> = ({
@@ -42,10 +45,11 @@ export const NavLayout: React.FC<LayoutProps> = ({
   detailOf,
   children,
 }) => {
+  const { playerVisible } = useContext(Context);
   return (
     <>
       <ProgressShadowTop />
-      
+
       <NavTop />
       {detailVisible ? (
         detailOf == "song" ? (
@@ -67,10 +71,12 @@ export const NavLayout: React.FC<LayoutProps> = ({
       >
         {children}
       </MainContainer>
-      <NavBottom
-        selected={selected}
-        handlerChangeSelected={handlerChangeSelected}
-      />
+      {!playerVisible ? (
+        <NavBottom
+          selected={selected}
+          handlerChangeSelected={handlerChangeSelected}
+        />
+      ) : null}
     </>
   );
 };

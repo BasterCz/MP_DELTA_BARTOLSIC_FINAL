@@ -7,6 +7,7 @@ import React, {
 } from "react";
 import styled from "styled-components";
 import { PlayerContext } from "../../lib/contextPlayer";
+import useStateCallback from "../hooks/useStateCallback";
 import waveformAvgChunker from "./waveformAvgChunker";
 
 type paintCanvasProps = {
@@ -74,63 +75,52 @@ const paintCanvas = ({
     //ctx.stroke();
   });
 };
-type WavefromProps = {
-  waveformData: number[];
-};
-const Waveform: React.FC<WavefromProps> = ({ waveformData }) => {
+const Waveform: React.FC = () => {
   const {
-    audioTimeOne,
-    audioTimeTwo,
-    activePlayer,
+    audioTime,
     audioCurrentTime,
     audioBufferTime,
+    audioInstance,
     isSliderMoving,
     setIsSliderMoving,
+    waveformQueue,
+    songIndex,
   } = useContext(PlayerContext);
 
-  const [lastCoordinate, setLastCoordinate] = useState(0);
+  const [lastCoordinate, setLastCoordinate] = useStateCallback(0);
   const [maskPosition, setMaskPosition] = useState(0);
   const [maskBufferPosition, setMaskBufferPosition] = useState(0);
-  const [audioTime, setAudioTime] = useState(audioTimeTwo);
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const chunkedData = waveformAvgChunker(waveformData);
   const waveformWidth = 346;
   const canvasHeight = 100;
+
+  
 
   const paintWaveform = useCallback(() => {
     paintCanvas({
       canvasRef,
-      waveformData: chunkedData,
+      waveformData: waveformAvgChunker(waveformQueue[songIndex]),
       canvasHeight,
     });
-  }, [chunkedData]);
+  }, [songIndex]);
 
   useEffect(() => {
     if (canvasRef.current) {
       paintWaveform();
     }
-  }, [canvasRef]);
-
-  useEffect(() => {
-    setAudioTime(activePlayer === 0? audioTimeOne: audioTimeTwo)
-  }, [activePlayer]);
+  }, [canvasRef, songIndex]);
 
   const handleMouseMove = useCallback((e) => {
-    // if (canvasRef.current)
-    //   console.log(e.clientX - canvasRef.current.getBoundingClientRect().left);
+    if (canvasRef.current)
+      setLastCoordinate(e.clientX - canvasRef.current.getBoundingClientRect().left);
   }, []);
 
   const seekTrack = (e: React.MouseEvent<HTMLCanvasElement, MouseEvent>) => {
-    if (canvasRef.current) {
-      // const xCoord = e.clientX - canvasRef.current.getBoundingClientRect().left;
-      // const seekPerc = (xCoord * 100) / waveformWidth;
-      // const seekMs = (trackDuration * seekPerc) / 100;
-      //setStartTime(Date.now() - seekMs);
-      setLastCoordinate(
-        e.clientX - canvasRef.current.getBoundingClientRect().left
-      );
+    if (audioInstance.current && canvasRef.current) {
+      audioInstance.current.currentTime = audioTime * (( e.clientX - canvasRef.current.getBoundingClientRect().left)/waveformWidth);
     }
   };
+
   const touchMoveSeek = (e: React.TouchEvent<HTMLCanvasElement>) => {
     if (canvasRef.current) {
       setLastCoordinate(
@@ -144,8 +134,12 @@ const Waveform: React.FC<WavefromProps> = ({ waveformData }) => {
     }
   };
   const touchMoveSeekEnd = (e: React.TouchEvent<HTMLCanvasElement>) => {
-    if (canvasRef.current) {
-      console.log("commited ", lastCoordinate);
+    if (canvasRef.current&& audioInstance.current) {
+      if(e.cancelable) {
+      }
+      else{
+        audioInstance.current.currentTime = audioTime * ( lastCoordinate/waveformWidth)
+      }
       setIsSliderMoving(false);
     }
   };
@@ -166,10 +160,14 @@ const Waveform: React.FC<WavefromProps> = ({ waveformData }) => {
         ref={canvasRef}
         height={canvasHeight}
         width={waveformWidth}
-        onMouseMove={handleMouseMove}
+        
         onTouchStart={touchMoveSeekStart}
         onTouchMove={touchMoveSeek}
         onTouchEnd={touchMoveSeekEnd}
+
+        onMouseMove={handleMouseMove}
+        onMouseEnter={()=>{setIsSliderMoving(true)}}
+        onMouseLeave={()=>{setIsSliderMoving(false)}}
         onClick={seekTrack}
         style={{
           height: canvasHeight,

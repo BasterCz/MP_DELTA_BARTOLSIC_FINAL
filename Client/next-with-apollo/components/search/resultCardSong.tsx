@@ -33,12 +33,10 @@ export const ResultCardSong: React.FC<SearchBarProps> = ({
   handlerResultClick,
 }) => {
   const srcPath = "http://localhost:3000" + song?.image_path!;
-  const { handlerPreload } = useContext(Context);
-  
+
   return (
     <Wrapper
       onClick={() => {
-        handlerPreload(song?.file_path!);
         handlerResultClick(song!._id, "song");
       }}
     >

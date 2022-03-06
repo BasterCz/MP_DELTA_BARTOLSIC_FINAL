@@ -9,9 +9,7 @@ import { PlayerContext } from "../../lib/contextPlayer";
 
 export const PlayerControls: React.FC = () => {
   const {
-    audioRefOne,
-    audioRefTwo,
-    activePlayer,
+    audioInstance,
     fwdBtnRef,
     revBtnRef,
     isPlaying,
@@ -19,23 +17,13 @@ export const PlayerControls: React.FC = () => {
   } = useContext(PlayerContext);
   useEffect(() => {
     const fastForward = () => {
-      if (activePlayer === 0) {
-        if (audioRefOne.current !== null)
-          audioRefOne.current.seekTo(audioRefOne.current.getCurrentTime() + 5);
-      } else {
-        if (audioRefTwo.current !== null)
-          audioRefTwo.current.seekTo(audioRefTwo.current.getCurrentTime() + 5);
-      }
+        if (audioInstance.current !== null)
+        audioInstance.current.currentTime += 5;
     };
 
     const revert = () => {
-      if (activePlayer === 0) {
-        if (audioRefOne.current !== null)
-          audioRefOne.current.seekTo(audioRefOne.current.getCurrentTime() - 5);
-      } else {
-        if (audioRefTwo.current !== null)
-          audioRefTwo.current.seekTo(audioRefTwo.current.getCurrentTime() - 5);
-      }
+        if (audioInstance.current !== null)
+        audioInstance.current.currentTime -= 5;
     };
 
     revBtnRef.current?.addEventListener("click", revert);
@@ -44,7 +32,7 @@ export const PlayerControls: React.FC = () => {
       revBtnRef.current?.removeEventListener("click", revert);
       fwdBtnRef.current?.removeEventListener("click", fastForward);
     };
-  }, [isPlaying, activePlayer]);
+  }, [isPlaying]);
 
   return (
     <Wrapper>
@@ -72,7 +60,7 @@ const Wrapper = styled.div`
 `;
 const StyledRoundButton = styled(Button)`
   margin: 0px 10px 0px 10px !important;
-  background-color: #d8dee9 !important;
+  
   height: 65px;
   width: 65px;
   border-radius: 100% !important;

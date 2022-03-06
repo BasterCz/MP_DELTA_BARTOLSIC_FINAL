@@ -2,6 +2,10 @@ import React, { SyntheticEvent, useContext, useEffect, useState } from "react";
 import ReactPlayer from "react-player";
 import styled from "styled-components";
 import { PlayerContext } from "../../lib/contextPlayer";
+import Hls from "hls.js"
+import {ReactJkMusicPlayerAudioInfo, ReactJkMusicPlayerInstance} from "react-jinke-music-player"
+import "react-jinke-music-player/assets/index.css";
+import dynamic from "next/dynamic";
 
 type ReactPlayerState = {
   played: number;
@@ -10,37 +14,34 @@ type ReactPlayerState = {
   loadedSeconds: number;
 };
 
+const NoSSRPlayer = dynamic(() => import("./Player"), {
+  ssr: false,
+});
+
 export const CustomPlayer: React.FC = () => {
   const {
-    audioRefOne,
-    audioRefTwo,
-    audioBufferTime,
-    audioTimeOne,
-    audioTimeTwo,
-    fwdBtnRef,
-    playBtnRef,
-    revBtnRef,
-    sliderRef,
     sliderValue,
-    playFileOne,
-    playFileTwo,
     commited,
     isPlaying,
-    activePlayer,
-    audioCurrentTime,
     isSliderMoving,
+    songQueue,
+    audioTime,
+    audioInstance,
+    songIndex,
     setCommited,
-    setIsPlaying,
     setIsSliderMoving,
     setSliderValue,
+    setAudioTime,
     setAudioCurrentTime,
     setAudioBufferTime,
-    setAudioTimeOne,
-    setAudioTimeTwo,
-    setActivePlayer
+    setSongIndex
   } = useContext(PlayerContext);
 
+  
   const [isSafari, setIsSafari] = useState(false);
+  const [isReady, setIsReady] = useState(false);
+
+  
 
   const toMinuteSecond = (num: number) => {
     return new Date(sliderValue * 1000).toISOString().substr(14, 5);
@@ -71,48 +72,34 @@ export const CustomPlayer: React.FC = () => {
     // }
   }, [commited]);
 
-  const progressHandler = (state: ReactPlayerState) => {
-    setAudioCurrentTime(state.playedSeconds);
-    if (!isSliderMoving) setSliderValue(state.playedSeconds);
-    setAudioBufferTime(state.loadedSeconds);
-    console.log(activePlayer === 0? audioTimeOne - state.playedSeconds: audioTimeTwo - state.playedSeconds);
-    if(activePlayer === 1 && audioTimeTwo - state.playedSeconds < 1) setActivePlayer(0);
-    else if (activePlayer === 0 && audioTimeOne - state.playedSeconds < 1) setActivePlayer(1);
+  const progressHandler = (state: ReactJkMusicPlayerAudioInfo) => {
+    setAudioCurrentTime(state.currentTime);
+    if (!isSliderMoving) setSliderValue(state.currentTime);
+    if(audioInstance.current && audioInstance.current.buffered.length > 0) setAudioBufferTime(audioInstance.current.buffered.end(0));
+    setAudioTime(state.duration);
   };
-
-  const handleDuration = (duration: number, player: number) => {
-    if (player === 0) {
-    setAudioTimeOne(duration);
-    }
-    else {
-      setAudioTimeTwo(duration);
-    }
-    console.log("loaded", player, "duration", duration, audioTimeOne);
-  };
+  
 
   return (
     <Wrapper>
-      <ReactPlayer
-      key="player1"
-        config={{ file: { forceHLS: false, forceAudio: true } }}
-        ref={audioRefOne}
-        playing={activePlayer === 0 ? isPlaying : false}
-        url={playFileOne}
-        onDuration={(dur) => handleDuration(dur, 0)}
-        onProgress={progressHandler}
-        height={1}
-        width={1}
-      />
-      <ReactPlayer
-      key="player2"
-        config={{ file: { forceHLS: false, forceAudio: true } }}
-        ref={audioRefTwo}
-        playing={activePlayer === 1 ? isPlaying : false}
-        url={playFileTwo}
-        onDuration={(dur) => handleDuration(dur, 1)}
-        onProgress={progressHandler}
-        height={1}
-        width={1}
+      <SPlayer 
+      preload="none"
+      loadAudioErrorPlayNext={false}
+        audioLists={songQueue}
+        quietUpdate
+        onAudioError={(e)=> {
+          if(e && e.code === 4 && Hls.isSupported()) {
+            const hlsInstance = new Hls();
+            console.log("eI", songIndex);
+            hlsInstance.loadSource(songQueue[songIndex].musicSrc);
+            hlsInstance.attachMedia(audioInstance.current!)
+          }
+        }}
+        onAudioProgress={progressHandler}
+        getAudioInstance={(instance) => audioInstance.current = instance}
+        onPlayIndexChange={(index)=> setSongIndex(index)}
+        onAudioListsChange={(a, b,c)=> console.log(a, b.map((a)=>a), c.__PLAYER_KEY__)}
+        
       />
     </Wrapper>
   );
@@ -123,4 +110,38 @@ const Wrapper = styled.div`
   width: 100vw;
   height: 5px;
   z-index: 7;
+`;
+const SPlayer = styled(NoSSRPlayer)`
+  * {
+    width: 1px !important;
+    height: 1px !important;
+    opacity: 0.000001 !important;
+    padding: 0px !important;
+    border: 0px !important;
+  }
+  * :before {
+    width: 1px !important;
+    height: 1px !important;
+    opacity: 0.000001 !important;
+    padding: 0px !important;
+    border: 0px !important;
+    /*CSS transitions*/
+    -o-transition-property: none !important;
+    -moz-transition-property: none !important;
+    -ms-transition-property: none !important;
+    -webkit-transition-property: none !important;
+    transition-property: none !important;
+    /*CSS transforms*/
+    -o-transform: none !important;
+    -moz-transform: none !important;
+    -ms-transform: none !important;
+    -webkit-transform: none !important;
+    transform: none !important;
+    /*CSS animations*/
+    -webkit-animation: none !important;
+    -moz-animation: none !important;
+    -o-animation: none !important;
+    -ms-animation: none !important;
+    animation: none !important;
+  }
 `;
