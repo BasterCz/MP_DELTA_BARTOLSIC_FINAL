@@ -23,7 +23,7 @@ export const DetailCardSong: React.FC<DetailCardWrapperProps> = ({
   handlerDetailClose,
 }) => {
   const [isReady, setIsReady] = useState(false);
-  const { song, refetchSong } = useSongOne(_id, isReady, false);
+  const { song, refetchSong } = useSongOne(_id, isReady);
   const { waveform, refetchWaveform } = useWaveform(_id);
   const [imagePath, setImagePath] = useState<string>("");
   const [audioPath, setAudioPath] = useState<string>("");
@@ -44,9 +44,9 @@ export const DetailCardSong: React.FC<DetailCardWrapperProps> = ({
   useEffect(() => {
     if (song) {
       if (song.image_path !== undefined)
-        setImagePath("http://192.168.2.19:3000" + song.image_path);
+        setImagePath("http://localhost:3000" + song.image_path);
       if (song.file_path !== undefined)
-        setAudioPath("http://192.168.2.19:3000" + song.file_path);
+        setAudioPath("http://localhost:3000" + song.file_path);
       if (song.name !== undefined) setTitle(song.name);
       if (song.name !== undefined) setID(song._id);
     }

@@ -6,6 +6,9 @@ import { Playlist, Song } from "../../__generated__/lib/type-defs.graphqls";
 import Image from "next/image";
 import SmallTitle from "../typography/smallTitle";
 
+
+type DetailOfType = "song" | "playlist";
+
 type SearchBarProps = {
   playlist:
     | ({
@@ -24,12 +27,13 @@ type SearchBarProps = {
       >)
     | null
     | undefined;
+    handlerResultClick: (_id: string, _detailOf: DetailOfType) => void;
 };
 
-export const ResultCardPlaylist: React.FC<SearchBarProps> = ({ playlist }) => {
+export const ResultCardPlaylist: React.FC<SearchBarProps> = ({ playlist, handlerResultClick }) => {
   const srcPath = "http://localhost:3000" + playlist?.image_path!;
   return (
-    <Wrapper>
+    <Wrapper onClick={()=>{handlerResultClick(playlist!._id, "playlist")}}>
       <ImagePlace>
         {playlist?.image_path ? (
           <SImage src={srcPath} height={"120px"} width={"120px"}/>

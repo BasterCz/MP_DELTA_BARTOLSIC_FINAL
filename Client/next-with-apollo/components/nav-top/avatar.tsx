@@ -4,16 +4,26 @@ import Avatar from "@mui/material/Avatar";
 import Stack from "@mui/material/Stack";
 import styled from "styled-components";
 
-export const BadgeAvatars: React.FC = () => {
+type BadgeProps = {
+  name: string;
+  src: string;
+  loading: boolean;
+};
+
+export const BadgeAvatars: React.FC<BadgeProps> = ({ name, src, loading }) => {
   return (
-    <SStack direction="row" spacing={2} >
-      <StyledBadge
-        overlap="circular"
-        anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
-        variant="dot"
-      >
-        <Avatar alt="Test Subject" src="/static/images/avatar/1.jpg" />
-      </StyledBadge>
+    <SStack direction="row" spacing={2}>
+      {loading ? (
+        <StyledBadge
+          overlap="circular"
+          anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+          variant="dot"
+        >
+          <Avatar alt={name} src={src} />
+        </StyledBadge>
+      ) : (
+        <Avatar alt={name} src={src} />
+      )}
     </SStack>
   );
 };
@@ -22,8 +32,8 @@ export default BadgeAvatars;
 
 const StyledBadge = styled(Badge)`
   & .MuiBadge-badge {
-    background-color: #44b700;
-    color: #44b700;
+    background-color: #e6e600;
+    color: #e6e600;
     box-shadow: 0 0 0 2px #1e222a;
     &::after {
       position: "absolute";
@@ -56,5 +66,5 @@ const SmallAvatar = styled(Avatar)`
 `;
 
 const SStack = styled(Stack)`
-    margin: 15px;
-`
+  margin: 15px;
+`;

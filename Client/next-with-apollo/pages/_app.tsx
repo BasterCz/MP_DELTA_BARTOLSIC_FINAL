@@ -13,6 +13,8 @@ import CustomPlayer from "../components/player/CustomPlayer";
 import { ReactJkMusicPlayerInstance } from "react-jinke-music-player";
 import useStateCallback from "../components/hooks/useStateCallback";
 
+import { UserProvider } from "@auth0/nextjs-auth0";
+
 type SelectedType = "feed" | "search" | "library";
 type DetailOfType = "song" | "playlist";
 type ReactPlayerState = {
@@ -107,30 +109,27 @@ function MyApp({ Component, pageProps }: AppProps) {
     }
   }, [isPlaying]);
 
-
   useEffect(() => {
-    if(removed) {
+    if (removed) {
       if (audioInstance.current && audioInstance.current.play)
-      audioInstance.current.load();
-    }
-    else{
+        audioInstance.current.load();
+    } else {
       if (audioInstance.current && audioInstance.current.playNext)
-      audioInstance.current.playNext();
+        audioInstance.current.playNext();
     }
-  }, [indexToPlay ,removed, removedNo]);
+  }, [indexToPlay, removed, removedNo]);
 
   const handlerStartPlayer = (
-    id:string,
+    id: string,
     waveform: number[],
     title: string,
     imageSrc: string,
     audioSrc: string
   ) => {
     if (songQueue.length > 0) {
-      var removed = false
+      var removed = false;
       setSongQueue(() => {
         var helperArray = [...songQueue];
-        
 
         helperArray.splice(songIndex + 1, 0, {
           id: id + Date.now(),
@@ -153,11 +152,17 @@ function MyApp({ Component, pageProps }: AppProps) {
       setIsPlaying(true);
       setIndexToPlay(removed ? songIndex : songIndex + 1);
       setRemoved(removed);
-      setRemovedNo(removed? removedNo + 1: removedNo);
+      setRemovedNo(removed ? removedNo + 1 : removedNo);
     } else {
       setSongQueue([
         ...songQueue,
-        { id: id  + Date.now(), name: title, singer: "Admin", cover: imageSrc, musicSrc: audioSrc },
+        {
+          id: id + Date.now(),
+          name: title,
+          singer: "Admin",
+          cover: imageSrc,
+          musicSrc: audioSrc,
+        },
       ]);
       setWaveformQueue([...waveformQueue, waveform]);
       setPlayerMiniVisible(false);
@@ -167,109 +172,169 @@ function MyApp({ Component, pageProps }: AppProps) {
     }
   };
 
-  const handlerAddSongToQueue= (
+  const handlerStartPlaylistPlayer = (
+    waveforms: number[][],
+    songsQueue: SongInfo[]) => { 
+      if (songQueue.length > 0) {
+        setSongQueue(() => {
+          var helperArray = [...songQueue];
+          helperArray.splice(songIndex + 1, 0, ...songsQueue);
+          return helperArray;
+        });
+        setWaveformQueue(() => {
+          var helperArray = [...waveformQueue];
+          helperArray.splice(songIndex + 1, 0, ...waveforms);
+          return helperArray;
+        });
+  
+        setPlayerMiniVisible(false);
+        setPlayerVisible(true);
+        setDetailVisible(false);
+        setIsPlaying(true);
+      } else {
+        setSongQueue([
+          ...songQueue,
+         ...songsQueue
+        ]);
+        setWaveformQueue([...waveformQueue, ...waveforms]);
+        setPlayerMiniVisible(false);
+        setPlayerVisible(true);
+        setDetailVisible(false);
+        setIsPlaying(true);
+      }
+  }
+
+  const handlerAddSongToQueue = (
     id: string,
     waveform: number[],
     title: string,
     imageSrc: string,
-    audioSrc: string) => {
-      setSongQueue(() => {
-        var removed = false;
-        var helperArray = [...songQueue];
-        helperArray.push({
-          id:id+ Date.now(),
-          name: title,
-          singer: "Admin",
-          cover: imageSrc,
-          musicSrc: audioSrc,})
-          if(removed) setSongIndex(songIndex-1);
-        return helperArray;
-      })
-      setWaveformQueue(()=>{
-        var helperArray = [...waveformQueue];
-        helperArray.push(waveform)
-        return helperArray;
-
+    audioSrc: string
+  ) => {
+    setSongQueue(() => {
+      var removed = false;
+      var helperArray = [...songQueue];
+      helperArray.push({
+        id: id + Date.now(),
+        name: title,
+        singer: "Admin",
+        cover: imageSrc,
+        musicSrc: audioSrc,
       });
-    
-  }
+      if (removed) setSongIndex(songIndex - 1);
+      return helperArray;
+    });
+    setWaveformQueue(() => {
+      var helperArray = [...waveformQueue];
+      helperArray.push(waveform);
+      return helperArray;
+    });
+  };
+
+  const handlerAddPlaylistToQueue = (
+    waveforms: number[][],
+    songsQueue: SongInfo[]
+  ) => {
+    setSongQueue(() => {
+      var helperArray = [...songQueue];
+      helperArray.push(...songsQueue);
+      return helperArray;
+    });
+    setWaveformQueue(() => {
+      var helperArray = [...waveformQueue];
+      helperArray.push(...waveforms);
+      return helperArray;
+    });
+  };
 
   return (
-    <ApolloProvider client={apolloClient}>
-      <Context.Provider
-        value={{ detailID, queueVisible, playerVisible, setQueueVisible, handlerResultClick, handlerStartPlayer, handlerAddSongToQueue }}
-      >
-        <PlayerContext.Provider
+    <UserProvider>
+      <ApolloProvider client={apolloClient}>
+        <Context.Provider
           value={{
-            setIsSliderMoving,
-            setSliderValue,
-            setCommited,
-            setIsPlaying,
-            setAudioTime,
-            setAudioCurrentTime,
-            setAudioBufferTime,
-            setSongQueue,
-            setSongIndex,
-            sliderValue,
-            playBtnRef,
-            sliderRef,
-            fwdBtnRef,
-            revBtnRef,
-            isPlaying,
-            isSliderMoving,
-            commited,
-            audioTime,
-            audioCurrentTime,
-            audioBufferTime,
-            waveformQueue,
-            songQueue,
-            audioInstance,
-            songIndex,
-            handlerPlay,
+            detailID,
+            queueVisible,
+            playerVisible,
+            setQueueVisible,
+            handlerResultClick,
+            handlerStartPlayer,
+            handlerAddSongToQueue,
+            handlerStartPlaylistPlayer,
+            handlerAddPlaylistToQueue
           }}
         >
-          <Head>
-            <meta
-              name="viewport"
-              content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=3"
-            />
-            <link rel="preconnect" href="https://fonts.googleapis.com" />
-            <link rel="preconnect" href="https://fonts.gstatic.com" />
-            <link
-              href="https://fonts.googleapis.com/css2?family=Heebo:wght@500&family=Kanit:wght@800&family=Kanit:wght@600&family=Varela+Round&display=swap"
-              rel="stylesheet"
-            />
-          </Head>
-          <CustomPlayer />
-          {playerVisible ? (
-            <PlayerCard handlerVisibilityPlayer={handlerVisibilityPlayer} />
-          ) : null}
-          <NavLayout
-            maximized={maximized}
-            handlerMenuClick={handlerMenuClick}
-            selected={selected}
-            handlerChangeSelected={handlerChangeSelected}
-            handlerDetailClose={handlerDetailClose}
-            playerControlMini={playerControlMini}
-            handlerMinifyPlayer={handlerMinifyPlayer}
-            detailOf={detailOf}
-            detailID={detailID}
-            handlerVisibilityPlayer={handlerVisibilityPlayer}
-            playerMiniVisible={playerMiniVisible}
-            title={
-              selected === "feed"
-                ? "Home"
-                : selected === "search"
-                ? "Search"
-                : "Library"
-            }
-            detailVisible={detailVisible}
+          <PlayerContext.Provider
+            value={{
+              setIsSliderMoving,
+              setSliderValue,
+              setCommited,
+              setIsPlaying,
+              setAudioTime,
+              setAudioCurrentTime,
+              setAudioBufferTime,
+              setSongQueue,
+              setSongIndex,
+              sliderValue,
+              playBtnRef,
+              sliderRef,
+              fwdBtnRef,
+              revBtnRef,
+              isPlaying,
+              isSliderMoving,
+              commited,
+              audioTime,
+              audioCurrentTime,
+              audioBufferTime,
+              waveformQueue,
+              songQueue,
+              audioInstance,
+              songIndex,
+              handlerPlay,
+            }}
           >
-            <Component {...pageProps} />
-          </NavLayout>
-        </PlayerContext.Provider>
-      </Context.Provider>
-    </ApolloProvider>
+            <Head>
+              <meta
+                name="viewport"
+                content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=3"
+              />
+              <link rel="preconnect" href="https://fonts.googleapis.com" />
+              <link rel="preconnect" href="https://fonts.gstatic.com" />
+              <link
+                href="https://fonts.googleapis.com/css2?family=Heebo:wght@500&family=Kanit:wght@800&family=Kanit:wght@600&family=Varela+Round&display=swap"
+                rel="stylesheet"
+              />
+            </Head>
+            <CustomPlayer />
+            {playerVisible ? (
+              <PlayerCard handlerVisibilityPlayer={handlerVisibilityPlayer} />
+            ) : null}
+            <NavLayout
+              maximized={maximized}
+              handlerMenuClick={handlerMenuClick}
+              selected={selected}
+              handlerChangeSelected={handlerChangeSelected}
+              handlerDetailClose={handlerDetailClose}
+              playerControlMini={playerControlMini}
+              handlerMinifyPlayer={handlerMinifyPlayer}
+              detailOf={detailOf}
+              detailID={detailID}
+              handlerVisibilityPlayer={handlerVisibilityPlayer}
+              playerMiniVisible={playerMiniVisible}
+              title={
+                selected === "feed"
+                  ? "Home"
+                  : selected === "search"
+                  ? "Search"
+                  : "Library"
+              }
+              detailVisible={detailVisible}
+            >
+              <Component {...pageProps} />
+            </NavLayout>
+          </PlayerContext.Provider>
+        </Context.Provider>
+      </ApolloProvider>
+    </UserProvider>
   );
 }
 export default MyApp;

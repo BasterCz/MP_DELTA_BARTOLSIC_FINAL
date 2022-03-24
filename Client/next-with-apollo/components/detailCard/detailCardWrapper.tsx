@@ -28,6 +28,7 @@ const Wrapper = styled.div`
   z-index: 3;
   width: 100vw;
   height: 87vh;
+  
 `;
 
 const CardWrapper = styled(Card)`
@@ -44,6 +45,7 @@ const CardWrapper = styled(Card)`
   backdrop-filter: blur(7px);
   filter: drop-shadow(1px -4px 4px rgba(0, 0, 0, 0.1));
   z-index: 3;
+  overflow-y: scroll;
 `;
 
 const CloseButton = styled(Button)`

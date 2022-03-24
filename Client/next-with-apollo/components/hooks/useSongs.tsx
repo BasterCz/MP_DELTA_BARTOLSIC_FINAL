@@ -8,16 +8,21 @@ import {
 } from "../../__generated__/lib/viewer.graphql";
 
 export const useSongMultiple = () => {
-  const { data, loading, error } = useSongsQuery({ pollInterval: 500 });
-  const { data: dataFuzzy, loading: loadingFuzzy, error: errorFuzzy, refetch: refetchFuzzy } = useSongsSearchQuery({ variables: {query: ""}});
+  const { data, loading, error } = useSongsQuery();
+  const {
+    data: dataFuzzy,
+    loading: loadingFuzzy,
+    error: errorFuzzy,
+    refetch: refetchFuzzy,
+  } = useSongsSearchQuery({ variables: { query: "" } });
   const [songs, setSongs] = useState(data?.songs);
   const [fsongs, setFSongs] = useState(dataFuzzy?.songsSearch);
 
   const fuzzySearch = async (search: string) => {
-    await refetchFuzzy({ query: search})
+    await refetchFuzzy({ query: search });
     return;
   };
-  
+
   useEffect(() => {
     setSongs(data?.songs);
   }, [data]);
@@ -32,17 +37,13 @@ export const useSongMultiple = () => {
     fuzzySearchSong: fuzzySearch,
   };
 };
-export const useSongOne = (
-  id: string,
-  isReady: boolean,
-  withPoll: boolean = true
-) => {
+export const useSongOne = (id: string, isReady: boolean) => {
   const {
     data: dataS,
     loading: loadingS,
     error: errorS,
     startPolling,
-    refetch
+    refetch,
   } = useSongQuery({
     variables: { _id: id as string },
     skip: Number.isNaN(id),
@@ -58,7 +59,6 @@ export const useSongOne = (
   useEffect(() => {
     if (isReady) {
       setSong(dataS?.song);
-      if (withPoll) startPolling(500);
     }
   });
   return {

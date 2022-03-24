@@ -6,7 +6,7 @@ import {
 
 export const useViewsDate = (_id: string, groupByMinutes: number) => {
   const { data, loading, error, refetch } = useObjectViewsDateQuery({
-    variables: { _id: _id, groupByMinutes: groupByMinutes }, pollInterval: 1000
+    variables: { _id: _id, groupByMinutes: groupByMinutes }
   });
   const dataS = data?.objectViewsDate;
   let last = 0;

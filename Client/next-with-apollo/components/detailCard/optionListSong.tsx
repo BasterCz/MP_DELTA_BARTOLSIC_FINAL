@@ -7,7 +7,7 @@ import {
   ListItemIcon,
   ListItemText,
 } from "@mui/material";
-import PlaylistAddRoundedIcon from "@mui/icons-material/PlaylistAddRounded";
+import QueueMusicRoundedIcon from "@mui/icons-material/QueueMusicRounded";
 import SavedSearchRoundedIcon from '@mui/icons-material/SavedSearchRounded';
 import PlaylistPlayRoundedIcon from '@mui/icons-material/PlaylistPlayRounded';
 import ShareRoundedIcon from '@mui/icons-material/ShareRounded';
@@ -22,7 +22,7 @@ export const OptionsDetailSong: React.FC = () => {
         <ListItem>
           <ListItemButton>
             <ListItemIcon>
-              <PlaylistAddRoundedIcon />
+              <QueueMusicRoundedIcon />
             </ListItemIcon>
             <ListItemText primary="Add to Playlist" />
           </ListItemButton>
@@ -64,8 +64,6 @@ const Wrapper = styled.div`
   align-items: center;
   flex-direction: column;
   justify-content: flex-start;
-  height: calc( 100% - 450px);
-  overflow-y: scroll;
 `;
 
 const SList = styled(List)`

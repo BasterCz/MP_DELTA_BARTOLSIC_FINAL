@@ -77,7 +77,7 @@ const Search: NextPage = () => {
           <ResultListWrapper>
             <MarginerStart />
             {foundPlaylists?.map((playlist) => {
-              return <ResultCardPlaylist playlist={playlist} />;
+              return <ResultCardPlaylist playlist={playlist} handlerResultClick={handlerResultClick}/>;
             })}
             <MarginerEnd />
           </ResultListWrapper>

@@ -1,6 +1,7 @@
 import { useContext } from "react";
 import Context from "../../lib/context";
 import { PlayerContext } from "../../lib/contextPlayer";
+import DetailCardPlaylist from "../detailCard/detailCardPlaylist";
 import DetailCardSong from "../detailCard/detailCardSong";
 import DetailCardWrapper from "../detailCard/detailCardWrapper";
 import MainContainer from "../mainContainer";
@@ -58,7 +59,13 @@ export const NavLayout: React.FC<LayoutProps> = ({
             detailVisible={detailVisible}
             _id={detailID}
           />
-        ) : null
+        ) : (
+          <DetailCardPlaylist
+            handlerDetailClose={handlerDetailClose}
+            detailVisible={detailVisible}
+            _id={detailID}
+          />
+        )
       ) : null}
       <MainContainer
         title={title}

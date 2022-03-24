@@ -24,9 +24,5 @@ export const useStateCallback = <T>(initialState: T | (()=>T)) => {
   return [state, setStateCallback] as const;
 };
 
-const isCallback = <T>(
-  maybeFunction: T | (() => T),
-): maybeFunction is (() => T) =>
-  typeof maybeFunction === 'function'
 
 export default useStateCallback;

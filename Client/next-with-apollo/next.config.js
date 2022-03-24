@@ -40,7 +40,7 @@ module.exports = {
       'cloud-object-storage-s5-cos-standard-4m2.s3.eu-de.cloud-object-storage.appdomain.cloud', 
       'koinonia-music-images.s3.eu-de.cloud-object-storage.appdomain.cloud',
       'localhost',
-      '192.168.2.19',
+      'localhost',
       'upload.wikimedia.org'
   ]
   }

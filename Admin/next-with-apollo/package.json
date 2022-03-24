@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@apollo/client": "3.3.8",
+    "@auth0/nextjs-auth0": "^1.7.0",
     "@emotion/react": "^11.6.0",
     "@emotion/styled": "^11.6.0",
     "@ffmpeg-installer/ffmpeg": "^1.1.0",
@@ -27,6 +28,7 @@
     "@nivo/line": "^0.79.1",
     "@nivo/scales": "^0.79.0",
     "@nivo/tooltip": "^0.79.0",
+    "@types/auth0": "^2.34.13",
     "@types/cookies": "^0.7.7",
     "@types/fastclick": "^1.0.30",
     "@types/fluent-ffmpeg": "^2.1.18",

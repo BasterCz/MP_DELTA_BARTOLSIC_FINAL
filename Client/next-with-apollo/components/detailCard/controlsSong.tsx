@@ -1,8 +1,7 @@
 import { Button, IconButton } from "@mui/material";
 import PlayArrowRoundedIcon from "@mui/icons-material/PlayArrowRounded";
-import QueueMusicRoundedIcon from "@mui/icons-material/QueueMusicRounded";
 import FavoriteBorderRoundedIcon from "@mui/icons-material/FavoriteBorderRounded";
-import FavoriteRoundedIcon from "@mui/icons-material/FavoriteRounded";
+import PlaylistAddRoundedIcon from "@mui/icons-material/PlaylistAddRounded";
 
 import React from "react";
 import styled from "styled-components";
@@ -20,7 +19,7 @@ export const ControlsDetailSong: React.FC<Props> = ({ children, startPlayer, add
         <PlayArrowRoundedIcon className="play"></PlayArrowRoundedIcon>
       </StyledRoundButton>
       <StyledRoundButton onClick={addToQueue} className="queueBtn">
-        <QueueMusicRoundedIcon className="queue"></QueueMusicRoundedIcon>
+        <PlaylistAddRoundedIcon className="queue"></PlaylistAddRoundedIcon>
       </StyledRoundButton>
     </Wrapper>
   );
