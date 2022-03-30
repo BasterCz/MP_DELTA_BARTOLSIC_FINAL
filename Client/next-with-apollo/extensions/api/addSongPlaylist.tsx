@@ -26,5 +26,5 @@ export const addSongPlaylist = async ({
     },
   };
 
-  return await axios.post("http://localhost:3000/api/playlistAddSong", {}, config).then(res => res);
+  return await axios.post("http://164.92.167.169:3000/api/playlistAddSong", {}, config).then(res => res);
 };

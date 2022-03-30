@@ -27,10 +27,10 @@ export const createPlaylist = async ({
       'Content-Type': 'text/plain;charset=utf-8',
       name: utf8.encode(name)  + "",
       description: utf8.encode(description) + "",
-      destinationImage:imageName.replace("http://localhost:3000", ""),
+      destinationImage:imageName.replace("http://164.92.167.169:3000", ""),
       isPublic: isPublic + "" 
     },
   };
 
-  return await axios.post("http://localhost:3000/api/playlistCreate", {}, config).then(res => res);
+  return await axios.post("http://164.92.167.169:3000/api/playlistCreate", {}, config).then(res => res);
 };

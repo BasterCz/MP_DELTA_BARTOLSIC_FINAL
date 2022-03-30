@@ -31,7 +31,7 @@ type SearchBarProps = {
 };
 
 export const ResultCardPlaylist: React.FC<SearchBarProps> = ({ playlist, handlerResultClick }) => {
-  const srcPath = "http://localhost:3000" + playlist?.image_path!;
+  const srcPath = "http://164.92.167.169:3000" + playlist?.image_path!;
   return (
     <Wrapper onClick={()=>{handlerResultClick(playlist!._id, "playlist")}}>
       <ImagePlace>

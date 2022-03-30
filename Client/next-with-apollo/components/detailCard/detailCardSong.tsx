@@ -44,9 +44,9 @@ export const DetailCardSong: React.FC<DetailCardWrapperProps> = ({
   useEffect(() => {
     if (song) {
       if (song.image_path !== undefined)
-        setImagePath("http://localhost:3000" + song.image_path);
+        setImagePath("http://164.92.167.169:3000" + song.image_path);
       if (song.file_path !== undefined)
-        setAudioPath("http://localhost:3000" + song.file_path);
+        setAudioPath("http://164.92.167.169:3000" + song.file_path);
       if (song.name !== undefined) setTitle(song.name);
       if (song.name !== undefined) setID(song._id);
     }

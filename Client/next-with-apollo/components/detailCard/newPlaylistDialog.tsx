@@ -99,7 +99,7 @@ export const NewPlaylistDialog: React.FC<SimpleDialogProps> = ({
               <Avatar>
                 {playlist?.image_path ? (
                   <Image
-                    src={"http://localhost:3000" + playlist?.image_path!}
+                    src={"http://164.92.167.169:3000" + playlist?.image_path!}
                     height={"50px"}
                     width={"50px"}
                   />

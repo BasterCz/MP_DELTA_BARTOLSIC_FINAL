@@ -73,7 +73,7 @@ export const DetailCardPlaylist: React.FC<DetailCardWrapperProps> = ({
     
     if (playlist) {
       if (playlist.image_path !== undefined)
-        setImagePath("http://localhost:3000" + playlist.image_path);
+        setImagePath("http://164.92.167.169:3000" + playlist.image_path);
       if (playlist.name !== undefined) setTitle(playlist.name);
       if (playlist.name !== undefined) setID(playlist._id);
     }
@@ -83,7 +83,7 @@ export const DetailCardPlaylist: React.FC<DetailCardWrapperProps> = ({
     
     if (songs) {
       setSongPreQueue(songs.map(song => { 
-        return {id: song?._id! + Date.now(), name: song?.name!, singer: "Koinonia", cover: "http://localhost:3000" + song?.image_path!, musicSrc: "http://localhost:3000" + song?.file_path!}
+        return {id: song?._id! + Date.now(), name: song?.name!, singer: "Koinonia", cover: "http://164.92.167.169:3000" + song?.image_path!, musicSrc: "http://164.92.167.169:3000" + song?.file_path!}
       }))
     }
   }, [songs]);
@@ -111,7 +111,7 @@ export const DetailCardPlaylist: React.FC<DetailCardWrapperProps> = ({
                 <ItemWrapper onClick={()=>{handlerResultClick(song!._id, "song")}}>
                   <ImagePlaceSmall>
                     <SImageSmall
-                      src={"http://localhost:3000" + song!.image_path}
+                      src={"http://164.92.167.169:3000" + song!.image_path}
                       height={"61px"}
                       width={"61px"}
                     />

@@ -23,7 +23,7 @@ export const NavTop: React.FC = () => {
           />
         </a>
       ) : (
-        <a href="/api/auth/login?redirect_uri=http://localhost:4000/listen/search">
+        <a href="/api/auth/login?redirect_uri=http://164.92.167.169:4000/listen/search">
           <Button color="warning" sx={{marginRight: "10px"}} variant="contained">Login</Button>
         </a>
       )}

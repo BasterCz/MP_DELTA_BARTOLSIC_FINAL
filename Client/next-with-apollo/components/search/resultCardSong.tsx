@@ -32,7 +32,7 @@ export const ResultCardSong: React.FC<SearchBarProps> = ({
   song,
   handlerResultClick,
 }) => {
-  const srcPath = "http://localhost:3000" + song?.image_path!;
+  const srcPath = "http://164.92.167.169:3000" + song?.image_path!;
 
   return (
     <Wrapper
