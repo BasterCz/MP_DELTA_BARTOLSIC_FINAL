@@ -67,9 +67,10 @@ export const DetailCardSong: React.FC<DetailCardWrapperProps> = ({
           addToQueue={() =>
             handlerAddSongToQueue(ID, waveform!, title, imagePath, audioPath)
           }
+          id={ID}
         />
         <DetailTitle>{song?.name}</DetailTitle>
-        <OptionsDetailSong />
+        <OptionsDetailSong songID={ID} imagePath={imagePath}/>
       </DetailCardWrapper>
     </Wrapper>
   );
