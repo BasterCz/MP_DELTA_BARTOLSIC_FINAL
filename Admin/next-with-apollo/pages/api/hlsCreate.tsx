@@ -4,15 +4,14 @@ import utf8 from "utf8";
 import hlsCreate from "../../lib/hlsCreate";
 import songUploadMongoDB from "../../lib/songUploadMongoDB";
 import waveformUploadMongoDB from "../../lib/waveformUploadMongoDB";
-
+import cors from "cors";
 const apiRoute = nextConnect({
   onNoMatch(req: NextApiRequest, res: NextApiResponse) {
     res.status(405).json({ error: `Method '${req.method}' Not Allowed` });
   },
 });
-
+apiRoute.use(cors());
 apiRoute.post(async (req, res) => {
-  console.log(req.headers);
   hlsCreate(
     req.headers["source"] as string,
     req.headers["destinationfolder"] as string,

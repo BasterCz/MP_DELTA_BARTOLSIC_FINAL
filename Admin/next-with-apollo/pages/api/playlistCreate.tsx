@@ -1,5 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import nextConnect from "next-connect";
+import cors from "cors";
 import utf8 from "utf8";
 import playlistUploadMongoDB from "../../lib/playlistUploadMongoDB";
 
@@ -8,9 +9,8 @@ const apiRoute = nextConnect({
     res.status(405).json({ error: `Method '${req.method}' Not Allowed` });
   },
 });
-
+apiRoute.use(cors());
 apiRoute.post(async (req, res) => {
-  console.log(req.headers);
   var response = await playlistUploadMongoDB(
     utf8.decode(req.headers["name"] as string) + "",
     utf8.decode(req.headers["description"] as string) + "",
@@ -19,6 +19,7 @@ apiRoute.post(async (req, res) => {
   );
   res.status(200).json({ data: "success", _id: response });
 });
+
 
 export default apiRoute;
 

@@ -61,10 +61,8 @@ export const updateSong = async ({
       audioLevels: await (await getAudioLevels("/temp/"+name.replaceAll(" ", "_").normalize("NFD").replace(/[\u0300-\u036f]/g, "")+".mp3")).join('|')
     },
   };
-  console.log(config.headers.audioLevels);
   const response = await axios.post("/api/hlsUpdate", {}, config);
   const responseData = response.data as ResponseType;
-  console.log(response.data);
   //* Add to playlists ↓
   const removedP = initialPlaylists?.filter(
     (x) => !playlists?.some((y) => y?._id === x?._id)

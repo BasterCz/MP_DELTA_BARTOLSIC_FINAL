@@ -61,16 +61,10 @@ export const CustomPlayer: React.FC = () => {
     setCommited(value as number);
     setIsSliderMoving(false);
   };
-  useEffect(() => {
-    setIsSafari(/^((?!chrome|android).)*safari/i.test(navigator.userAgent));
-  });
 
   useEffect(() => {
-    // if (commited !== -1 && audioRef.current !== null) {
-    //   audioRef.current.seekTo(commited);
-    //   setCommited(-1);
-    // }
-  }, [commited]);
+    setIsSafari(/^((?!chrome|android).)*safari/i.test(navigator.userAgent));
+  }, []);
 
   const progressHandler = (state: ReactJkMusicPlayerAudioInfo) => {
     setAudioCurrentTime(state.currentTime);
@@ -90,7 +84,6 @@ export const CustomPlayer: React.FC = () => {
         onAudioError={(e)=> {
           if(e && e.code === 4 && Hls.isSupported()) {
             const hlsInstance = new Hls();
-            console.log("eI", songIndex);
             hlsInstance.loadSource(songQueue[songIndex].musicSrc);
             hlsInstance.attachMedia(audioInstance.current!)
           }
@@ -98,7 +91,6 @@ export const CustomPlayer: React.FC = () => {
         onAudioProgress={progressHandler}
         getAudioInstance={(instance) => audioInstance.current = instance}
         onPlayIndexChange={(index)=> setSongIndex(index)}
-        onAudioListsChange={(a, b, c)=> console.log(a, b, c.__PLAYER_KEY__, songIndex)}
         
       />
     </Wrapper>

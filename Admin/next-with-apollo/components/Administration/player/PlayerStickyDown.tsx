@@ -102,7 +102,6 @@ export const PlayerStickyDown: React.FC<PlayerStickyDownProps> = ({
   }, [commited]);
 
   useEffect(() => {
-    console.log(src);
     if (audioRef.current !== null) setIsPlaying(true);
   }, [src]);
 

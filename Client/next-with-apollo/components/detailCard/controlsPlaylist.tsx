@@ -12,52 +12,20 @@ import { useIsLikedByUser, useUserFunctions } from "../hooks/useUserActions";
 type Props = {
   startPlayer: () => void;
   addToQueue: () => void;
-  id: string;
+
 };
-export const ControlsDetailSong: React.FC<Props> = ({
+export const ControlsDetailPlaylist: React.FC<Props> = ({
   children,
   startPlayer,
   addToQueue,
-  id,
 }) => {
-  const { userContext } = useContext(Context);
-  const { addView } = useAddView();
-  const { isLiked, refetchLiked } = useIsLikedByUser(
-    userContext?.user?.sub ?? "",
-    id,
-    true,
-    true
-  );
 
-  const { onAddLike, onRemoveLikeRef, onAddViewRef } = useUserFunctions();
-  useEffect(() => {
-    refetchLiked(userContext?.user?.sub ?? "", id);
-  }, [userContext?.user?.sub, id]);
 
   return (
     <Wrapper>
       <StyledRoundButton
-        onClick={() => {
-          if (isLiked != true) {
-            onAddLike(userContext?.user?.sub ?? "", id);
-          } else {
-            onRemoveLikeRef(userContext?.user?.sub ?? "", id);
-          }
-          refetchLiked(userContext?.user?.sub ?? "", id);
-        }}
-        className="likeBtn"
-      >
-        {isLiked != true ? (
-          <FavoriteBorderRoundedIcon className="like"></FavoriteBorderRoundedIcon>
-        ) : (
-          <FavoriteIcon className="like"></FavoriteIcon>
-        )}
-      </StyledRoundButton>
-      <StyledRoundButton
         onClick={async () => {
           startPlayer();
- 
-          onAddViewRef(userContext?.user?.sub ?? "", await(await addView({ variables: { _id: id } })).data?.addView??"");
         }}
         className="playBtn"
       >
@@ -69,7 +37,7 @@ export const ControlsDetailSong: React.FC<Props> = ({
     </Wrapper>
   );
 };
-export default ControlsDetailSong;
+export default ControlsDetailPlaylist;
 
 const Wrapper = styled.div`
   height: 65px;

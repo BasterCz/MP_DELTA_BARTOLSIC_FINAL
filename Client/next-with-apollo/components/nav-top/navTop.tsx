@@ -1,21 +1,32 @@
 import { Button, IconButton } from "@mui/material";
-import React from "react";
+import React, { useContext } from "react";
 import styled from "styled-components";
 
-import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined';
+import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
 import BadgeAvatars from "./avatar";
-import { useUser } from '@auth0/nextjs-auth0';
 import Link from "next/link";
+import Context from "../../lib/context";
 
 export const NavTop: React.FC = () => {
-  const {user, error, isLoading} = useUser();
+  const { userContext } = useContext(Context);
   return (
     <Nav>
       <SIconButton>
         <SettingsOutlinedIcon />
       </SIconButton>
-      {console.log(user)}
-      {user?<BadgeAvatars name={user.nickname as string} src={user.picture as string} loading={isLoading}/>:<a href="/api/auth/login?redirect_uri=http://localhost:4000/listen/search">Login</a>}
+      {userContext && userContext.user && userContext.user.sub ? (
+        <a href="/api/auth/logout">
+          <BadgeAvatars
+            name={userContext.user.nickname as string}
+            src={userContext.user.picture as string}
+            loading={userContext.isLoading}
+          />
+        </a>
+      ) : (
+        <a href="/api/auth/login?redirect_uri=http://localhost:4000/listen/search">
+          <Button color="warning" sx={{marginRight: "10px"}} variant="contained">Login</Button>
+        </a>
+      )}
     </Nav>
   );
 };
@@ -36,6 +47,5 @@ const SIconButton = styled(IconButton)`
   color: #d8dee9;
   svg {
     font-size: 2.3rem;
-    
   }
 `;

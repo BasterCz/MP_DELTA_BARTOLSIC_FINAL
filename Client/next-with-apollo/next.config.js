@@ -40,8 +40,17 @@ module.exports = {
       'cloud-object-storage-s5-cos-standard-4m2.s3.eu-de.cloud-object-storage.appdomain.cloud', 
       'koinonia-music-images.s3.eu-de.cloud-object-storage.appdomain.cloud',
       'localhost',
-      'localhost',
-      'upload.wikimedia.org'
+      'upload.wikimedia.org',
+      '164.92.167.169'
   ]
-  }
+  },
+  async redirects() {
+    return [
+      {
+        source: '/',
+        destination: '/listen/feed',
+        permanent: true,
+      },
+    ]
+  },
 };

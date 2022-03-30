@@ -8,18 +8,36 @@ import {
   ListItemText,
 } from "@mui/material";
 import QueueMusicRoundedIcon from "@mui/icons-material/QueueMusicRounded";
-import SavedSearchRoundedIcon from '@mui/icons-material/SavedSearchRounded';
-import PlaylistPlayRoundedIcon from '@mui/icons-material/PlaylistPlayRounded';
-import ShareRoundedIcon from '@mui/icons-material/ShareRounded';
+import SavedSearchRoundedIcon from "@mui/icons-material/SavedSearchRounded";
+import PlaylistPlayRoundedIcon from "@mui/icons-material/PlaylistPlayRounded";
+import ShareRoundedIcon from "@mui/icons-material/ShareRounded";
 
-import React from "react";
+import React, { useContext, useState } from "react";
 import styled from "styled-components";
+import NewPlaylistDialog from "./newPlaylistDialog";
+import { useUserFunctions } from "../hooks/useUserActions";
+import Context from "../../lib/context";
 
-export const OptionsDetailSong: React.FC = () => {
+type Props = {
+  imagePath: string,
+  songID:string,
+}
+
+export const OptionsDetailSong: React.FC<Props> = ({imagePath, songID}) => {
+  const [open, setOpen] = useState(false);
+  const {userContext} = useContext(Context);
+  const {onAddPlaylistRef} = useUserFunctions();
+  const handleClose = (output: string) => {
+    setOpen(false);
+    if(output !== "")onAddPlaylistRef(userContext?.user?.sub ?? "", output);
+  };
+  const handleOpen = () => {
+    setOpen(true);
+  };
   return (
     <Wrapper>
       <SList>
-        <ListItem>
+        <ListItem button onClick={()=>handleOpen()}>
           <ListItemButton>
             <ListItemIcon>
               <QueueMusicRoundedIcon />
@@ -28,7 +46,7 @@ export const OptionsDetailSong: React.FC = () => {
           </ListItemButton>
         </ListItem>
         <ListItem>
-          <ListItemButton>
+          <ListItemButton disabled>
             <ListItemIcon>
               <PlaylistPlayRoundedIcon />
             </ListItemIcon>
@@ -36,7 +54,7 @@ export const OptionsDetailSong: React.FC = () => {
           </ListItemButton>
         </ListItem>
         <ListItem>
-          <ListItemButton>
+          <ListItemButton disabled>
             <ListItemIcon>
               <SavedSearchRoundedIcon />
             </ListItemIcon>
@@ -44,7 +62,7 @@ export const OptionsDetailSong: React.FC = () => {
           </ListItemButton>
         </ListItem>
         <ListItem>
-          <ListItemButton>
+          <ListItemButton disabled>
             <ListItemIcon>
               <ShareRoundedIcon />
             </ListItemIcon>
@@ -52,6 +70,12 @@ export const OptionsDetailSong: React.FC = () => {
           </ListItemButton>
         </ListItem>
       </SList>
+      <NewPlaylistDialog
+        open={open}
+        songID={songID}
+        onClose={handleClose}
+        imagePath={imagePath}
+      />
     </Wrapper>
   );
 };
@@ -59,7 +83,7 @@ export default OptionsDetailSong;
 
 const Wrapper = styled.div`
   width: 100%;
-  background-color: rgba(216, 222, 233,0.03);
+  background-color: rgba(216, 222, 233, 0.03);
   display: flex;
   align-items: center;
   flex-direction: column;
@@ -69,15 +93,13 @@ const Wrapper = styled.div`
 const SList = styled(List)`
   width: 100%;
   color: #d8dee9;
-  
+
   * {
-  font-size: 1.2rem;
-  font-family: 'Varela Round', sans-serif;
-  
+    font-size: 1.2rem;
+    font-family: "Varela Round", sans-serif;
   }
   svg {
     color: #d8dee9;
     font-size: 2.3rem;
   }
-  
 `;

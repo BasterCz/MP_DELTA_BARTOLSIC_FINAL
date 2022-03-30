@@ -1,9 +1,9 @@
 import React from "react";
 import styled from "styled-components";
 
-
-export const ProgressShadowTop: React.FC = () => {
-  return <Wrapper><Progress/></Wrapper>;
+type Props = { time : number}
+export const ProgressShadowTop: React.FC<Props> = ({time}) => {
+  return <Wrapper style={{width: `${time}%`}}><Progress/></Wrapper>;
 };
 export default ProgressShadowTop;
 
@@ -17,7 +17,7 @@ const Wrapper = styled.div`
 `;
 
 const Progress = styled.div`
-  width: 90%;
+  width: 100%;
   height: 1px;
   background-color: #A3BE8C;
   filter: drop-shadow(0px 1px 5px #A3BE8C);

@@ -2,7 +2,7 @@ import elastic from "elasticsearch";
 
 export const elasticSearchSongs = async (_query: string) => {
   const client = new elastic.Client({
-    host: "http://192.168.43.76:9200",
+    host: "http://164.92.167.169:9200",
   });
   const result = await client.search({
     index: "koinoniamusicdbsongs",
@@ -49,7 +49,7 @@ export const elasticSearchSongs = async (_query: string) => {
 
 export const elasticSearchPlaylists = async (_query: string) => {
   const client = new elastic.Client({
-    host: "http://192.168.43.76:9200",
+    host: "http://164.92.167.169:9200",
   });
   const result = await client.search({
     index: "koinoniamusicdbplaylists",

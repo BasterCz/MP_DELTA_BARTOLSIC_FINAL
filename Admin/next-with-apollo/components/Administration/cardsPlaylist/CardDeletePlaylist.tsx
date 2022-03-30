@@ -31,7 +31,6 @@ export const CardDeletePlaylist: React.FC<CardDeletePlaylistProps> = ({
       isPublic: playlist.isPublic,
       imageName: playlist.image_path!,
     });
-    console.log(songs);
     setValueIsSetAndLoaded(true);
   }
   if (initialValues !== undefined)

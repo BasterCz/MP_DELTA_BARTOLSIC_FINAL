@@ -4,15 +4,14 @@ import utf8 from "utf8";
 import hlsCreate from "../../lib/hlsCreate";
 import songEditMongoDB from "../../lib/songEditMongoDB";
 import waveformEditMongoDB from "../../lib/waveformEditMongoDB";
-
+import cors from "cors";
 const apiRoute = nextConnect({
   onNoMatch(req: NextApiRequest, res: NextApiResponse) {
     res.status(405).json({ error: `Method '${req.method}' Not Allowed` });
   },
 });
-
+apiRoute.use(cors());
 apiRoute.post(async (req, res) => {
-  console.log("passed")
   if (req.headers["fileisinitial"] !== "true") {
     hlsCreate(
       req.headers["source"] as string,
@@ -20,7 +19,6 @@ apiRoute.post(async (req, res) => {
       req.headers["destination"] as string
     );
   }
-  console.log("passed")
   await songEditMongoDB(
     req.headers["_id"] as string,
     utf8.decode(req.headers["name"] as string),
@@ -32,7 +30,6 @@ apiRoute.post(async (req, res) => {
     req.headers["_id"] as string, 
     (req.headers["audiolevels"] as string).split('|').map(Number) as number[],
   );
-  console.log("Upload" + responseWaveform)
   res.status(200).json({ data: "success", _id: req.headers["_id"] as string });
 });
 

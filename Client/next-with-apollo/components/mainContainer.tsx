@@ -66,6 +66,8 @@ const Wrapper = styled.div`
   position: fixed;
   top: -15px;
   filter: drop-shadow(1px -4px 4px rgba(0, 0, 0, 0.2));
+  overflow-y: scroll;
+  overflow-x:hidden;
 `;
 const MenuBtnSpacer = styled.div`
   width: 100vw;

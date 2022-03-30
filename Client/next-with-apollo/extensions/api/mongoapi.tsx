@@ -291,11 +291,189 @@ export const addView = async (_id: string) => {
     parentID: new ObjectId(_id),
     time: new Date(Date.now()),
   });
-  return res.acknowledged;
+  return res.insertedId;
 };
 
 export const waveformFind = async (id: string) => {
   const { db } = await connectToDatabase();
-  const waveform = await db.collection("waveform").findOne({songID: id});
-  return waveform;
+  const waveform = await db.collection("waveform").find({ songID: id }).toArray();
+  return waveform[0];
+};
+
+export const waveformsFind = async (ids: string[]) => {
+  const { db } = await connectToDatabase();
+  const waveforms = await db.collection("waveform").find({ songID: {$in: ids} }).toArray();
+  return waveforms;
+};
+
+export const checkUserExists = async (id: string) => {
+  const { db } = await connectToDatabase();
+  const res = await db
+    .collection("users")
+    .aggregate([
+      { $match: { userID: id } },
+      { $group: { _id: null, count: { $sum: 1 } } },
+      { $project: { _id: 0, count: 1 } },
+    ]);
+  return res.count && res.count > 0; //bool
+};
+
+export const addUser = async (id: string) => {
+  const { db } = await connectToDatabase();
+  const res = await db
+    .collection("users")
+    .updateOne({ userID: id }, { $set: { userID: id } }, { upsert: true });
+  return res.acknowledged; //ack
+};
+
+export const addLikeRef = async (id: string, objectID: string) => {
+  const { db } = await connectToDatabase();
+  const res = await db
+    .collection("users")
+    .updateOne({ userID: id }, { $addToSet: { likes: objectID } }, { upsert: true });
+  return res.acknowledged; //ack
+};
+
+export const addViewRef = async (id: string, objectID: string) => {
+  const { db } = await connectToDatabase();
+  const res = await db
+    .collection("users")
+    .updateOne({ userID: id }, { $push: { views: objectID } });
+  return res.acknowledged; //ack
+};
+
+export const addPlaylistRef = async (id: string, objectID: string) => {
+  const { db } = await connectToDatabase();
+  const res = await db
+    .collection("users")
+    .updateOne({ userID: id }, { $push: { playlists: objectID } });
+  return res.acknowledged; //ack
+};
+
+export const removeLikeRef = async (id: string, objectID: string) => {
+  const { db } = await connectToDatabase();
+  const res = await db
+    .collection("users")
+    .updateOne({ userID: id }, { $pull: { likes: objectID } });
+  return res.acknowledged; //ack
+};
+
+export const removeViewRef = async (id: string, objectID: string) => {
+  const { db } = await connectToDatabase();
+  const res = await db
+    .collection("users")
+    .updateOne({ userID: id }, { $pull: { views: objectID } });
+  return res.acknowledged; //ack
+};
+
+export const removePlaylistRef = async (id: string, objectID: string) => {
+  const { db } = await connectToDatabase();
+  const res = await db
+    .collection("users")
+    .updateOne({ userID: id }, { $pull: { playlists: objectID } });
+  return res.acknowledged; //ack
+};
+
+export const isLikedByUser = async (id: string, objectID: string) => {
+  const { db } = await connectToDatabase();
+  const res = await db
+    .collection("users")
+    .aggregate([
+      { $match: { userID: id, likes: objectID } },
+      { $group: { _id: objectID, count: { $sum: 1 } } },
+      { $project: { _id: 0, count: 1 } },
+    ]).toArray();
+  
+  return (res[0]?.count > 0); //bool
+};
+
+export const getLikeRefs = async (id: string) => {
+  const { db } = await connectToDatabase();
+  const res = await db.collection("users").find({ userID: id }).toArray();
+  const idArray = res[0].likes.map((_id: string) => new ObjectId(_id));
+  const res2 = await db
+    .collection("songs")
+    .aggregate([{ $match: { _id: { $in: idArray } } }])
+    .toArray();
+  return res2; //song arr
+};
+
+export const getPlaylistRef = async (id: string) => {
+  const { db } = await connectToDatabase();
+  const res = await db.collection("users").find({ userID: id }).toArray();
+  const idArray = res[0].playlists.map((_id: string) => new ObjectId(_id));
+  const res2 = await db
+    .collection("playlists")
+    .aggregate([{ $match: { _id: { $in: idArray } } }])
+    .toArray();
+  return res2; //playlist arr
+};
+
+export const getLastViewdSongs = async (id: string) => {
+  const { db } = await connectToDatabase();
+  const res = await db.collection("users").find({ userID: id }).toArray();
+  const idArray = res[0].views.map((_id: string) => new ObjectId(_id));
+  const res2 = await db
+    .collection("viewStats")
+    .aggregate([{ $match: { _id: { $in: idArray } } }, { $sort: { time: 1 } }])
+    .toArray();
+  const idArray2 = res2.map((obj: any) => new ObjectId(obj.parentID));
+  const res3 = await db
+    .collection("songs")                            
+    .aggregate([
+      { $match: { _id: { $in: idArray2 } } },
+      { $addFields: { __order: { $indexOfArray: [idArray2, "$_id"] } } },
+      { $sort: { __order: -1 } },
+    ])
+    .toArray();
+
+  return res3; //song arr
+};
+
+export const getMostViewdSongs = async () => {
+  const { db } = await connectToDatabase();
+  const res = await db
+    .collection("viewStats")
+    .aggregate([
+      {
+        $group: { _id: "$parentID", count: { $sum: 1 } },
+      },
+      { $sort: { count: -1 } },
+    ])
+    .toArray();
+  const idArray = res.map((obj: any) => new ObjectId(obj._id));
+  const res2 = await db
+    .collection("songs")
+    .aggregate([
+      { $match: { _id: { $in: idArray } } },
+      { $addFields: { __order: { $indexOfArray: [idArray, "$_id"] } } },
+      { $sort: { __order: 1 } },
+    ])
+    .toArray();
+
+  return res2; //song arr
+};
+
+export const getLatestSongs = async () => {
+  const { db } = await connectToDatabase();
+
+  const res = await db
+    .collection("songs")
+    .find({ isPublic: true })
+    .sort({ createdDate: 1 })
+    .toArray();
+
+  return res; //song arr
+};
+
+export const getLatestPlaylists = async () => {
+  const { db } = await connectToDatabase();
+
+  const res = await db
+    .collection("playlists")
+    .find({ isPublic: true })
+    .sort({ createdDate: 1 })
+    .toArray();
+
+  return res; //playlist arr
 };

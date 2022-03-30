@@ -12,6 +12,7 @@ import { usePlaylistOne } from "../hooks/usePlaylist";
 import { Box, Button, ButtonGroup } from "@mui/material";
 import FormatListBulletedRoundedIcon from '@mui/icons-material/FormatListBulletedRounded';
 import AutoAwesomeRoundedIcon from '@mui/icons-material/AutoAwesomeRounded';
+import ControlsDetailPlaylist from "./controlsPlaylist";
 
 
 const imageSize = "250px";
@@ -42,14 +43,14 @@ export const DetailCardPlaylist: React.FC<DetailCardWrapperProps> = ({
     isReady
   );
 
-  const { waveforms } = useWaveforms(playlist?.songs as string[] | undefined);
+  const { waveforms } = useWaveforms(playlist?.songs as string[]);
   const [songPreQueue, setSongPreQueue] = useState<SongInfo[]>([])
   const [imagePath, setImagePath] = useState<string>("");
   const [ID, setID] = useState<string>("");
   const [title, setTitle] = useState<string>("");
   const [selected, setSelected] = useState(true);
 
-  const { handlerStartPlaylistPlayer, handlerAddPlaylistToQueue } = useContext(Context);
+  const { handlerStartPlaylistPlayer, handlerAddPlaylistToQueue,  handlerResultClick} = useContext(Context);
 
   const handlerSelectList = () => {
     setSelected(true);
@@ -82,7 +83,7 @@ export const DetailCardPlaylist: React.FC<DetailCardWrapperProps> = ({
     
     if (songs) {
       setSongPreQueue(songs.map(song => { 
-        return {id: song?._id! + Date.now(), name: song?.name!, singer: "Koinonia", cover: song?.image_path!, musicSrc: song?.file_path!}
+        return {id: song?._id! + Date.now(), name: song?.name!, singer: "Koinonia", cover: "http://localhost:3000" + song?.image_path!, musicSrc: "http://localhost:3000" + song?.file_path!}
       }))
     }
   }, [songs]);
@@ -95,27 +96,19 @@ export const DetailCardPlaylist: React.FC<DetailCardWrapperProps> = ({
             <SImage src={imagePath} height={imageSize} width={imageSize} />
           ) : null}
         </ImagePlace>
-        <ControlsDetailSong
+        <ControlsDetailPlaylist
           startPlayer={() => {
-            handlerStartPlaylistPlayer(waveforms, songPreQueue);
+            if(waveforms) handlerStartPlaylistPlayer(waveforms, songPreQueue);
           }}
-          addToQueue={() =>
-            handlerAddPlaylistToQueue(waveforms, songPreQueue)
-          }
+          addToQueue={() => {
+            if(waveforms) handlerAddPlaylistToQueue(waveforms, songPreQueue)
+          }}
         />
         <DetailTitle>{playlist?.name}</DetailTitle>
-        <SButtonGroup>
-            <Button onClick={handlerSelectList} className={selected?"selected":""}>
-              <FormatListBulletedRoundedIcon  />
-            </Button>
-            <Button onClick={handlerSelectOptions} className={!selected?"selected":""}>
-              <AutoAwesomeRoundedIcon />
-            </Button>
-          </SButtonGroup>
-          {selected?<SongWrapper>
+      <SongWrapper>
           {songs
             ? songs.map((song) => {return(
-                <ItemWrapper>
+                <ItemWrapper onClick={()=>{handlerResultClick(song!._id, "song")}}>
                   <ImagePlaceSmall>
                     <SImageSmall
                       src={"http://localhost:3000" + song!.image_path}
@@ -127,8 +120,7 @@ export const DetailCardPlaylist: React.FC<DetailCardWrapperProps> = ({
                 </ItemWrapper>)
               })
             : <></>}
-        </SongWrapper>:<OptionsDetailSong />}
-        
+        </SongWrapper>
         
       </DetailCardWrapper>
     </Wrapper>

@@ -9,8 +9,16 @@ type Query {
   songPlaylists(_id: ID!): [Playlist]
   objectViewsDate(_id: ID!, groupByMinutes: Int!): [DateView]
   waveformFind(_id: ID!): Waveform
+  waveformsFind(_ids: [ID!]!): [Waveform]
   objectViews(_id: ID!): [CountView]
-  
+  checkUserExists(userID: ID!): Boolean
+  isLikedByUser(userID: ID!, objectID: ID!): Boolean
+  getLikeRefs(userID: ID!): [Song]
+  getPlaylistRef(userID: ID!): [Playlist]
+  getLastViewdSongs(userID: ID!): [Song]
+  getMostViewdSongs: [Song]
+  getLatestSongs: [Song]
+  getLatestPlaylists: [Playlist]
 }
 
 type Mutation {
@@ -51,7 +59,15 @@ type Mutation {
   playlistAddSong(_id: ID!, song: ID!): Boolean!
   playlistRemoveSong(_id: ID!, song: ID!): Boolean!
 
-  addView(_id: ID!): Boolean!
+  addView(_id: ID!): String!
+
+  addUser(userID: ID!): Boolean
+  addLikeRef(userID: ID!, objectID: ID!): Boolean
+  addViewRef(userID: ID!, objectID: ID!): Boolean
+  addPlaylistRef(userID: ID!, objectID: ID!): Boolean
+  removeLikeRef(userID: ID!, objectID: ID!): Boolean
+  removeViewRef(userID: ID!, objectID: ID!): Boolean
+  removePlaylistRef(userID: ID!, objectID: ID!): Boolean
 }
 
 type Song {

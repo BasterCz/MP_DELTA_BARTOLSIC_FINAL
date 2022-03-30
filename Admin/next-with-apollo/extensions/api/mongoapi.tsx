@@ -142,7 +142,6 @@ export const playlistAdd = async (
 
 export const playlistAddSong = async (_id: string, song: string) => {
   const { db } = await connectToDatabase();
-
   const update = {
     $addToSet: { songs: new ObjectId(song) },
     $set: { modifiedDate: new Date(Date.now()) },

@@ -86,7 +86,6 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({
       setImageName(file.name);
       onChange(formData, destination, file.name);
       setChanged(true);
-      console.log(file.name);
     });
 
     formRef.current?.reset();

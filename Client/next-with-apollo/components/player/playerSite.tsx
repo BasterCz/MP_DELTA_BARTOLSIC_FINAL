@@ -20,7 +20,7 @@ type PlayerSmallProps = {
 }
 
 export const PlayerSmall: React.FC<PlayerSmallProps> = ({handlerMinifyPlayer,handlerVisibilityPlayer, playerControlMini}) => {
-  const { handlerPlay, isPlaying, audioInstance } = useContext(PlayerContext);
+  const { handlerPlay, isPlaying, audioInstance, songQueue } = useContext(PlayerContext);
 const next = () => {
   if(audioInstance.current && audioInstance.current.playNext) audioInstance.current.playNext();
 }
@@ -28,7 +28,6 @@ const previous = () => {
   if(audioInstance.current && audioInstance.current.playPrev) audioInstance.current.playPrev();
 }
 const mute = () => {
-  console.log(audioInstance.current!.volume)
   if(audioInstance.current) audioInstance.current.volume = (audioInstance.current.volume === 0? 1 : 0);
 }
   return (
@@ -62,7 +61,7 @@ const mute = () => {
             <SButton className={audioInstance.current && audioInstance.current.volume === 0? "muted" : ""} onClick={mute}>
               <VolumeOffRoundedIcon className="mute" />
             </SButton>
-            <SButton onClick={handlerVisibilityPlayer}>
+            <SButton disabled={songQueue.length === 0} onClick={handlerVisibilityPlayer}>
               <LaunchRoundedIcon className="more" />
             </SButton>
           </SButtonGroup>

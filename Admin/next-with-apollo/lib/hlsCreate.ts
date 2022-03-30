@@ -17,7 +17,6 @@ export default function hlsCreate(
   }
   
   if (!fs.existsSync(resultFileName)) {
-    console.log(
       ffmpeg()
         .input(sourcePath)
         .addOption([
@@ -41,8 +40,8 @@ export default function hlsCreate(
             }
           }
         )
-        .run()
-    );
+        .run();
+    
   }
 
 

@@ -19,13 +19,7 @@ export const handleOnChangeUploadFormikSong = async (
         destination: destination.replaceAll(" ", "_")
         .normalize("NFD")
         .replace(/[\u0300-\u036f]/g, ""),
-      },
-      onUploadProgress: (event: { loaded: number; total: number }) => {
-        console.log(
-          `Current progress:`,
-          Math.round((event.loaded * 100) / event.total)
-        );
-      },
+      }
     };
     
     const response = await axios.post("/api/upload", formData, config);
@@ -38,7 +32,6 @@ export const handleOnChangeUploadFormikSong = async (
         formikInstance.setFieldValue("imageName", fileName);
         break;
     }
-    console.log("response", response.data);
     setUploaded(true)
   };
 

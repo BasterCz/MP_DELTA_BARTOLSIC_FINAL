@@ -3,13 +3,13 @@ import nextConnect from "next-connect";
 import utf8 from "utf8";
 import hlsCreate from "../../lib/hlsCreate";
 import playlistEditMongoDB from "../../lib/playlistEditMongoDB";
-
+import cors from "cors";
 const apiRoute = nextConnect({
   onNoMatch(req: NextApiRequest, res: NextApiResponse) {
     res.status(405).json({ error: `Method '${req.method}' Not Allowed` });
   },
 });
-
+apiRoute.use(cors());
 apiRoute.post(async (req, res) => {
   await playlistEditMongoDB(
     req.headers["_id"] as string,

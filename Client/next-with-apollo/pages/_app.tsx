@@ -13,7 +13,7 @@ import CustomPlayer from "../components/player/CustomPlayer";
 import { ReactJkMusicPlayerInstance } from "react-jinke-music-player";
 import useStateCallback from "../components/hooks/useStateCallback";
 
-import { UserProvider } from "@auth0/nextjs-auth0";
+import { UserContext, UserProvider, useUser } from "@auth0/nextjs-auth0";
 
 type SelectedType = "feed" | "search" | "library";
 type DetailOfType = "song" | "playlist";
@@ -33,6 +33,7 @@ type SongInfo = {
 
 function MyApp({ Component, pageProps }: AppProps) {
   const apolloClient = useApollo(pageProps.initialApolloState);
+
   const router = useRouter();
 
   const [maximized, setMaximized] = useState(true);
@@ -62,6 +63,8 @@ function MyApp({ Component, pageProps }: AppProps) {
   const [indexToPlay, setIndexToPlay] = useState(0);
   const [removed, setRemoved] = useStateCallback(false);
   const [removedNo, setRemovedNo] = useStateCallback(0);
+
+  const [userContext, setUserContext] = useState<UserContext | null>(null);
 
   const audioInstance = useRef<ReactJkMusicPlayerInstance | null>(null);
   const playBtnRef = useRef<HTMLButtonElement>(null);
@@ -100,7 +103,7 @@ function MyApp({ Component, pageProps }: AppProps) {
   const handlerResultClick = (_id: string, _detailOf: DetailOfType) => {
     setDetailOf(_detailOf);
     setDetailID(_id);
-    setDetailVisible(!detailVisible);
+    setDetailVisible(true);
   };
 
   useEffect(() => {
@@ -174,35 +177,33 @@ function MyApp({ Component, pageProps }: AppProps) {
 
   const handlerStartPlaylistPlayer = (
     waveforms: number[][],
-    songsQueue: SongInfo[]) => { 
-      if (songQueue.length > 0) {
-        setSongQueue(() => {
-          var helperArray = [...songQueue];
-          helperArray.splice(songIndex + 1, 0, ...songsQueue);
-          return helperArray;
-        });
-        setWaveformQueue(() => {
-          var helperArray = [...waveformQueue];
-          helperArray.splice(songIndex + 1, 0, ...waveforms);
-          return helperArray;
-        });
-  
-        setPlayerMiniVisible(false);
-        setPlayerVisible(true);
-        setDetailVisible(false);
-        setIsPlaying(true);
-      } else {
-        setSongQueue([
-          ...songQueue,
-         ...songsQueue
-        ]);
-        setWaveformQueue([...waveformQueue, ...waveforms]);
-        setPlayerMiniVisible(false);
-        setPlayerVisible(true);
-        setDetailVisible(false);
-        setIsPlaying(true);
-      }
-  }
+    songsQueue: SongInfo[]
+  ) => {
+    if (songQueue.length > 0) {
+      setSongQueue(() => {
+        var helperArray = [...songQueue];
+        helperArray.splice(songIndex + 1, 0, ...songsQueue);
+        return helperArray;
+      });
+      setWaveformQueue(() => {
+        var helperArray = [...waveformQueue];
+        helperArray.splice(songIndex + 1, 0, ...waveforms);
+        return helperArray;
+      });
+
+      setPlayerMiniVisible(false);
+      setPlayerVisible(true);
+      setDetailVisible(false);
+      setIsPlaying(true);
+    } else {
+      setSongQueue([...songQueue, ...songsQueue]);
+      setWaveformQueue([...waveformQueue, ...waveforms]);
+      setPlayerMiniVisible(false);
+      setPlayerVisible(true);
+      setDetailVisible(false);
+      setIsPlaying(true);
+    }
+  };
 
   const handlerAddSongToQueue = (
     id: string,
@@ -255,12 +256,14 @@ function MyApp({ Component, pageProps }: AppProps) {
             detailID,
             queueVisible,
             playerVisible,
+            userContext,
             setQueueVisible,
             handlerResultClick,
             handlerStartPlayer,
             handlerAddSongToQueue,
             handlerStartPlaylistPlayer,
-            handlerAddPlaylistToQueue
+            handlerAddPlaylistToQueue,
+            setUserContext,
           }}
         >
           <PlayerContext.Provider
@@ -292,45 +295,45 @@ function MyApp({ Component, pageProps }: AppProps) {
               handlerPlay,
             }}
           >
-            <Head>
-              <meta
-                name="viewport"
-                content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=3"
-              />
-              <link rel="preconnect" href="https://fonts.googleapis.com" />
-              <link rel="preconnect" href="https://fonts.gstatic.com" />
-              <link
-                href="https://fonts.googleapis.com/css2?family=Heebo:wght@500&family=Kanit:wght@800&family=Kanit:wght@600&family=Varela+Round&display=swap"
-                rel="stylesheet"
-              />
-            </Head>
-            <CustomPlayer />
-            {playerVisible ? (
-              <PlayerCard handlerVisibilityPlayer={handlerVisibilityPlayer} />
-            ) : null}
-            <NavLayout
-              maximized={maximized}
-              handlerMenuClick={handlerMenuClick}
-              selected={selected}
-              handlerChangeSelected={handlerChangeSelected}
-              handlerDetailClose={handlerDetailClose}
-              playerControlMini={playerControlMini}
-              handlerMinifyPlayer={handlerMinifyPlayer}
-              detailOf={detailOf}
-              detailID={detailID}
-              handlerVisibilityPlayer={handlerVisibilityPlayer}
-              playerMiniVisible={playerMiniVisible}
-              title={
-                selected === "feed"
-                  ? "Home"
-                  : selected === "search"
-                  ? "Search"
-                  : "Library"
-              }
-              detailVisible={detailVisible}
-            >
-              <Component {...pageProps} />
-            </NavLayout>
+              <Head>
+                <meta
+                  name="viewport"
+                  content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=3"
+                />
+                <link rel="preconnect" href="https://fonts.googleapis.com" />
+                <link rel="preconnect" href="https://fonts.gstatic.com" />
+                <link
+                  href="https://fonts.googleapis.com/css2?family=Heebo:wght@500&family=Kanit:wght@800&family=Kanit:wght@600&family=Varela+Round&display=swap"
+                  rel="stylesheet"
+                />
+              </Head>
+              <CustomPlayer />
+              {playerVisible ? (
+                <PlayerCard handlerVisibilityPlayer={handlerVisibilityPlayer} />
+              ) : null}
+              <NavLayout
+                maximized={maximized}
+                handlerMenuClick={handlerMenuClick}
+                selected={selected}
+                handlerChangeSelected={handlerChangeSelected}
+                handlerDetailClose={handlerDetailClose}
+                playerControlMini={playerControlMini}
+                handlerMinifyPlayer={handlerMinifyPlayer}
+                detailOf={detailOf}
+                detailID={detailID}
+                handlerVisibilityPlayer={handlerVisibilityPlayer}
+                playerMiniVisible={playerMiniVisible}
+                title={
+                  selected === "feed"
+                    ? "Home"
+                    : selected === "search"
+                    ? "Search"
+                    : "Library"
+                }
+                detailVisible={detailVisible}
+              >
+                <Component {...pageProps} />
+              </NavLayout>
           </PlayerContext.Provider>
         </Context.Provider>
       </ApolloProvider>

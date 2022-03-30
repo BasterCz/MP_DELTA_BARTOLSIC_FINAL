@@ -105,6 +105,81 @@ query WaveformFind($_id: ID!) {
     songID
   }
 }
+query WaveformsFind($_ids: [ID!]!) {
+  waveformsFind(_ids: $_ids) {
+    _id
+    waveform
+    songID
+  }
+}
+
+query CheckUserExists($userID: ID!) {
+  checkUserExists(userID: $userID) 
+}
+
+query IsLikedByUser($userID: ID!, $objectID: ID!) {
+  isLikedByUser(userID: $userID, objectID: $objectID) 
+}
+
+query GetLikeRefs($userID: ID!) {
+  getLikeRefs(userID: $userID) {
+    _id
+    name
+    file_path
+    image_path
+    createdDate
+    modifiedDate
+    isPublic
+  }
+}
+
+query GetPlaylistRef($userID: ID!) {
+  getPlaylistRef(userID: $userID) {
+    ...ClientPlaylist
+  }
+}
+
+query GetLastViewdSongs($userID: ID!) {
+  getLastViewdSongs(userID: $userID) {
+    _id
+    name
+    file_path
+    image_path
+    createdDate
+    modifiedDate
+    isPublic
+  }
+}
+
+query GetMostViewdSongs {
+  getMostViewdSongs {
+    _id
+    name
+    file_path
+    image_path
+    createdDate
+    modifiedDate
+    isPublic
+  }
+}
+
+query GetLatestSongs {
+  getLatestSongs {
+    _id
+    name
+    file_path
+    image_path
+    createdDate
+    modifiedDate
+    isPublic
+  }
+}
+
+query GetLatestPlaylists {
+  getLatestPlaylists {
+    ...ClientPlaylist
+  }
+}
 
 mutation SongsUpdate(
   $_id: ID!
@@ -198,4 +273,32 @@ mutation PlaylistRemoveSong(
 
 mutation AddView($_id: ID!) {
   addView (_id: $_id)
+}
+
+mutation AddUser($userID: ID!) {
+  addUser (userID: $userID)
+}
+
+mutation AddLikeRef($userID: ID!, $objectID: ID!) {
+  addLikeRef (userID: $userID, objectID: $objectID)
+}
+
+mutation AddViewRef($userID: ID!, $objectID: ID!) {
+  addViewRef (userID: $userID, objectID: $objectID)
+}
+
+mutation AddPlaylistRef($userID: ID!, $objectID: ID!) {
+  addPlaylistRef (userID: $userID, objectID: $objectID)
+}
+
+mutation RemoveLikeRef($userID: ID!, $objectID: ID!) {
+  removeLikeRef (userID: $userID, objectID: $objectID)
+}
+
+mutation RemoveViewRef($userID: ID!, $objectID: ID!) {
+  removeViewRef (userID: $userID, objectID: $objectID)
+}
+
+mutation RemovePlaylistRef($userID: ID!, $objectID: ID!) {
+  removePlaylistRef (userID: $userID, objectID: $objectID)
 }

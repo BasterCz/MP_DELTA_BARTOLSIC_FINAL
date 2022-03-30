@@ -18,19 +18,12 @@ export const handleOnChangeUploadFormikPlaylist = async (
         destination: destination.replaceAll(" ", "_")
         .normalize("NFD")
         .replace(/[\u0300-\u036f]/g, ""),
-      },
-      onUploadProgress: (event: { loaded: number; total: number }) => {
-        console.log(
-          `Current progress:`,
-          Math.round((event.loaded * 100) / event.total)
-        );
-      },
+      }
     };
     
     const response = await axios.post("/api/upload", formData, config);
         formikInstance.setFieldValue("imageName", fileName);
-    
-    console.log("response", response.data);
+  
     setUploaded(true)
   };
 

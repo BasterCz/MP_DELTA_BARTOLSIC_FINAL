@@ -3,7 +3,6 @@ import {  ClientPlaylistFragmentDoc, PlaylistDocument, usePlaylistDeleteMutation
 export const usePlaylistMultiple = () => {
     const { data: dataP, loading: loadingP, error: errorP, refetch, client } = usePlaylistsQuery({ pollInterval: 500 });
     const [playlists, setPlaylists] = useState(dataP?.playlists);
-    console.log(errorP?.message)
     const [deletePlaylist] = usePlaylistDeleteMutation();
     const onDelete = async (id: string) => {
         await deletePlaylist(
