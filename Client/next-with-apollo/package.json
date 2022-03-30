@@ -6,7 +6,7 @@
     "codegen": "graphql-let",
     "dev": "yarn codegen && next dev -p 4000",
     "build": "yarn codegen && next build",
-    "start": "yarn codegen && next start -p 4001",
+    "start": "yarn codegen && next start -p 4000",
     "lint": "yarn codegen && next lint"
   },
   "dependencies": {
@@ -29,6 +29,7 @@
     "@nivo/scales": "^0.79.0",
     "@nivo/tooltip": "^0.79.0",
     "@types/cookies": "^0.7.7",
+    "@types/cors": "^2.8.12",
     "@types/elasticsearch": "^5.0.40",
     "@types/fastclick": "^1.0.30",
     "@types/fluent-ffmpeg": "^2.1.18",
