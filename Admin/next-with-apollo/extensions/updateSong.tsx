@@ -58,7 +58,7 @@ export const updateSong = async ({
         (fileName.startsWith("/audio/") || imageName.startsWith("https://")) +
         "",
       possibleInitialFile: utf8.encode(fileName),
-      audioLevels: await (await getAudioLevels("/temp/"+name.replaceAll(" ", "_").normalize("NFD").replace(/[\u0300-\u036f]/g, "")+".mp3")).join('|')
+      audioLevels: await (await getAudioLevels("/temp/"+outputFN.replace(/^(.*[\\\/])/g, "").replaceAll(" ", "_").normalize("NFD").replace(/[\u0300-\u036f]/g, "")+".mp3")).join('|')
     },
   };
   const response = await axios.post("/api/hlsUpdate", {}, config);
